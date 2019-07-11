@@ -6,16 +6,17 @@ for : init data formater of other paltforms
 
 '''
 
-import json
-import os.path
+from parsers.qqmusic import QQparser
+from parsers.wangyimusic import WangYiparser
 
 
 def initprasers():
-    music_ = './music.platform.json'
-    if os.path.isfile(music_):
-        print('loading music platforms parser')
-        with open(music_, 'r') as f:
-            musicPlatforms = json.load(f)
-            print(list(musicPlatforms.keys()))
+    platforms = {
+        "qq":QQparser("qq url"),
+        "wangyi":WangYiparser("wangyi url")
+    }
 
- initprasers()
+    return platforms
+
+
+superParser = initprasers()

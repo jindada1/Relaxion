@@ -1,6 +1,6 @@
 from aiohttp import web
 import asyncQQ
-import Parser from parser
+from parseService import superParser
 
 
 async def index(request):
@@ -162,7 +162,7 @@ async def songsinSonglist(request):
 
 async def testDynamic(request):
     platform = request.match_info['platform']
-    P = Parser.get(platform)
+    P = superParser[platform]
     if P:
         return web.json_response(P.testDynamic(request.path_qs))
     else:
