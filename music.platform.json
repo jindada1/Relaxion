@@ -1,0 +1,10 @@
+{
+    "qq": {
+        "target": "http://localhost:5001",
+        "enabled": true
+    },
+    "wangyi": {
+        "target": "http://localhost:5001",
+        "enabled": true
+    }
+}
