@@ -44,7 +44,7 @@
 **技术栈**
 
 + 开发
-  + Moleculer 微服务架构 api网关
+  + aiohttp 微服务架构 api网关
   + python/node 平台爬虫
   + sqlite 用户数据存储，其它资源存储
 
