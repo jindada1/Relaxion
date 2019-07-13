@@ -12,7 +12,7 @@ class PraserService(object):
     def __init__(self, cfg):
         self.platforms = {}
         # no outer settings, read local default setting
-        if cfg:
+        if not cfg:
             try:
                 with open('./settings/platform_setting.json', 'r') as f:
                     content = f.read()

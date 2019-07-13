@@ -182,7 +182,7 @@ def Redrict(handler):
         print(request.path_qs)
 
         # filter invalid platforms
-        if platform in superParser["platforms"]:
+        if superParser[platform]:
             return handler(superParser[platform], _id)
         # handle error platforms
         return errorHandler("platform: %s is not supported" % platform)
@@ -196,8 +196,9 @@ async def lyric(P, _id):
 
 @Redrict
 async def albumPic(P, _id):
-    newurl = await P.albumpic(_id)
+    newurl = await P.picurl(_id)
     raise web.HTTPFound(newurl)
+
 
 
 test_args = {
