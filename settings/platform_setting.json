@@ -1,0 +1,10 @@
+{
+    "qq": {
+        "target": "http://localhost:5000",
+        "parser": "QQparser"
+    },
+    "wangyi": {
+        "target": "http://api.goldenproud.cn/wangyi",
+        "parser": "WangYiparser"
+    }
+}

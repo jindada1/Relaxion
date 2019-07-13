@@ -1,0 +1,35 @@
+{
+    "music": {
+        "qq": {
+            "zhName": "QQ音乐",
+            "keyword": "周杰伦",
+            "albumid": "1458791",
+            "dissid": "1304470181",
+            "idforcomments": {
+                "album": "14536",
+                "song": "107192078",
+                "mv": "n0010BCw40a"
+            },
+            "idforres": "002WCV372JMZJw",
+            "mvid": "m00119xeo83",
+            "lyricid": "002WCV372JMZJw",
+            "user": "10001"
+        },
+        "wangyi": {
+            "zhName": "网易云音乐",
+            "keyword": "林俊杰",
+            "albumid": "32311",
+            "dissid": "24381616",
+            "idforcomments": {
+                "album": "32311",
+                "song": "33894312",
+                "mv": "5436712"
+            },
+            "idforres": "33894312",
+            "mvid": "5436712",
+            "lyricid": "33894312",
+            "user": "同济吴亦凡"
+        }
+    },
+    "movie": {}
+}

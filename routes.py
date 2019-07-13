@@ -1,10 +1,14 @@
 from views import *
 
 def setup_routes(app):
+    # index html
     app.router.add_get('/', index)
 
+    # return static files
+    app.router.add_get('/static/{filename}', files)
+
     # search and return song
-    app.router.add_get('/{platform}/songs', searchSongs)
+    app.router.add_get('/{platform}/songs', searchSong)
 
     # search and return album
     app.router.add_get('/{platform}/albums', searchAlbum)
@@ -28,7 +32,7 @@ def setup_routes(app):
     app.router.add_get('/{platform}/comments/mv', commentsMV)
 
     # get lyric of a song
-    app.router.add_get('/{platform}/lyric/{idforres}', lyric)
+    app.router.add_get('/{platform}/lyric/{id}', lyric)
     
     # get uri of a song
     app.router.add_get('/{platform}/uri/song', songUri)
@@ -38,6 +42,9 @@ def setup_routes(app):
 
     # get user's public songlists
     app.router.add_get('/{platform}/user/songlists', userSonglists)
+
+    # redirect pic
+    app.router.add_get('/{platform}/albumcover/{id}', albumPic)
 
     # test dynamic router
     app.router.add_get('/{platform}/test/dynamic', testDynamic)
