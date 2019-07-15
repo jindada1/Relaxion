@@ -59,5 +59,5 @@ def __dropTable(table):
 
 if __name__ == '__main__':
     __disPlayAllMusicQualities()
-    __disPlayAllQQLyric()
+    ## __disPlayAllQQLyric()
     __disPlayAllQQUSER()

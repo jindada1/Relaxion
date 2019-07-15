@@ -5,21 +5,21 @@ by  :  Kris Huang
 for : init data formater of other paltforms
 '''
 
-from platforms import *
+from .qqmusic import QQparser
+from .wangyimusic import WangYiparser
+
 import json
 
 class PraserService(object):
     def __init__(self, cfg):
         self.platforms = {}
+        
         # no outer settings, read local default setting
         if not cfg:
-            try:
-                with open('./settings/platform_setting.json', 'r') as f:
-                    content = f.read()
-                    cfg = json.loads(content)
-            except:
-                print("setting file error")
-                return
+            with open('./platform_setting.json', 'r') as f:
+                content = f.read()
+                cfg = json.loads(content)
+
 
         for name, prop in cfg.items():
             # we can validate the target url here
@@ -31,11 +31,8 @@ class PraserService(object):
     
     # override [], return parser
     def __getitem__(self, key):
+
         if key in self.platforms.keys():
             return self.platforms[key]
+
         return None
-
-
-
-othercfg = {}
-superParser = PraserService(othercfg)

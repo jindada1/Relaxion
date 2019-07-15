@@ -4,9 +4,12 @@ by  :  Kris Huang
 
 for : integrate parser modules to package -- "platforms"
 '''
-from .baseparser import baseParser
-from .qqmusic import QQparser
-from .wangyimusic import WangYiparser
+from __future__ import barry_as_FLUFL
 
 
-__all__ = ['baseParser','QQparser','WangYiparser']
+
+__all__ = ['superParser']
+__version__ = '0.1'
+__author__ = 'Kris Huang'
+
+from .parseService import PraserService
