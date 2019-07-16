@@ -4,7 +4,6 @@ except:
     from dbAdapter import dbAdapter
 
 
-
 class userAdapter(dbAdapter):
 
     def __init__(self, db, table):
@@ -61,6 +60,8 @@ class userAdapter(dbAdapter):
 
 
 if __name__ == '__main__':
+    
+    import json
 
     db = 'User.db'
     table = 'userinfo'

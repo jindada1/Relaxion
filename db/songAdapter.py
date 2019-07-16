@@ -3,7 +3,6 @@ try:
 except:
     from dbAdapter import dbAdapter
 
-import json
 
 '''
 handle the operation on song info and download
@@ -18,10 +17,10 @@ class songAdapter(dbAdapter):
         print(table)
         self.table = table
 
-    def insert(self, row):
+    def insert(self, songid, info):
         try:
             self.sql_do('insert into {} (songid, info, count) values (?, ?, ?)'.format(
-                self.table), (row['songid'], row['info'], 1,))
+                self.table), (songid, info, 1,))
             return True
         except:
             return False
@@ -69,22 +68,34 @@ class songAdapter(dbAdapter):
 
 
 if __name__ == '__main__':
+    
+    import json
 
     db = 'User.db'
     table = 'song'
     songs = songAdapter(db, table)
 
 
-    song = {
-        "songid": "qq123123123",
-        'info': json.dumps({
-            "name": "告白气球",
-            "singer": "周杰伦"
-        },ensure_ascii=False)
-    }
+    songsdata = [
+        {
+            "songid": "qq123",
+            'info': json.dumps({
+                "name": "告白气球",
+                "singer": "周杰伦"
+            },ensure_ascii=False)
+        },
+        {
+            "songid": "qq123wtf",
+            'info': json.dumps({
+                "name": "等你下课",
+                "singer": "周杰伦"
+            },ensure_ascii=False)
+        }
+    ]
 
-    # print(songs.insert(song))
-    print(songs.fetch_row(song['songid']))
+    for song in songsdata:
+        print(songs.insert(song['songid'], song['info']))
+    # print(songs.fetch_row(song['songid']))
     # num = songs.find_property(song['songid'], 'count')
     # print(songs.update_property(song['songid'],("count", num + 1)))
     # print(songs.delete(song['songid']))

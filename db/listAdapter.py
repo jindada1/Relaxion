@@ -17,10 +17,10 @@ class listAdapter(dbAdapter):
         print(table)
         self.table = table
 
-    def insert(self, row):
+    def insert(self, username, songid):
         try:
             self.sql_do('insert into {} (username, songid, id) values (?, ?, ?)'.format(
-                self.table), (row['username'], row['songid'],row['username'] + row['songid']))
+                self.table), (username, songid, username + songid))
             return True
         except:
             return False
@@ -32,10 +32,10 @@ class listAdapter(dbAdapter):
 
         return list(map(lambda x: x[1], t_res))
 
-    def delete(self, row):
+    def delete(self, username, songid):
 
         rows = self.sql_do(
-            'delete from {} where id = ?'.format(self.table), (row['username'] + row['songid'],))
+            'delete from {} where id = ?'.format(self.table), (username + songid,))
 
         return rows
 
@@ -49,22 +49,18 @@ if __name__ == '__main__':
     record = [
         {
             'username': 'Kris',
-            'songid': '1234',
+            'songid': 'qq123',
         },
         {
             'username': 'Kris',
-            'songid': '1235',
-        },
-        {
-            'username': 'Kris',
-            'songid': '2563',
+            'songid': 'qq123wtf',
         }
     ]
 
 
     for r in record:
-        print(records.insert(r))
+        print(records.insert(r['username'], r['songid']))
     
-    print(records.fetch_all('Kris'))
-    print(records.delete(record[0]))
+    # print(records.fetch_all('Kris'))
+    # print(records.delete(record[0]))
     # records.disp_table()

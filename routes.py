@@ -48,3 +48,22 @@ def setup_routes(app):
 
     # test dynamic router
     app.router.add_get('/{platform}/test/dynamic', testDynamic)
+
+    '''
+        local service
+    '''
+
+    # user login
+    app.router.add_post('/login', login)
+    
+    # user sign up
+    app.router.add_post('/sign', signUp)
+
+    # user love a song, add song to his list
+    app.router.add_post('/user/love/song', loveSong)
+
+    # get user loved songs
+    app.router.add_get('/user/loved/song', getUserLove)
+
+    # user dislike a song, remove song from his list
+    app.router.add_post('/user/hate/song', hateSong)

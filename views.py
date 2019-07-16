@@ -16,31 +16,28 @@ from db import dbService
 
 othercfg = {}
 superParser = PraserService(othercfg)
+localdb = dbService('./db/User.db')
 
-class preHandle:
+
+class argsCheckerGet(object):
     def __init__(self, argSchema):
         self.argSchema = argSchema
 
     def __call__(self, handler):
         def wrapper(request):
             # print("%s is running" % handler.__name__)
-            platform = request.match_info['platform']
             req = request.path_qs
             print(req)
 
-            # filter invalid platforms
-            if superParser[platform]:
-                # validate arguments in request according to self.argSchema
-                validation = self.validateArgs(request.rel_url)
-                if validation['err']:
-                    return errorHandler(validation['err'])
-                else:
-                    return handler(superParser[platform], validation)
-            # handle error platforms
-            return errorHandler("platform: %s is not supported" % platform)
+            # validate arguments in request according to self.argSchema
+            validation = self.validate(request.rel_url)
+            if validation['err']:
+                return errorHandler(validation['err'])
+            else:
+                return handler(validation)
         return wrapper
-
-    def validateArgs(self, rq_args):
+        
+    def validate(self, rq_args):
         params = {}
         for arg, prpty in self.argSchema.items():
             try:
@@ -53,6 +50,30 @@ class preHandle:
                 params[arg] = prpty
         params["err"] = ""
         return params
+
+class pltfGet(argsCheckerGet):
+    def __init__(self, argSchema):
+
+        super().__init__(argSchema)
+
+    def __call__(self, handler):
+        def wrapper(request):
+            # print("%s is running" % handler.__name__)
+            platform = request.match_info['platform']
+            req = request.path_qs
+            print(req)
+
+            # filter invalid platforms
+            if superParser[platform]:
+                # validate arguments in request according to self.argSchema
+                validation = self.validate(request.rel_url)
+                if validation['err']:
+                    return errorHandler(validation['err'])
+                else:
+                    return handler(superParser[platform], validation)
+            # handle error platforms
+            return errorHandler("platform: %s is not supported" % platform)
+        return wrapper
 
 
 async def errorHandler(errmsg):
@@ -73,10 +94,10 @@ search_args = {
     "page": 0
 }
 # this function search songs from qq music, and format response then return out
-# @preHandle(search_args)
+# @pltfGet(search_args)
 
 
-@preHandle(search_args)
+@pltfGet(search_args)
 async def searchSong(P, params):
     s = params['keyword']
     p = params['page']
@@ -84,7 +105,7 @@ async def searchSong(P, params):
     return web.json_response(await P.searchSong(s, p, n))
 
 
-@preHandle(search_args)
+@pltfGet(search_args)
 async def searchMV(P, params):
     s = params['keyword']
     p = params['page']
@@ -92,7 +113,7 @@ async def searchMV(P, params):
     return web.json_response(await P.searchMV(s, p, n))
 
 
-@preHandle(search_args)
+@pltfGet(search_args)
 async def searchAlbum(P, params):
     s = params['keyword']
     p = params['page']
@@ -102,7 +123,7 @@ async def searchAlbum(P, params):
 # get songs in an album
 
 
-@preHandle({'albumid': "*"})
+@pltfGet({'albumid': "*"})
 async def songsinAlbum(P, params):
     albumid = params['albumid']
     return web.json_response(await P.songsinAlbum(albumid))
@@ -115,7 +136,7 @@ comment_args = {
 }
 
 
-@preHandle(comment_args)
+@pltfGet(comment_args)
 async def commentsSong(P, params):
     topid = params['idforcomments']
     p = params['page']
@@ -123,7 +144,7 @@ async def commentsSong(P, params):
     return web.json_response(await P.getComments(topid, 'music', p, n))
 
 
-@preHandle(comment_args)
+@pltfGet(comment_args)
 async def commentsAlbum(P, params):
     topid = params['idforcomments']
     p = params['page']
@@ -131,7 +152,7 @@ async def commentsAlbum(P, params):
     return web.json_response(await P.getComments(topid, 'album', p, n))
 
 
-@preHandle(comment_args)
+@pltfGet(comment_args)
 async def commentsMV(P, params):
     topid = params['idforcomments']
     p = params['page']
@@ -141,7 +162,7 @@ async def commentsMV(P, params):
 # get the uri of a song
 
 
-@preHandle({'idforres': "*"})
+@pltfGet({'idforres': "*"})
 async def songUri(P, params):
     idforres = params['idforres']
     return web.json_response(await P.musicuri(idforres))
@@ -149,7 +170,7 @@ async def songUri(P, params):
 # get the uri of a mv
 
 
-@preHandle({'mvid': "*"})
+@pltfGet({'mvid': "*"})
 async def mvUri(P, params):
     mvid = params['mvid']
     return web.json_response(await P.mvuri(mvid))
@@ -157,7 +178,7 @@ async def mvUri(P, params):
 # get user's public songlists
 
 
-@preHandle({'user': "*"})
+@pltfGet({'user': "*"})
 async def userSonglists(P, params):
     user = params['user']
     return web.json_response(await P.userlist(user))
@@ -165,7 +186,7 @@ async def userSonglists(P, params):
 # get songs in a user songlist
 
 
-@preHandle({
+@pltfGet({
     'dissid': "*",
     "num": 20,
     "page": 0
@@ -212,8 +233,66 @@ test_args = {
 }
 
 
-@preHandle(test_args)
+@pltfGet(test_args)
 async def testDynamic(P, params):
     a = params['a']
     b = params['b']
     return web.json_response(P.testDynamic(a, b))
+
+
+@argsCheckerGet({
+    'username':"*"
+})
+async def getUserLove(params):
+    userid = params['username']
+    return web.json_response(localdb.get_songlist(userid))
+
+
+class argsCheckerPost(object):
+    def __init__(self, argSchema):
+        self.argSchema = argSchema
+
+    def __call__(self, handler):
+        def wrapper(request):
+            # print("%s is running" % handler.__name__)
+            req = request.path_qs
+            print(req)
+
+            # validate arguments in request according to self.argSchema
+            validation = self.validate(request.rel_url)
+            if validation['err']:
+                return errorHandler(validation['err'])
+            else:
+                return handler(validation)
+        return wrapper
+        
+    def validate(self, rq_args):
+        params = {}
+        for arg, prpty in self.argSchema.items():
+            try:
+                params[arg] = rq_args.query[arg]
+            except:
+                # if param is required, raise error
+                if prpty == "*":
+                    return {"err": "%s is required" % arg}
+                # set default value
+                params[arg] = prpty
+        params["err"] = ""
+        return params
+
+async def login(request):
+    jsonresp = await request.json()
+    result = localdb.login({
+        'name':jsonresp['username'],
+        'pw':jsonresp['password']
+    })
+    return web.json_response(result)
+
+async def signUp(request):
+    pass
+
+async def loveSong(request):
+    pass
+
+async def hateSong(request):
+    pass

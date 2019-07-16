@@ -16,6 +16,11 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
+<style>
+    .col-head {
+        padding: 0 0 10px 0;
+    }
+</style>
 
 <body>
     <div id="app">
@@ -25,30 +30,34 @@
             </el-header>
             <el-container>
                 <el-aside>
-                    <el-menu :default-openeds="['1']" class="el-menu-vertical-demo" @select="selectmenu">
+                    <el-menu default-active="4" class="el-menu-vertical-demo" @select="selectmenu">
                         <el-submenu index="1">
                             <template slot="title">
                                 <i class="el-icon-location"></i>
                                 <span>音乐</span>
                             </template>
                             <el-menu-item v-for="name_prop in Object.entries(testcase.music)" :index="name_prop[0]"
-                                :keys="name_prop[0]">{{name_prop[1].zhName}}
+                                :key ="name_prop[0]">{{name_prop[1].zhName}}
                             </el-menu-item>
                         </el-submenu>
                         <el-menu-item index="2">
                             <template slot="title">
-                                <i class="el-icon-menu"></i>
+                                <i class="el-icon-video-camera"></i>
                                 <span slot="title">视频</span>
                             </template>
                             <el-menu-item v-for="name_prop in Object.entries(testcase.movie)" :index="name_prop[0]"
-                                :keys="name_prop[0]">{{name_prop[1].zhName}}
+                                :key ="name_prop[0]">{{name_prop[1].zhName}}
                             </el-menu-item>
                         </el-menu-item>
                         <el-menu-item index="3">
-                            <i class="el-icon-document"></i>
+                            <i class="el-icon-male"></i>
                             <span slot="title">第三方接口</span>
                         </el-menu-item>
                         <el-menu-item index="4">
+                            <i class="el-icon-user"></i>
+                            <span slot="title">本平台用户</span>
+                        </el-menu-item>
+                        <el-menu-item index="5">
                             <i class="el-icon-document"></i>
                             <span slot="title">文档</span>
                         </el-menu-item>
@@ -100,6 +109,38 @@
                         </ul>
                     </div>
                     <div v-if="selectedcategory === '4'">
+                        <div>
+                            <h3>注册/登录</h3>
+                            <p>在本平台注册或登录账户</p>
+                            <el-row :gutter="20">
+                                <el-col :span="8">
+                                    <el-form ref="form" :model="loginsign" label-width="80px">
+                                        <el-form-item label="用户名">
+                                            <el-input v-model="loginsign.name"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="密码">
+                                            <el-input v-model="loginsign.pw"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="login">登录</el-button>
+                                            <el-button @click="sign">注册</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div class="col-head">参数</div>
+                                    <el-input type="textarea" :rows="5" v-model="loginsign.params">
+                                    </el-input>
+                                </el-col>
+                                <el-col :span="8">
+                                    <div class="col-head">结果</div>
+                                    <el-input type="textarea" :rows="5" v-model="loginsign.response">
+                                    </el-input>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </div>
+                    <div v-if="selectedcategory === '5'">
                         <a href="https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse">文档</a>
                     </div>
                 </el-main>
@@ -126,7 +167,14 @@
                     testcase: data,
                     platformName: Object.keys(data.music)[0], // default select first music platform
                     platform: Object.entries(data.music)[0][1], // default select first music platform
-                    selectedcategory: 1
+                    selectedcategory: '4',
+
+                    loginsign: {
+                        name: "Kris",
+                        pw: "1234",
+                        params: "",
+                        response: ""
+                    }
                 }
             },
             methods: {
@@ -137,6 +185,33 @@
                         this.platform = this.testcase.music[index]
                         console.log(this.platform)
                     }
+                },
+                login() {
+                    params = {
+                        username: this.loginsign.name,
+                        password: this.loginsign.pw
+                    }
+                    this.loginsign.params = JSON.stringify(params)
+                    let _this = this
+                    axios.post('/login', params)
+                        .then(function (response) {
+                            _this.loginsign.response = JSON.stringify(response.data)
+                        })
+                        .catch(function (error) {
+                            _this.loginsign.response(error);
+                        });
+                },
+                sign() {
+                    axios.post('/sign', {
+                        firstName: 'Fred',
+                        lastName: 'Flintstone'
+                    })
+                        .then(function (response) {
+                            console.log(response);
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
                 }
             },
             mounted() {
