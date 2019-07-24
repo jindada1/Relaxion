@@ -63,7 +63,7 @@ def setup_routes(app):
     app.router.add_post('/user/love/song', loveSong)
 
     # get user loved songs
-    app.router.add_get('/user/loved/song', getUserLove)
+    app.router.add_get('/user/loved/songs', getUserLove)
 
     # user dislike a song, remove song from his list
     app.router.add_post('/user/hate/song', hateSong)
