@@ -37,7 +37,7 @@
                                 <span>音乐</span>
                             </template>
                             <el-menu-item v-for="name_prop in Object.entries(testcase.music)" :index="name_prop[0]"
-                                :key ="name_prop[0]">{{name_prop[1].zhName}}
+                                :key="name_prop[0]">{{name_prop[1].zhName}}
                             </el-menu-item>
                         </el-submenu>
                         <el-menu-item index="2">
@@ -46,7 +46,7 @@
                                 <span slot="title">视频</span>
                             </template>
                             <el-menu-item v-for="name_prop in Object.entries(testcase.movie)" :index="name_prop[0]"
-                                :key ="name_prop[0]">{{name_prop[1].zhName}}
+                                :key="name_prop[0]">{{name_prop[1].zhName}}
                             </el-menu-item>
                         </el-menu-item>
                         <el-menu-item index="3">
@@ -129,12 +129,12 @@
                                 </el-col>
                                 <el-col :span="8">
                                     <div class="col-head">参数</div>
-                                    <el-input type="textarea" :rows="5" v-model="loginsign.params">
+                                    <el-input type="textarea" :rows="5" v-model="postpanel.params">
                                     </el-input>
                                 </el-col>
                                 <el-col :span="8">
                                     <div class="col-head">结果</div>
-                                    <el-input type="textarea" :rows="5" v-model="loginsign.response">
+                                    <el-input type="textarea" :rows="5" v-model="postpanel.response">
                                     </el-input>
                                 </el-col>
                             </el-row>
@@ -169,11 +169,14 @@
                     platform: Object.entries(data.music)[0][1], // default select first music platform
                     selectedcategory: '4',
 
-                    loginsign: {
-                        name: "Kris",
-                        pw: "1234",
+                    postpanel: {
                         params: "",
                         response: ""
+                    },
+
+                    loginsign: {
+                        name: "Kris",
+                        pw: "1234"
                     }
                 }
             },
@@ -191,26 +194,24 @@
                         username: this.loginsign.name,
                         password: this.loginsign.pw
                     }
-                    this.loginsign.params = JSON.stringify(params)
-                    let _this = this
-                    axios.post('/login', params)
-                        .then(function (response) {
-                            _this.loginsign.response = JSON.stringify(response.data)
-                        })
-                        .catch(function (error) {
-                            _this.loginsign.response(error);
-                        });
+                    this.postTo('/login', params)
                 },
                 sign() {
-                    axios.post('/sign', {
-                        firstName: 'Fred',
-                        lastName: 'Flintstone'
-                    })
+                    params = {
+                        username: this.loginsign.name,
+                        password: this.loginsign.pw
+                    }
+                    this.postTo('/sign', params)
+                },
+                postTo(url, params) {
+                    this.postpanel.params = JSON.stringify(params)
+                    let _this = this
+                    axios.post(url, params)
                         .then(function (response) {
-                            console.log(response);
+                            _this.postpanel.response = JSON.stringify(response.data)
                         })
                         .catch(function (error) {
-                            console.log(error);
+                            _this.postpanel.response = error;
                         });
                 }
             },

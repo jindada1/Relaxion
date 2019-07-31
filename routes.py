@@ -34,6 +34,9 @@ def setup_routes(app):
     # get lyric of a song
     app.router.add_get('/{platform}/lyric/{id}', lyric)
     
+    # redirect to an effective uri of a song
+    app.router.add_get('/{platform}/song/{id}', song)
+    
     # get uri of a song
     app.router.add_get('/{platform}/uri/song', songUri)
 

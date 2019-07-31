@@ -13,7 +13,6 @@ from platforms import PraserService
 from db import dbService
 
 
-
 othercfg = {}
 superParser = PraserService(othercfg)
 localdb = dbService('./db/User.db')
@@ -36,7 +35,7 @@ class argsCheckerGet(object):
             else:
                 return handler(validation)
         return wrapper
-        
+
     def validate(self, rq_args):
         params = {}
         for arg, prpty in self.argSchema.items():
@@ -50,6 +49,7 @@ class argsCheckerGet(object):
                 params[arg] = prpty
         params["err"] = ""
         return params
+
 
 class pltfGet(argsCheckerGet):
     def __init__(self, argSchema):
@@ -226,6 +226,12 @@ async def albumPic(P, _id):
     raise web.HTTPFound(newurl)
 
 
+@Redrict
+async def song(P, _id):
+    newurl = await P.musicuri(_id)
+    # newurl is {"uri":"https://......."}
+    raise web.HTTPFound(newurl['uri'])
+
 
 test_args = {
     "a": "*",
@@ -241,7 +247,7 @@ async def testDynamic(P, params):
 
 
 @argsCheckerGet({
-    'username':"*"
+    'username': "*"
 })
 async def getUserLove(params):
     userid = params['username']
@@ -253,46 +259,66 @@ class argsCheckerPost(object):
         self.argSchema = argSchema
 
     def __call__(self, handler):
-        def wrapper(request):
+        async def wrapper(request):
             # print("%s is running" % handler.__name__)
             req = request.path_qs
             print(req)
 
+            # get form data
+            data = await request.json()
+
             # validate arguments in request according to self.argSchema
-            validation = self.validate(request.rel_url)
+            validation = self.validate(data)
             if validation['err']:
-                return errorHandler(validation['err'])
+                return await errorHandler(validation['err'])
             else:
-                return handler(validation)
+                return await handler(validation)
         return wrapper
-        
-    def validate(self, rq_args):
+
+    def validate(self, data):
         params = {}
         for arg, prpty in self.argSchema.items():
-            try:
-                params[arg] = rq_args.query[arg]
-            except:
+            # get value
+            if arg in data.keys():
+                params[arg] = data[arg]
+
+            else:
                 # if param is required, raise error
                 if prpty == "*":
                     return {"err": "%s is required" % arg}
                 # set default value
                 params[arg] = prpty
+
         params["err"] = ""
         return params
 
-async def login(request):
-    jsonresp = await request.json()
+@argsCheckerPost({
+    'username': '*',
+    'password': '*'
+})
+async def login(params):
     result = localdb.login({
-        'name':jsonresp['username'],
-        'pw':jsonresp['password']
+        'name': params['username'],
+        'pw': params['password']
     })
     return web.json_response(result)
 
-async def signUp(request):
-    pass
+
+@argsCheckerPost({
+    'username': '*',
+    'password': '*'
+})
+async def signUp(params):
+    result = localdb.register({
+        'name': params['username'],
+        'pw': params['password']
+    })
+    return web.json_response(result)
+
 
 async def loveSong(request):
     pass
+
 
 async def hateSong(request):
     pass

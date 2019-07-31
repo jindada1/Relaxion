@@ -17,6 +17,7 @@ class userAdapter(dbAdapter):
             self.sql_do('insert into {} (name, pw, info) values (?, ?, ?)'.format(
                 self.table), (row['name'], row['pw'], row['info'],))
             return True
+            
         except:
             return False
 
@@ -77,9 +78,10 @@ if __name__ == '__main__':
         },ensure_ascii=False)
     }
 
-    print(users.insert(user))
+    # print(users.insert(user))
     # print(users.update(user))
     # print(users.fetch_row('Kris'))
     # print(users.find_property('Kris','info'))
     # print(users.delete('12354'))
+    
     users.disp_table()

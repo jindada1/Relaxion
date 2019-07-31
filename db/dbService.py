@@ -9,6 +9,7 @@ except:
 
 import json
 
+
 class dbService(object):
     def __init__(self, dbfile):
         self.users = userAdapter(dbfile, 'userinfo')
@@ -16,14 +17,23 @@ class dbService(object):
         self.songlist = listAdapter(dbfile, 'playlist')
 
     def register(self, user):
-        return self.users.insert(user)
+        user['info'] = '{}'
+
+        if self.users.insert(user):
+            return {'succ': 'ok'}
+            
+        return {'err': 'exist'}
 
     def login(self, user):
 
         pw = self.users.find_property(user['name'], 'pw')
+        if not pw:
+            return {'err': 'no-user'}
+
         if user['pw'] == pw:
             info = self.users.find_property(user['name'], 'info')
             return json.loads(info)
+
         return {'err': 'password-error'}
 
     def bind_info(self, user):
@@ -68,6 +78,7 @@ class dbService(object):
 
     def hate_video(self, userid, songid):
         pass
+
 
 if __name__ == '__main__':
     localdb = dbService('User.db')
