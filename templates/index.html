@@ -20,6 +20,14 @@
     .col-head {
         padding: 0 0 10px 0;
     }
+
+    .el-select .el-input {
+        width: 110px;
+    }
+
+    .input-with-select .el-input-group__prepend {
+        background-color: #fff;
+    }
 </style>
 
 <body>
@@ -110,7 +118,20 @@
                     </div>
                     <div v-if="selectedcategory === '4'">
                         <el-row :gutter="20">
-                            <el-col :span="12" style="max-height: 500px; overflow-y: auto;">
+                            <el-col :span="14" style="max-height: 500px; overflow-y: auto;">
+                                <div>
+                                    <h3>用户歌单</h3>
+                                    <p>获取用户在本平台收藏的歌单</p>
+                                    <el-form ref="form" :model="playlist" label-width="80px">
+                                        <el-form-item label="用户名">
+                                            <el-input v-model="playlist.name"></el-input>
+                                        </el-form-item>
+                                        <el-form-item>
+                                            <el-button type="primary" @click="getlist">获取</el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
+                                <el-divider></el-divider>
                                 <div>
                                     <h3>注册/登录</h3>
                                     <p>在本平台注册或登录账户</p>
@@ -129,19 +150,18 @@
                                 </div>
                                 <el-divider></el-divider>
                                 <div>
-                                    <h3>用户歌单</h3>
-                                    <p>获取用户在本平台收藏的歌单</p>
-                                    <el-form ref="form" :model="playlist" label-width="80px">
-                                        <el-form-item label="用户名">
-                                            <el-input v-model="playlist.name"></el-input>
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-button type="primary" @click="getlist">获取</el-button>
-                                        </el-form-item>
-                                    </el-form>
+                                    <h3>收藏歌曲到 {{loginsign.name}} 的歌单</h3>
+                                    <p>用户收藏自己喜欢的歌曲</p>
+                                    <el-input placeholder="请搜索歌曲" v-model="search.input" class="input-with-select">
+                                        <el-select v-model="search.platform" slot="prepend" placeholder="选择平台">
+                                            <el-option label="QQ" value="qq"></el-option>
+                                            <el-option label="网易云" value="wangyi"></el-option>
+                                        </el-select>
+                                        <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
+                                    </el-input>
                                 </div>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="10">
                                 <div class="col-head">参数
                                     <el-input type="textarea" :rows="5" v-model="postpanel.params">
                                     </el-input>
@@ -194,6 +214,12 @@
 
                     playlist: {
                         name: "Kris"
+                    },
+
+                    search: {
+                        platform: "qq",
+                        input: "",
+                        result: []
                     }
                 }
             },
@@ -238,15 +264,27 @@
                     this.getFrom('/user/loved/songs', params)
                 },
                 getFrom(url, args) {
-                    this.postpanel.params = JSON.stringify(params)
+                    this.postpanel.params = JSON.stringify(args)
                     let _this = this
-                    axios.get(url, {params: args})
+                    axios.get(url, { params: args })
                         .then(function (response) {
                             _this.postpanel.response = JSON.stringify(response.data)
                         })
                         .catch(function (error) {
                             _this.postpanel.response = error;
                         });
+                },
+                doSearch() {
+                    let _this = this
+                    axios.get(`/${this.search.platform}/songs`, {
+                        params: {
+                            keyword: this.search.input
+                        }
+                    }).then(function (response) {
+                        _this.postpanel.response = JSON.stringify(response.data)
+                    }).catch(function (error) {
+                        _this.postpanel.response = error;
+                    });
                 }
             },
             mounted() {
