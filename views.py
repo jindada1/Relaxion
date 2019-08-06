@@ -315,10 +315,26 @@ async def signUp(params):
     })
     return web.json_response(result)
 
+@argsCheckerPost({
+    'username': '*',
+    'songid': '*',
+    'info_str': '*'
+})
+async def loveSong(params):
+    result = localdb.love_song(
+        params['username'],
+        params['songid'],
+        params['info_str']
+    )
+    return web.json_response(result)
 
-async def loveSong(request):
-    pass
-
-
-async def hateSong(request):
-    pass
+@argsCheckerPost({
+    'username': '*',
+    'songid': '*'
+})
+async def hateSong(params):
+    result = localdb.hate_song(
+        params['username'],
+        params['songid']
+    )
+    return web.json_response(result)
