@@ -28,6 +28,34 @@
     .input-with-select .el-input-group__prepend {
         background-color: #fff;
     }
+
+    .item {
+        color: #5e6d82;
+        background-color: #c5ebe9;
+        margin: 4px;
+        display: inline-block;
+        padding: 3px 5px;
+        border-radius: 3px;
+        line-height: 18px;
+    }
+
+    .item:hover {
+        cursor: pointer;
+        background-color: #409EFF;
+        color: white;
+    }
+
+    code {
+        color: #5e6d82;
+        background-color: #e6effb;
+        margin: 0 4px;
+        display: inline-block;
+        padding: 1px 5px;
+        font-size: 12px;
+        border-radius: 3px;
+        height: 18px;
+        line-height: 18px;
+    }
 </style>
 
 <body>
@@ -151,7 +179,7 @@
                                 <el-divider></el-divider>
                                 <div>
                                     <h3>收藏歌曲到 {{loginsign.name}} 的歌单</h3>
-                                    <p>用户收藏自己喜欢的歌曲</p>
+                                    <p>点击收藏{{loginsign.name}}喜欢的歌曲</p>
                                     <el-input placeholder="请搜索歌曲" v-model="search.input" class="input-with-select">
                                         <el-select v-model="search.platform" slot="prepend" placeholder="选择平台">
                                             <el-option label="QQ" value="qq"></el-option>
@@ -159,6 +187,22 @@
                                         </el-select>
                                         <el-button slot="append" icon="el-icon-search" @click="doSearch"></el-button>
                                     </el-input>
+                                    <div>
+                                        <code>{{search.url}}</code>
+                                    </div>
+                                    <div v-for="(song, index) in search.result" :key="song.idforres" class="item"
+                                        @click="lovesong(index)">
+                                        {{song.name}}
+                                    </div>
+                                </div>
+                                <el-divider></el-divider>
+                                <div>
+                                    <h3>从 {{loginsign.name}} 的歌单中移除歌曲</h3>
+                                    <p>点击移除</p>
+                                    <div v-for="(song, index) in search.result" :key="song.idforres" class="item"
+                                        @click="lovesong(index)">
+                                        {{song.name}}
+                                    </div>
                                 </div>
                             </el-col>
                             <el-col :span="10">
@@ -217,6 +261,7 @@
                     },
 
                     search: {
+                        url: "/{platform}/songs",
                         platform: "qq",
                         input: "",
                         result: []
@@ -281,10 +326,20 @@
                             keyword: this.search.input
                         }
                     }).then(function (response) {
-                        _this.postpanel.response = JSON.stringify(response.data)
+                        _this.search.url = response.request.responseURL;
+                        _this.search.result = response.data.songs;
                     }).catch(function (error) {
-                        _this.postpanel.response = error;
+                        _this.search.url = error;
                     });
+                },
+                lovesong(index) {
+                    let song = this.search.result[index];
+                    params = {
+                        username: this.loginsign.name,
+                        songid: song.platform + song.idforres,
+                        info_str: JSON.stringify(song),
+                    }
+                    this.postTo('/user/love/song', params)
                 }
             },
             mounted() {
