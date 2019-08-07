@@ -56,6 +56,35 @@
         height: 18px;
         line-height: 18px;
     }
+
+    .block-item {
+        display: inline-block;
+        position: relative;
+        width: 50%;
+        margin: 8px 0 0 0;
+        font-size: 12px;
+        letter-spacing: normal;
+    }
+
+    .block-item .content {
+        margin: 0 5px 0 0;
+        padding: 0 8px;
+        line-height: 30px;
+        background-color: #ececec;
+    }
+
+    .block-item .content:hover {
+        cursor: pointer;
+        background-color: rgb(219, 219, 219);
+    }
+
+    .fullscreen {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        background-color: white;
+    }
 </style>
 
 <body>
@@ -199,9 +228,12 @@
                                 <div>
                                     <h3>从 {{loginsign.name}} 的歌单中移除歌曲</h3>
                                     <p>点击移除</p>
-                                    <div v-for="(song, index) in search.result" :key="song.idforres" class="item"
-                                        @click="lovesong(index)">
-                                        {{song.name}}
+                                    <el-button type="primary" @click="refreshlist">刷新歌单</el-button>
+                                    <div>
+                                        <div v-for="(song, index) in playlist.songs" :key="song.idforres"
+                                            class="block-item" @click="lovesong(index)">
+                                            <div class="content">{{song.name}}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </el-col>
@@ -223,13 +255,15 @@
                 </el-main>
             </el-container>
         </el-container>
+        <div v-if="isok" class="fullscreen">
+
+        </div>
     </div>
 </body>
 <script>
     // get testcases
     axios.get('/static/testcase.json')
         .then(function (response) {
-
             mainApp(response.data);
         })
         .catch(function (error) {
@@ -241,6 +275,7 @@
             el: '#app',
             data: () => {
                 return {
+                    isok:false,
                     testcase: data,
                     platformName: Object.keys(data.music)[0], // default select first music platform
                     platform: Object.entries(data.music)[0][1], // default select first music platform
@@ -257,7 +292,8 @@
                     },
 
                     playlist: {
-                        name: "Kris"
+                        name: "Kris",
+                        songs: []
                     },
 
                     search: {
@@ -340,6 +376,18 @@
                         info_str: JSON.stringify(song),
                     }
                     this.postTo('/user/love/song', params)
+                },
+                refreshlist() {
+                    let _this = this
+                    axios.get('/user/loved/songs', {
+                        params: {
+                            username: this.loginsign.name
+                        }
+                    }).then(function (response) {
+                        _this.playlist.songs = response.data;
+                    }).catch(function (error) {
+                        _this.postpanel.response = error;
+                    });
                 }
             },
             mounted() {
