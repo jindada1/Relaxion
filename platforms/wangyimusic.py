@@ -270,13 +270,12 @@ class WangYiparser(baseParser):
 
     # special
     async def picurl(self, _id):
-        # first search user, get user's id
         params = {
             "id":_id
         }
         api = "%s/album" % self.baseurl
-        userinfo = await self._asyncGetJson(api, params=params)
-        return userinfo['album']['picUrl'];
+        info = await self._asyncGetJson(api, params=params)
+        return info['album']['picUrl'];
 
 
 async def __test():
