@@ -7,6 +7,7 @@ for : init data formater of other paltforms
 
 from .qqmusic import QQparser
 from .wangyimusic import WangYiparser
+from .kugoumusic import KuGouparser
 
 import json
 

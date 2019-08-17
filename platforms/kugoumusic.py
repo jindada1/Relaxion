@@ -3,6 +3,7 @@ try:
 except:
     from baseparser import baseParser
 
+from hashlib import md5
 
 class KuGouparser(baseParser):
     def __init__(self, baseurl):
@@ -11,31 +12,31 @@ class KuGouparser(baseParser):
 
     # override, return object
     async def searchSong(self, k, p, n):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "keyword": k,
             "page": p,
             "pagesize": n,
             "plat": 2
         }
-        # this api is coincident with your creeper service
-        api = "https://mobilecdn.kugou.com/api/v3/search/song"
+        # this api is from kugou
+        api = "http://mobilecdn.kugou.com/api/v3/search/song"
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'songs': []}
         append = result['songs'].append
         try:
-            for kugousong in jsonresp['data']['info']:
+            for song in jsonresp['data']['info']:
                 append(self._song(
                     "kugou",
-                    kugousong['hash'],
-                    kugousong['hash'],
-                    kugousong['mvhash'],
-                    "/kugou/albumcover/%s" % kugousong['hash'],
-                    kugousong["album_name"],
-                    "/kugou/lyric/%s" %kugousong['songmid'],
-                    kugousong['songname'],
-                    kugousong['singername'],
-                    kugousong['duration']
+                    song['hash'],
+                    song['hash'],
+                    song['mvhash'],
+                    "/kugou/albumcover/%s" % song['hash'],
+                    song["album_name"],
+                    "/kugou/lyric/%s" % song['hash'],
+                    song['songname'],
+                    song['singername'],
+                    song['duration']
                 ))
         except:
             result['error'] = 1
@@ -43,27 +44,28 @@ class KuGouparser(baseParser):
 
     # override
     async def searchAlbum(self, k, p, n):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
-            "searchkey": k,
+            "keyword": k,
             "page": p,
-            "num": n
+            "pagesize": n,
+            "plat": 2
         }
-        # this api is coincident with your creeper service
-        api = "%s/search/album" % self.baseurl
+        # this api is from kugou
+        api = "http://mobilecdn.kugou.com/api/v3/search/album"
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'albums': []}
         append = result['albums'].append
         try:
-            for album in jsonresp['data']['album']['list']:
+            for album in jsonresp['data']['info']:
                 append(self._album(
                     "kugou",
-                    album['albumID'],
-                    album['albumPic'],
-                    album['albumName'],
-                    album['albumID'],
-                    self._getname(album['singer_list']),
-                    album['publicTime']
+                    album['albumid'],
+                    album['imgurl'],
+                    album['albumname'],
+                    album['albumid'],
+                    album['singername'],
+                    album['publishtime']
                 ))
         except:
             result['error'] = 1
@@ -71,28 +73,29 @@ class KuGouparser(baseParser):
 
     # override
     async def searchMV(self, k, p, n):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
-            "searchkey": k,
+            "keyword": k,
             "page": p,
-            "num": n
+            "pagesize": n,
+            "plat": 2
         }
-        # this api is coincident with your creeper service
-        api = "%s/search/mv" % self.baseurl
+        # this api is from kugou
+        api = "http://mobilecdn.kugou.com/api/v3/search/mv"
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'videos': []}
         append = result['videos'].append
         try:
-            for mv in jsonresp['data']['mv']['list']:
+            for mv in jsonresp['data']['info']:
                 append(self._mv(
                     "kugou",
-                    mv['mv_name'],
-                    mv['mv_pic_url'],
-                    mv['v_id'],
-                    mv['v_id'],
-                    self._getname(mv['singer_list']),
+                    mv['filename'],
+                    mv['imgurl'],
+                    mv['hash'],
+                    mv['hash'],
+                    mv['singername'],
                     mv['duration'],
-                    mv['publish_date']
+                    mv['publishdate']
                 ))
         except:
             result['error'] = 1
@@ -100,93 +103,103 @@ class KuGouparser(baseParser):
 
     # override
     async def mvuri(self, _id):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "mvid": _id
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "%s/mv" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
         return jsonresp
 
     # override
-    async def musicuri(self, _id):
-        # this params is coincident with your creeper service
+    async def musicuri(self, _hash):
+        key = self.__md5(_hash + 'kgcloudv2')
+        # this params is coincident with kugou
         params = {
-            "idforres": _id
+            "hash": _hash,
+            "key": key,
+            "pid": 3,
+            "behavior": 'play',
+            "cmd": 25,
+            "version": 8990
         }
-        # this api is coincident with your creeper service
-        api = "%s/song" % self.baseurl
+        # this api is from kugou
+        api = "http://trackercdn.kugou.com/i/v2"
         jsonresp = await self._asyncGetJson(api, params=params)
         return jsonresp
+        # result = self._uri(jsonresp['data'][0]['url'])
+        # return result
 
     # override
     async def lyric(self, _id):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "idforres": _id
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "%s/lyric" % self.baseurl
         textresp = await self._asyncGetText(api, params=params)
         return textresp
 
     # override
     async def songsinList(self, _id, p, n):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "dissid": _id,
             "page": p,
             "num": n
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "%s/songs/songlist" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
-        
-        result = {'songs':[]}
+
+        result = {'songs': []}
         append = result['songs'].append
         try:
-            for kugousong in jsonresp['songlist']:
+            for song in jsonresp['songlist']:
                 append(self._song(
                     "kugou",
-                    kugousong['songmid'],
-                    kugousong['songid'],
-                    kugousong['vid'],
-                    "https://y.gtimg.cn/music/photo_new/T002R300x300M000" + kugousong['albummid'] + ".jpg?max_age=2592000",
-                    kugousong['albumname'],
-                    "/kugou/lyric/" + kugousong['songmid'],
-                    kugousong['songname'],
-                    self._getname(kugousong['singer']),
-                    kugousong['interval']
-              ))
+                    song['songmid'],
+                    song['songid'],
+                    song['vid'],
+                    "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
+                    song['albummid'] + ".jpg?max_age=2592000",
+                    song['albumname'],
+                    "/kugou/lyric/" + song['songmid'],
+                    song['songname'],
+                    self._getname(song['singer']),
+                    song['interval']
+                ))
         except:
             result['error'] = 1
         return result
 
     # override
     async def songsinAlbum(self, _id):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "albumid": _id
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "%s/songs/album" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
-        result = {'songs':[]}
+        result = {'songs': []}
         append = result['songs'].append
         try:
-            for kugousong in jsonresp['data']['songlist']:
+            for song in jsonresp['data']['songlist']:
                 append(self._song(
                     "kugou",
-                    kugousong['songmid'],
-                    kugousong['songid'],
-                    kugousong['vid'],
-                    "https://y.gtimg.cn/music/photo_new/T002R300x300M000" + kugousong['albummid'] + ".jpg?max_age=2592000",
-                    kugousong['albumname'],
-                    "/kugou/lyric/" + kugousong['songmid'],
-                    kugousong['songname'],
-                    self._getname(kugousong['singer']),
-                    kugousong['interval']
+                    song['songmid'],
+                    song['songid'],
+                    song['vid'],
+                    "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
+                    song['albummid'] + ".jpg?max_age=2592000",
+                    song['albumname'],
+                    "/kugou/lyric/" + song['songmid'],
+                    song['songname'],
+                    self._getname(song['singer']),
+                    song['interval']
                 ))
         except:
             result['error'] = 1
@@ -194,14 +207,14 @@ class KuGouparser(baseParser):
 
     # special
     async def getComments(self, _id, t, p, n):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "idforcomments": _id,
             "type": t,
             "page": p,
             "num": n
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "%s/comments" % self.baseurl
         data = await self._asyncGetJson(api, params=params)
         # parse data
@@ -236,16 +249,15 @@ class KuGouparser(baseParser):
 
     # special
     async def songinfo(self, songhash):
-        # this params is coincident with your creeper service
+        # this params is coincident with kugou
         params = {
             "r": 'play/getdata',
             "hash": songhash
         }
-        # this api is coincident with your creeper service
+        # this api is from kugou
         api = "https://wwwapi.kugou.com/yy/index.php"
         data = await self._asyncGetJson(api, params=params)
-    
-    
+
     # special
     async def picurl(self, songhash):
         # first check db
@@ -254,27 +266,34 @@ class KuGouparser(baseParser):
 
         pass
 
+    # special
+    def __md5(self, string):
+        m = md5()
+        m.update(string.encode('utf-8'))
+        return(m.hexdigest())
+
 async def __test():
-    p = QQparser("self-kugou")
+    p = KuGouparser("local-creeper")
     searchkey = "周杰伦"
     page = 2
-    num = 20
+    num = 10
 
     '''
         
     '''
-    print((await p.searchSong(searchkey, page, num)).keys())
+    # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # √ print((await p.getComments("107192078", "music", page, num)).keys())
-    # √ print((await p.getComments("14536", "album", page, num)).keys())
-    # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # √ print((await p.musicuri("002WCV372JMZJw")).keys())
-    # √ print((await p.mvuri("m00119xeo83")).keys())
-    # √ print(await p.lyric("002WCV372JMZJw"))
-    # √ print(await p.userlist("406143883"))
-    # √ print((await p.songsinList("1304470181", page, num)).keys())
-    # √ print((await p.songsinAlbum("14536")).keys())
+    # ? print((await p.getComments("10332c58914b9c5fcaaab60b9531d739", "music", page, num)).keys())
+    # ? print((await p.getComments("23509815", "album", page, num)).keys())
+    # ? print((await p.getComments("0c28d3658d3ec86e9d033c80d9d8e9da", "mv", page, num)).keys())
+    # ? print((await p.musicuri("10332c58914b9c5fcaaab60b9531d739")).keys())
+    # ? print((await p.mvuri("0c28d3658d3ec86e9d033c80d9d8e9da")).keys())
+    print(await p.musicuri("10332c58914b9c5fcaaab60b9531d739"))
+    # ? print(await p.lyric("10332c58914b9c5fcaaab60b9531d739"))
+    # ? print(await p.userlist("406143883"))
+    # ? print((await p.songsinList("1304470181", page, num)).keys())
+    # ? print((await p.songsinAlbum("23509815")).keys())
 
 
 if __name__ == '__main__':

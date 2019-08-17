@@ -6,5 +6,9 @@
     "wangyi": {
         "target": "http://api.goldenproud.cn/wangyi",
         "parser": "WangYiparser"
+    },
+    "kugou": {
+        "target": "local",
+        "parser": "KuGouparser"
     }
 }
