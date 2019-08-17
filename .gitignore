@@ -3,6 +3,9 @@ __pycache__
 .vscode
 .pytest_cache
 
+/platforms/__pycache__
+/db/__pycache__
+
 platforms/__pycache__
 db/__pycache__
 

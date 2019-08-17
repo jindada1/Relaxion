@@ -17,7 +17,7 @@ class PraserService(object):
         
         # no outer settings, read local default setting
         if not cfg:
-            with open('./platform_setting.json', 'r') as f:
+            with open('./settings/platforms.json', 'r') as f:
                 content = f.read()
                 cfg = json.loads(content)
 
