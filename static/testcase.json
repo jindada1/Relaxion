@@ -29,6 +29,21 @@
             "mvid": "5436712",
             "lyricid": "33894312",
             "user": "同济吴亦凡"
+        },
+        "kugou": {
+            "zhName": "酷狗音乐",
+            "keyword": "薛之谦",
+            "albumid": "23509815",
+            "dissid": "24381616",
+            "idforcomments": {
+                "album": "23509815",
+                "song": "10332c58914b9c5fcaaab60b9531d739",
+                "mv": "0c28d3658d3ec86e9d033c80d9d8e9da"
+            },
+            "idforres": "10332c58914b9c5fcaaab60b9531d739",
+            "mvid": "0c28d3658d3ec86e9d033c80d9d8e9da",
+            "lyricid": "10332c58914b9c5fcaaab60b9531d739",
+            "user": "同济吴亦凡"
         }
     },
     "movie": {}
