@@ -120,22 +120,8 @@ class KuGouparser(baseParser):
 
     # override
     async def musicuri(self, _hash):
-        key = self.__md5(_hash + 'kgcloudv2')
-        # this params is coincident with kugou
-        params = {
-            "hash": _hash,
-            "key": key,
-            "pid": 3,
-            "behavior": 'play',
-            "cmd": 25,
-            "version": 8990
-        }
-        # this api is from kugou
-        api = "http://trackercdn.kugou.com/i/v2"
-        jsonresp = await self._asyncGetJson(api, params=params)
+        jsonresp = await self.dispatcher(_hash, "play_url")
         return jsonresp
-        # result = self._uri(jsonresp['data'][0]['url'])
-        # return result
 
     # override
     async def lyric(self, _id):
@@ -280,6 +266,7 @@ class KuGouparser(baseParser):
         data = await self._asyncGetJson(api, params=params)
         # fill cache, for other requests to fetch 
         self.songinfoCache[_hash] = data
+        print(data)
         return data[key]
 
     # special
@@ -314,9 +301,23 @@ async def __test():
     # ? print((await p.songsinList("1304470181", page, num)).keys())
     # ? print((await p.songsinAlbum("23509815")).keys())
 
+async def trygetcookie():
+    import aiohttp
+    urls = [
+        'https://www.kugou.com',
+    ]
+    header = {
+        'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
+    }
+    for url in urls:
+        async with aiohttp.ClientSession(cookie_jar=aiohttp.CookieJar()) as s:
+          async with s.get(url, headers=header) as r:
+                cookies = s.cookie_jar.filter_cookies('https://www.kugou.com')
+                for key, cookie in cookies.items():
+                    print('Key: "%s", Value: "%s"' % (cookie.key, cookie.value))
 
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
+    loop.run_until_complete(trygetcookie())
     loop.close()
