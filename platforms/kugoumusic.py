@@ -3,12 +3,18 @@ try:
 except:
     from baseparser import baseParser
 
-from hashlib import md5
 
 class KuGouparser(baseParser):
     def __init__(self, baseurl):
         self.baseurl = baseurl
         print("construct KuGou on %s" % baseurl)
+
+        '''
+        {
+            "{{hash}}":{{data}}
+        }
+        '''
+        self.songinfoCache = {}
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -248,15 +254,33 @@ class KuGouparser(baseParser):
         return result
 
     # special
-    async def songinfo(self, songhash):
-        # this params is coincident with kugou
+    async def dispatcher(self, _hash, key):
+        if _hash in self.songinfoCache.keys():
+            # hit
+            times = 0
+            while (not self.songinfoCache[_hash]) and times < 4:
+                # wait until data fetched or time exceeded
+                await asyncio.sleep(0.5)
+                times += 1
+
+            # directly fetch
+            if self.songinfoCache[_hash]:
+                return self.songinfoCache[_hash][key]
+        
+        # not hit or overtime
+        # add _hash to Cache, tell other requests to wait for response
+        self.songinfoCache[_hash] = {}
+        # request from remote
         params = {
             "r": 'play/getdata',
-            "hash": songhash
+            "hash": _hash
         }
         # this api is from kugou
         api = "https://wwwapi.kugou.com/yy/index.php"
         data = await self._asyncGetJson(api, params=params)
+        # fill cache, for other requests to fetch 
+        self.songinfoCache[_hash] = data
+        return data[key]
 
     # special
     async def picurl(self, songhash):
@@ -266,11 +290,6 @@ class KuGouparser(baseParser):
 
         pass
 
-    # special
-    def __md5(self, string):
-        m = md5()
-        m.update(string.encode('utf-8'))
-        return(m.hexdigest())
 
 async def __test():
     p = KuGouparser("local-creeper")
