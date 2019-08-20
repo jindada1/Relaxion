@@ -1,3 +1,10 @@
+'''
+on  :  2019-08-15
+by  :  Kris Huang
+
+for : get data from kugou music directly
+'''
+
 try:
     from .baseparser import baseParser
 except:
@@ -10,9 +17,13 @@ class KuGouparser(baseParser):
         print("construct KuGou on %s" % baseurl)
 
         self.cookies = {
-            "kg_mid": 'c1be9b2d3f0fd7d568a1e470c93016d4',
-            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661',
-            "kg_dfid": '2B4TGo2EfXh10MIJlA28RBZX'
+            "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',
+            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661,1566286143',
+            "kg_dfid": '10P9yI2EfXk70MCKMa4TFGjg'
+        }
+
+        self.headers={
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
         }
 
         '''
@@ -126,19 +137,13 @@ class KuGouparser(baseParser):
 
     # override
     async def musicuri(self, _hash):
-        jsonresp = await self.dispatcher(_hash, "play_url")
-        return jsonresp
+        url = await self.dispatcher(_hash, "play_url")
+        return self._uri(url)
 
     # override
-    async def lyric(self, _id):
-        # this params is coincident with kugou
-        params = {
-            "idforres": _id
-        }
-        # this api is from kugou
-        api = "%s/lyric" % self.baseurl
-        textresp = await self._asyncGetText(api, params=params)
-        return textresp
+    async def lyric(self, _hash):
+        lrc = await self.dispatcher(_hash, "lyrics")
+        return lrc
 
     # override
     async def songsinList(self, _id, p, n):
@@ -249,9 +254,11 @@ class KuGouparser(baseParser):
     async def dispatcher(self, _hash, key):
         if _hash in self.songinfoCache.keys():
             # hit
+            print('hit: ' + key)
             times = 0
-            while (not self.songinfoCache[_hash]) and times < 4:
+            while (not self.songinfoCache[_hash]) and times < 6:
                 # wait until data fetched or time exceeded
+                print('waiting')
                 await asyncio.sleep(0.5)
                 times += 1
 
@@ -261,26 +268,38 @@ class KuGouparser(baseParser):
         
         # not hit or overtime
         # add _hash to Cache, tell other requests to wait for response
+        print('not hit: ' + key)
         self.songinfoCache[_hash] = {}
+
+        # waiting
+        data = await self.detail_info(_hash)
+
+        if data is dict:
+            # fill cache, for other requests to fetch 
+            self.songinfoCache[_hash] = data
+            return data[key]
+            
+        return 'nores'
+
+    # special
+    async def detail_info(self, _hash):
         # request from remote
         params = {
             "r": 'play/getdata',
             "hash": _hash
         }
+
         # this api is from kugou
         api = "https://wwwapi.kugou.com/yy/index.php"
-        data = await self._asyncGetJson(api, params=params, cookies=self.cookies)
-        # fill cache, for other requests to fetch 
-        self.songinfoCache[_hash] = data
-        return data['data'][key]
+        
+        resp = await self.asyncGetJsonHeadersCookies(api, params=params)
+        print(resp)
+        return resp['data']
 
     # special
-    async def picurl(self, songhash):
-        # first check db
-
-        # search from KuGou
-
-        pass
+    async def picurl(self, _hash):
+        imgurl = await self.dispatcher(_hash, "img")
+        return imgurl
 
 
 async def __test():
@@ -288,20 +307,21 @@ async def __test():
     searchkey = "周杰伦"
     page = 2
     num = 10
-
+    songhash = "10332c58914b9c5fcaaab60b9531d739"
     '''
         
     '''
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # ? print((await p.getComments("10332c58914b9c5fcaaab60b9531d739", "music", page, num)).keys())
+    # await p.lyric(songhash)
+    # print(await p.musicuri(songhash))
+    # print(await p.picurl(songhash))
+
+    # ? print((await p.getComments(songhash, "music", page, num)).keys())
     # ? print((await p.getComments("23509815", "album", page, num)).keys())
     # ? print((await p.getComments("0c28d3658d3ec86e9d033c80d9d8e9da", "mv", page, num)).keys())
-    # ? print((await p.musicuri("10332c58914b9c5fcaaab60b9531d739")).keys())
     # ? print((await p.mvuri("0c28d3658d3ec86e9d033c80d9d8e9da")).keys())
-    print(await p.musicuri("10332c58914b9c5fcaaab60b9531d739"))
-    # ? print(await p.lyric("10332c58914b9c5fcaaab60b9531d739"))
     # ? print(await p.userlist("406143883"))
     # ? print((await p.songsinList("1304470181", page, num)).keys())
     # ? print((await p.songsinAlbum("23509815")).keys())

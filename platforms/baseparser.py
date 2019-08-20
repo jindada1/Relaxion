@@ -17,10 +17,16 @@ class baseParser(object):
             resp = await session.get(url, params=params)
             return await resp.text()
 
-    async def _asyncGetJson(self, url, params, cookies = None):
-        async with ClientSession(cookies=cookies) as session:
+    async def _asyncGetJson(self, url, params):
+        async with ClientSession() as session:
             resp = await session.get(url, params=params)
             return json.loads(await resp.text())
+
+    async def asyncGetJsonHeadersCookies(self, url, params):
+        async with ClientSession(cookies=self.cookies) as session:
+            async with session.get(url, params=params, headers=self.headers) as resp:
+                a = await resp.text()
+                return json.loads(a)
 
     def _getname(self, singers):
         artist = ""
