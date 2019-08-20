@@ -9,6 +9,12 @@ class KuGouparser(baseParser):
         self.baseurl = baseurl
         print("construct KuGou on %s" % baseurl)
 
+        self.cookies = {
+            "kg_mid": 'c1be9b2d3f0fd7d568a1e470c93016d4',
+            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661',
+            "kg_dfid": '2B4TGo2EfXh10MIJlA28RBZX'
+        }
+
         '''
         {
             "{{hash}}":{{data}}
@@ -263,11 +269,10 @@ class KuGouparser(baseParser):
         }
         # this api is from kugou
         api = "https://wwwapi.kugou.com/yy/index.php"
-        data = await self._asyncGetJson(api, params=params)
+        data = await self._asyncGetJson(api, params=params, cookies=self.cookies)
         # fill cache, for other requests to fetch 
         self.songinfoCache[_hash] = data
-        print(data)
-        return data[key]
+        return data['data'][key]
 
     # special
     async def picurl(self, songhash):
@@ -300,24 +305,10 @@ async def __test():
     # ? print(await p.userlist("406143883"))
     # ? print((await p.songsinList("1304470181", page, num)).keys())
     # ? print((await p.songsinAlbum("23509815")).keys())
-
-async def trygetcookie():
-    import aiohttp
-    urls = [
-        'https://www.kugou.com',
-    ]
-    header = {
-        'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
-    }
-    for url in urls:
-        async with aiohttp.ClientSession(cookie_jar=aiohttp.CookieJar()) as s:
-          async with s.get(url, headers=header) as r:
-                cookies = s.cookie_jar.filter_cookies('https://www.kugou.com')
-                for key, cookie in cookies.items():
-                    print('Key: "%s", Value: "%s"' % (cookie.key, cookie.value))
+    
 
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(trygetcookie())
+    loop.run_until_complete(__test())
     loop.close()

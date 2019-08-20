@@ -17,8 +17,8 @@ class baseParser(object):
             resp = await session.get(url, params=params)
             return await resp.text()
 
-    async def _asyncGetJson(self, url, params):
-        async with ClientSession() as session:
+    async def _asyncGetJson(self, url, params, cookies = None):
+        async with ClientSession(cookies=cookies) as session:
             resp = await session.get(url, params=params)
             return json.loads(await resp.text())
 
