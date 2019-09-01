@@ -252,19 +252,18 @@ class KuGouparser(baseParser):
 
     # special
     async def dispatcher(self, _hash, key):
+        print('key is %s' % key)
         if _hash in self.songinfoCache.keys():
             # hit
             print('hit: ' + key)
-            times = 0
-            while (not self.songinfoCache[_hash]) and times < 6:
-                # wait until data fetched or time exceeded
+            while not self.songinfoCache[_hash]:
+                # aready fetching, but no response, wait until data fetched or failed
                 print('waiting')
                 await asyncio.sleep(0.5)
-                times += 1
 
             # directly fetch
-            if self.songinfoCache[_hash]:
-                return self.songinfoCache[_hash][key]
+            if self.songinfoCache[_hash]['data']:
+                return self.songinfoCache[_hash]['data'][key]
         
         # not hit or overtime
         # add _hash to Cache, tell other requests to wait for response
@@ -274,15 +273,17 @@ class KuGouparser(baseParser):
         # waiting
         data = await self.detail_info(_hash)
 
-        if data is dict:
-            # fill cache, for other requests to fetch 
-            self.songinfoCache[_hash] = data
-            return data[key]
+        # fill cache, for other requests to fetch 
+        self.songinfoCache[_hash] = data
+
+        if data['err_code'] == 0:
+            return data['data'][key]
             
         return 'nores'
 
     # special
     async def detail_info(self, _hash):
+        print('----------- getting -------------')
         # request from remote
         params = {
             "r": 'play/getdata',
@@ -293,8 +294,10 @@ class KuGouparser(baseParser):
         api = "https://wwwapi.kugou.com/yy/index.php"
         
         resp = await self.asyncGetJsonHeadersCookies(api, params=params)
+        
         print(resp)
-        return resp['data']
+
+        return resp
 
     # special
     async def picurl(self, _hash):
@@ -307,14 +310,16 @@ async def __test():
     searchkey = "周杰伦"
     page = 2
     num = 10
-    songhash = "10332c58914b9c5fcaaab60b9531d739"
+    songhash = "382DC60D2879205633FBB7F2685D9840"
     '''
         
     '''
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # await p.lyric(songhash)
+    # await p.detail_info(songhash)
+
+    await p.lyric(songhash)
     # print(await p.musicuri(songhash))
     # print(await p.picurl(songhash))
 
