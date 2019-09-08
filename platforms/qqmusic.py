@@ -107,7 +107,7 @@ class QQparser(baseParser):
         # this api is coincident with your creeper service
         api = "%s/mv" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
-        return jsonresp
+        return self._uri(jsonresp['uri'])
 
     # override
     async def musicuri(self, _id):
@@ -118,7 +118,7 @@ class QQparser(baseParser):
         # this api is coincident with your creeper service
         api = "%s/song" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
-        return jsonresp
+        return self._uri(jsonresp['uri'])
 
     # override
     async def lyric(self, _id):
@@ -264,7 +264,7 @@ class QQparser(baseParser):
 
 
 async def __test():
-    p = QQparser("http://localhost:5000")
+    p = QQparser("http://api.goldenproud.cn/qq")
     searchkey = "周杰伦"
     page = 2
     num = 20
@@ -278,8 +278,8 @@ async def __test():
     # √ print((await p.getComments("107192078", "music", page, num)).keys())
     # √ print((await p.getComments("14536", "album", page, num)).keys())
     # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # √ print((await p.musicuri("002WCV372JMZJw")).keys())
-    # √ print((await p.mvuri("m00119xeo83")).keys())
+    print(await p.musicuri("002WCV372JMZJw"))
+    print(await p.mvuri("m00119xeo83"))
     # √ print(await p.lyric("002WCV372JMZJw"))
     # √ print(await p.userlist("406143883"))
     # √ print((await p.songsinList("1304470181", page, num)).keys())

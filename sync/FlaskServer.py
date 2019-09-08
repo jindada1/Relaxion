@@ -1,5 +1,7 @@
 
 from flask import Flask,make_response,request
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -14,17 +16,14 @@ kg_cook = {
     "kg_dfid": '10P9yI2EfXk70MCKMa4TFGjg'
 }
 
+kugoucache = {}
 
-def CORS_response_json(data):
-    response = make_response(data)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'POST'
-    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
-    return response
-
-@app.route('/kugou/info', methods = ['GET'])
-def kugou(_hash):
+@app.route('/kugou/playres', methods = ['GET'])
+def kugou():
     _hash = request.args.get('hash')
+    _key = request.args.get('key')
+
+    validkeys = ["play_url", "lyrics", "img"]
 
     params = {
         "r": 'play/getdata',
@@ -33,10 +32,34 @@ def kugou(_hash):
     # this api is from kugou
     api = "https://wwwapi.kugou.com/yy/index.php"
 
-    result = requests.get(api, headers=headers, cookies = kg_cook, params=params).text
     
-    return CORS_response_json(result)
+    if not _key:
+
+        result = requests.get(api, headers=headers, cookies = kg_cook, params=params).text
+        return result
+
+    if not _key in validkeys:
+
+        return "invalid key %s" % _key
+
+    if _hash in kugoucache.keys():
+        print('hit cache')
+        return kugoucache[_hash][_key]
+
+    # store cache here
+    result = requests.get(api, headers=headers, cookies = kg_cook, params=params).text
+
+    data = json.loads(result)['data']
+
+    new = {}
+    for k in validkeys:
+        new[k] = data[k]
+
+    kugoucache[_hash] = new
+
+    return new[_key]
+    
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1',port=8081)
+    app.run(host='127.0.0.1', port=8081, debug=True)

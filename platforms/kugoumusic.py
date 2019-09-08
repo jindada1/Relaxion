@@ -16,22 +16,6 @@ class KuGouparser(baseParser):
         self.baseurl = baseurl
         print("construct KuGou on %s" % baseurl)
 
-        self.cookies = {
-            "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',
-            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661,1566286143',
-            "kg_dfid": '10P9yI2EfXk70MCKMa4TFGjg'
-        }
-
-        self.headers={
-            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
-        }
-
-        '''
-        {
-            "{{hash}}":{{data}}
-        }
-        '''
-        self.songinfoCache = {}
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -126,24 +110,36 @@ class KuGouparser(baseParser):
 
     # override
     async def mvuri(self, _id):
-        # this params is coincident with kugou
         params = {
-            "mvid": _id
+            "hash": _hash,
+            "key": ''
         }
-        # this api is from kugou
-        api = "%s/mv" % self.baseurl
+        # this api is from local midware
+        api = "%s/playres" % self.baseurl
         jsonresp = await self._asyncGetJson(api, params=params)
         return jsonresp
 
     # override
     async def musicuri(self, _hash):
-        url = await self.dispatcher(_hash, "play_url")
+        params = {
+            "hash": _hash,
+            "key": 'play_url'
+        }
+        # this api is from local midware
+        api = "%s/playres" % self.baseurl
+        url = await self._asyncGetText(api, params=params)
         return self._uri(url)
 
     # override
     async def lyric(self, _hash):
-        lrc = await self.dispatcher(_hash, "lyrics")
-        return lrc
+        params = {
+            "hash": _hash,
+            "key": 'lyrics'
+        }
+        # this api is from local midware
+        api = "%s/playres" % self.baseurl
+        lyric = await self._asyncGetText(api, params=params)
+        return lyric
 
     # override
     async def songsinList(self, _id, p, n):
@@ -251,62 +247,19 @@ class KuGouparser(baseParser):
         return result
 
     # special
-    async def dispatcher(self, _hash, key):
-        print('key is %s' % key)
-        if _hash in self.songinfoCache.keys():
-            # hit
-            print('hit: ' + key)
-            while not self.songinfoCache[_hash]:
-                # aready fetching, but no response, wait until data fetched or failed
-                print('waiting')
-                await asyncio.sleep(0.5)
-
-            # directly fetch
-            if self.songinfoCache[_hash]['data']:
-                return self.songinfoCache[_hash]['data'][key]
-        
-        # not hit or overtime
-        # add _hash to Cache, tell other requests to wait for response
-        print('not hit: ' + key)
-        self.songinfoCache[_hash] = {}
-
-        # waiting
-        data = await self.detail_info(_hash)
-
-        # fill cache, for other requests to fetch 
-        self.songinfoCache[_hash] = data
-
-        if data['err_code'] == 0:
-            return data['data'][key]
-            
-        return 'nores'
-
-    # special
-    async def detail_info(self, _hash):
-        print('----------- getting -------------')
-        # request from remote
-        params = {
-            "r": 'play/getdata',
-            "hash": _hash
-        }
-
-        # this api is from kugou
-        api = "https://wwwapi.kugou.com/yy/index.php"
-        
-        resp = await self.asyncGetJsonHeadersCookies(api, params=params)
-        
-        print(resp)
-
-        return resp
-
-    # special
     async def picurl(self, _hash):
-        imgurl = await self.dispatcher(_hash, "img")
-        return imgurl
+        params = {
+            "hash": _hash,
+            "key": 'img'
+        }
+        # this api is from local midware
+        api = "%s/playres" % self.baseurl
+        url = await self._asyncGetText(api, params=params)
+        return url
 
 
 async def __test():
-    p = KuGouparser("local-creeper")
+    p = KuGouparser("http://localhost:8081/kugou")
     searchkey = "周杰伦"
     page = 2
     num = 10
@@ -317,11 +270,10 @@ async def __test():
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # await p.detail_info(songhash)
 
     await p.lyric(songhash)
-    # print(await p.musicuri(songhash))
-    # print(await p.picurl(songhash))
+    print(await p.musicuri(songhash))
+    print(await p.picurl(songhash))
 
     # ? print((await p.getComments(songhash, "music", page, num)).keys())
     # ? print((await p.getComments("23509815", "album", page, num)).keys())
