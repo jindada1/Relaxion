@@ -16,6 +16,14 @@ class KuGouparser(baseParser):
         self.baseurl = baseurl
         print("construct KuGou on %s" % baseurl)
 
+        self.cookies = {
+            "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',
+            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661,1566286143',
+            "kg_dfid": '10P9yI2EfXk70MCKMa4TFGjg'
+        }
+        self.headers = {
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
+        }
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -123,7 +131,6 @@ class KuGouparser(baseParser):
         url = list(jsonresp['mvdata'].items())[0][1]['downurl']
         return self._uri(url)
 
-
     # override
     async def musicuri(self, _hash):
         params = {
@@ -137,14 +144,32 @@ class KuGouparser(baseParser):
 
     # override
     async def lyric(self, _hash):
-        params = {
-            "hash": _hash,
-            "key": 'lyrics'
+        params = {                    
+            'keyword':'%20-%20',
+            'ver'    : '1',
+            'hash'   : _hash,
+            'client' : 'mobi',
+            'man'    : 'yes',
         }
-        # this api is from local midware
-        api = "%s/playres" % self.baseurl
-        lyric = await self._asyncGetText(api, params=params)
-        return lyric
+        
+        api = 'http://krcs.kugou.com/search'
+
+        data = await self._asyncGetJson(api, params=params)
+
+        params = {
+            'charset'  : 'utf8',
+            'accesskey': data['candidates'][0]['accesskey'],
+            'id'       : data['candidates'][0]['id'],
+            'client'   : 'mobi',
+            'fmt'      : 'lrc',
+            'ver'      : '1',
+        }
+
+        api = 'http://lyrics.kugou.com/download'
+
+        resp = await self._asyncGetJson(api, params=params)
+
+        return self._base64(resp['content'])
 
     # override
     async def songsinList(self, _id, p, n):
@@ -260,7 +285,7 @@ class KuGouparser(baseParser):
         # this api is from local midware
         api = "%s/playres" % self.baseurl
         url = await self._asyncGetText(api, params=params)
-        return url
+        return self._uri(url)
 
 
 async def __test():
@@ -276,10 +301,10 @@ async def __test():
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
     # √ print(await p.mvuri("0c28d3658d3ec86e9d033c80d9d8e9da"))
+    # √ print(await p.lyric(songhash))
 
-    # await p.lyric(songhash)
     # print(await p.musicuri(songhash))
-    # print(await p.picurl(songhash))
+    print(await p.picurl(songhash))
 
     # ? print((await p.getComments(songhash, "music", page, num)).keys())
     # ? print((await p.getComments("23509815", "album", page, num)).keys())

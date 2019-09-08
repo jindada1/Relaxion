@@ -9,6 +9,7 @@ for : parse data from other platforms to the format of our platform
 
 from aiohttp import ClientSession
 import json
+import base64
 
 
 class baseParser(object):
@@ -20,6 +21,11 @@ class baseParser(object):
     async def _asyncGetJson(self, url, params):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
+            return json.loads(await resp.text())
+
+    async def _asyncPostJson(self, url, params):
+        async with ClientSession() as session:
+            resp = await session.post(url, data=params)
             return json.loads(await resp.text())
 
     async def asyncGetJsonHeadersCookies(self, url, params):
@@ -96,6 +102,10 @@ class baseParser(object):
             "pic": pic,
             "songnum": songnum
         }
+
+    def _base64(self, text):
+        
+        return base64.b64decode(text).decode(encoding="utf-8-sig")
 
     async def searchSong(self, k, p, n):
         return "base search result"
