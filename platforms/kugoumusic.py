@@ -109,15 +109,20 @@ class KuGouparser(baseParser):
         return result
 
     # override
-    async def mvuri(self, _id):
+    async def mvuri(self, _hash):
+        # this params is coincident with kugou
         params = {
             "hash": _hash,
-            "key": ''
+            "cmd": 100,
+            "ismp3": 1,
+            "ext": 'mp4'
         }
-        # this api is from local midware
-        api = "%s/playres" % self.baseurl
+        api = "http://m.kugou.com/app/i/mv.php"
+        
         jsonresp = await self._asyncGetJson(api, params=params)
-        return jsonresp
+        url = list(jsonresp['mvdata'].items())[0][1]['downurl']
+        return self._uri(url)
+
 
     # override
     async def musicuri(self, _hash):
@@ -270,15 +275,15 @@ async def __test():
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
+    # √ print(await p.mvuri("0c28d3658d3ec86e9d033c80d9d8e9da"))
 
-    await p.lyric(songhash)
-    print(await p.musicuri(songhash))
-    print(await p.picurl(songhash))
+    # await p.lyric(songhash)
+    # print(await p.musicuri(songhash))
+    # print(await p.picurl(songhash))
 
     # ? print((await p.getComments(songhash, "music", page, num)).keys())
     # ? print((await p.getComments("23509815", "album", page, num)).keys())
     # ? print((await p.getComments("0c28d3658d3ec86e9d033c80d9d8e9da", "mv", page, num)).keys())
-    # ? print((await p.mvuri("0c28d3658d3ec86e9d033c80d9d8e9da")).keys())
     # ? print(await p.userlist("406143883"))
     # ? print((await p.songsinList("1304470181", page, num)).keys())
     # ? print((await p.songsinAlbum("23509815")).keys())

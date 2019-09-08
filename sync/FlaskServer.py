@@ -2,6 +2,7 @@
 from flask import Flask,make_response,request
 import requests
 import json
+from hashlib import md5
 
 app = Flask(__name__)
 
@@ -58,7 +59,21 @@ def kugou():
     kugoucache[_hash] = new
 
     return new[_key]
+
+@app.route('/md5')
+def testmd5():
+    _hash = request.args.get('hash')
+
+    key = _mymd5(_hash + "kgcloud")
+    url = "http://trackercdn.kugou.com/i/?cmd=4&hash=" + _hash + "&key=" + key + "&pid=1&forceDown=0&vip=1"
+
+    return requests.get(url, headers=headers, cookies = kg_cook).text
     
+
+def _mymd5(string):
+    m = md5()
+    m.update(string.encode('utf-8'))
+    return(m.hexdigest())
 
 
 if __name__ == '__main__':
