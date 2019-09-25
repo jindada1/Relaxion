@@ -28,6 +28,12 @@ class baseParser(object):
             resp = await session.post(url, data=params)
             return json.loads(await resp.text())
 
+    async def asyncGetJsonHeaders(self, url, params):
+        async with ClientSession() as session:
+            async with session.get(url, params=params, headers=self.headers) as resp:
+                a = await resp.text()
+                return json.loads(a)
+
     async def asyncGetJsonHeadersCookies(self, url, params):
         async with ClientSession(cookies=self.cookies) as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
@@ -106,6 +112,10 @@ class baseParser(object):
     def _base64(self, text):
         
         return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+    def _jsonify(self, _dict):
+
+        return json.dumps(_dict).replace(" ", '')
 
     async def searchSong(self, k, p, n):
         return "base search result"
