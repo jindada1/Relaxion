@@ -49,9 +49,6 @@ def setup_routes(app):
     # redirect pic
     app.router.add_get('/{platform}/albumcover/{id}', albumPic)
 
-    # test dynamic router
-    app.router.add_get('/{platform}/test/dynamic', testDynamic)
-
     '''
         local service
     '''
@@ -70,3 +67,6 @@ def setup_routes(app):
 
     # user dislike a song, remove song from his list
     app.router.add_post('/user/hate/song', hateSong)
+
+    # extract music from mv
+    app.router.add_get('/extract', extractAudio)

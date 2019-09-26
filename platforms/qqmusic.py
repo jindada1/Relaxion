@@ -1,3 +1,10 @@
+'''
+on  :  2019-07-11
+by  :  Kris Huang
+
+for : get data from qq music directly
+'''
+
 try:
     from .baseparser import baseParser
 except:

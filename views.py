@@ -11,11 +11,13 @@ import re
 from aiohttp import web
 from platforms import PraserService
 from db import dbService
+from core import extractor
 
 
 othercfg = {}
 superParser = PraserService(othercfg)
 localdb = dbService('./db/User.db')
+extractor = extractor("F:\\tool\\ffmpeg\\bin\\ffmpeg")
 
 
 class argsCheckerGet(object):
@@ -197,8 +199,15 @@ async def songsinSonglist(P, params):
     n = params['num']
     return web.json_response(await P.songsinList(dissid, p, n))
 
-# get lyric of a song
+# extract music from mv
 
+@argsCheckerGet({
+    'mvurl': "*",
+    'song': "",
+})
+async def extractAudio():
+    mvurl = params['mvurl']
+    return web.json_response()
 
 def Redrict(handler):
     def wrapper(request):
@@ -213,6 +222,8 @@ def Redrict(handler):
         # handle error platforms
         return errorHandler("platform: %s is not supported" % platform)
     return wrapper
+
+# get lyric of a song
 
 
 @Redrict
@@ -232,18 +243,6 @@ async def song(P, _id):
     # newurl is {"uri":"https://......."}
     raise web.HTTPFound(newurl['uri'])
 
-
-test_args = {
-    "a": "*",
-    "b": "1"
-}
-
-
-@pltfGet(test_args)
-async def testDynamic(P, params):
-    a = params['a']
-    b = params['b']
-    return web.json_response(P.testDynamic(a, b))
 
 
 @argsCheckerGet({

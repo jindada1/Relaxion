@@ -1,32 +1,14 @@
 {
     "qq": {
-        "target": "http://api.goldenproud.cn/qq",
-        "parser": "QQparser",
-        "headers": {
-            "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
-        },
-        "cookies": {}
+        "target": "local",
+        "parser": "QQparser"
     },
     "wangyi": {
         "target": "http://api.goldenproud.cn/wangyi",
-        "parser": "WangYiparser",
-        "headers": {
-            "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
-        },
-        "cookies": {}
+        "parser": "WangYiparser"
     },
     "kugou": {
-        "target": "http://localhost:8081/kugou",
-        "parser": "KuGouparser",
-        "headers": {
-            "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
-        },
-        "cookies": {
-            "kg_mid": "52feea488ad51e0dfbd6e5f0ce639708", 
-            "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": "1567875689,1567919149,1567957150,1567958713",
-            "Hm_lpvt_aedee6983d4cfc62f509129360d6bb3d": "1567958713",
-            "kg_dfid": "3KxS2k43r61f0Jka882P2NWM",
-            "kg_dfid_collect": "d41d8cd98f00b204e9800998ecf8427e"
-        }
+        "target": "local",
+        "parser": "KuGouparser"
     }
 }
