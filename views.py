@@ -17,7 +17,7 @@ from core import extractor
 othercfg = {}
 superParser = PraserService(othercfg)
 localdb = dbService('./db/User.db')
-extractor = extractor("F:\\tool\\ffmpeg\\bin\\ffmpeg")
+extractor = extractor("F:\\tool\\ffmpeg\\bin\\")
 
 
 class argsCheckerGet(object):
@@ -203,9 +203,10 @@ async def songsinSonglist(P, params):
 
 @argsCheckerGet({
     'mvurl': "*",
-    'song': "",
+    'picurl' ""
+    'metadata': "{}",
 })
-async def extractAudio():
+async def extractAudio(params):
     mvurl = params['mvurl']
     return web.json_response()
 
