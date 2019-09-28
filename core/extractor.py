@@ -10,6 +10,19 @@ class extractor(object):
     '''
     def __init__(self, P):
 
+        self.__version = "1.0"
+
+        self.__initffmpegcmd(P)
+
+        self.__initFolders()
+
+        print('init extractor based on ffmpeg in %s', P)
+
+    '''
+    init ffmpeg command code
+    '''
+    def __initffmpegcmd(self, P):
+
         # extract audio from video --------------
 
         # {0: input mp4}; {1: output file type}; {2: output file}
@@ -34,6 +47,12 @@ class extractor(object):
         # {0: file}
         self.metadataCode = P + 'ffprobe {0} -hide_banner'
 
+    
+    '''
+    init local folders
+    '''
+    def __initFolders(self):
+
         self.videoFolder = os.path.join(os.getcwd(), "videos")
         self.audioFolder = os.path.join(os.getcwd(), "audios")
 
@@ -41,7 +60,28 @@ class extractor(object):
             if not os.path.exists(path):
                 os.makedirs(path)
 
+    '''
+    format args for ffmpeg command line
+    '''
+    def __metadataFormat(self, meta):
 
+        cover = ""
+        if meta['album']:
+            pic = os.path.join(self.videoFolder, meta['album'] + ".jpg")
+            
+            if os.path.exists(pic):
+                cover = "-i {0}".format(pic)
+
+        metadata = ""
+        for data in meta.items():
+
+            metadata += "-metadata {0}={1} ".format(data[0], data[1])
+
+        return (cover, metadata)
+
+    '''
+    interface for extract audio from local video file, and set cover img if exists
+    '''
     def extract(self, videoname, meta = None):
 
         vFilename = videoname
@@ -69,6 +109,9 @@ class extractor(object):
 
         return aFullFilename
 
+    '''
+    change metadata or cover image of a local mp3 file
+    '''
     def setinfo(self, audio, meta):
 
         newaudio = audio.replace('.mp3', '-new.mp3')
@@ -83,26 +126,21 @@ class extractor(object):
         
         return newaudio
 
-    def __metadataFormat(self, meta):
-
-        cover = ""
-        if meta['album']:
-            pic = os.path.join(self.videoFolder, meta['album'] + ".jpg")
-            
-            if os.path.exists(pic):
-                cover = "-i {0}".format(pic)
-
-        metadata = ""
-        for data in meta.items():
-
-            metadata += "-metadata {0}={1} ".format(data[0], data[1])
-
-        return (cover, metadata)
-
-    def showinfo(self, mp3):
+    '''
+    show metadata of a local mp3 file
+    '''
+    def showmeta(self, mp3):
 
         cmd = self.metadataCode.format(mp3)
         os.system(cmd)
+
+    '''
+    read only version info
+    '''
+    @property
+    def version(self):
+
+        return self.__version
 
 
 
