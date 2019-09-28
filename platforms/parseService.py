@@ -9,18 +9,12 @@ from .qqmusic import QQparser
 from .wangyimusic import WangYiparser
 from .kugoumusic import KuGouparser
 
-import json
-
 class PraserService(object):
     def __init__(self, cfg):
         self.platforms = {}
         
-        # no outer settings, read local default setting
         if not cfg:
-            with open('./settings/platforms.json', 'r') as f:
-                content = f.read()
-                cfg = json.loads(content)
-
+            print('[-] no platform service was registered')
 
         for name, prop in cfg.items():
             # we can validate the third url here

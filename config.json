@@ -1,0 +1,25 @@
+{
+    "platforms": {
+        "qq": {
+            "third": "",
+            "parser": "QQparser"
+        },
+        "wangyi": {
+            "third": "http://api.goldenproud.cn/wangyi",
+            "parser": "WangYiparser"
+        },
+        "kugou": {
+            "third": "",
+            "parser": "KuGouparser"
+        }
+    },
+
+    "database": {
+        "path": "./db/User.db"
+    },
+
+    "core-extract" : {
+        "ffmpeg-path": "F:/tool/ffmpeg/bin/",
+        "local-folder": "./core/"
+    }
+}

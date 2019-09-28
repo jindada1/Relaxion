@@ -8,16 +8,23 @@ for : check request params
 '''
 
 import re
+import json
 from aiohttp import web
 from platforms import PraserService
 from db import dbService
 from core import extractor
 
+with open('./config.json', 'r') as f:
+    cfg = json.loads(f.read())
 
-othercfg = {}
-superParser = PraserService(othercfg)
-localdb = dbService('./db/User.db')
-extractor = extractor("F:\\tool\\ffmpeg\\bin\\")
+    platforms_cfg = cfg['platforms']
+    dbpath = cfg['database']['path']
+    ffmpegpath = cfg['core-extract']["ffmpeg-path"]
+    mediafolder = cfg['core-extract']["local-folder"]
+
+superParser = PraserService(platforms_cfg)
+localdb = dbService(dbpath)
+extractor = extractor(ffmpegpath, mediafolder)
 
 
 class argsCheckerPost(object):
@@ -251,18 +258,6 @@ async def songsinSonglist(P, params):
     n = params['num']
     return web.json_response(await P.songsinList(dissid, p, n))
 
-# extract music from mv
-
-
-@argsCheckerGet({
-    'mvurl': "*",
-    'picurl' ""
-    'metadata': "{}",
-})
-async def extractAudio(params):
-    mvurl = params['mvurl']
-    return web.json_response(extractor.version)
-
 
 # get lyric of a song
 
@@ -341,3 +336,25 @@ async def hateSong(params):
         params['songid']
     )
     return web.json_response(result)
+
+
+# extract music from mv
+
+@argsCheckerPost({
+    'mvurl': "*",
+    'picurl' ""
+    'metadata': {},
+})
+async def extractAudio(params):
+
+    mvurl = params['mvurl']
+
+    metadata = {
+        'title': "告白气球",
+        'album': "周杰伦的床边故事",
+        'artist': "周杰伦"
+    }
+
+    extractor.extract("gbqq.mp4", metadata)
+
+    return web.json_response(extractor.version)

@@ -8,13 +8,13 @@ class extractor(object):
 
         aim: this class is for extract audio from video, and set metadata, album cover to audio
     '''
-    def __init__(self, P):
+    def __init__(self, P, mediafolder = None):
 
         self.__version = "1.0"
 
         self.__initffmpegcmd(P)
 
-        self.__initFolders()
+        self.__initFolders(mediafolder)
 
         print('init extractor based on ffmpeg in %s' % P)
 
@@ -51,10 +51,13 @@ class extractor(object):
     '''
     init local folders
     '''
-    def __initFolders(self):
-
-        self.videoFolder = os.path.join(os.getcwd(), "videos")
-        self.audioFolder = os.path.join(os.getcwd(), "audios")
+    def __initFolders(self, mediafolder = None):
+        
+        if not mediafolder or not os.path.exists(mediafolder):
+            mediafolder = os.getcwd()
+        
+        self.videoFolder = os.path.join(mediafolder, "videos")
+        self.audioFolder = os.path.join(mediafolder, "audios")
 
         for path in [self.videoFolder, self.audioFolder]:
             if not os.path.exists(path):
@@ -154,4 +157,4 @@ if __name__ == '__main__':
         'artist': "周杰伦"
     }
 
-    a = e.extract("gbqq.mp4", metadata)
+    # a = e.extract("gbqq.mp4", metadata)
