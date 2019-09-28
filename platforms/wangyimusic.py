@@ -5,9 +5,9 @@ except:
 
 
 class WangYiparser(baseParser):
-    def __init__(self, baseurl):
-        self.baseurl = baseurl
-        print("construct WY on %s" % baseurl)
+    def __init__(self, thirdparty = None):
+
+        baseParser.__init__(self, name = "WangYi", third = thirdparty)
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -19,7 +19,7 @@ class WangYiparser(baseParser):
             'offset': int(p) * int(n),
         }
         # this api is coincident with your creeper service
-        api = "%s/search" % self.baseurl
+        api = "%s/search" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
 
         result = {'songs': []}
@@ -52,7 +52,7 @@ class WangYiparser(baseParser):
             'offset': int(p) * int(n),
         }
         # this api is coincident with your creeper service
-        api = "%s/search" % self.baseurl
+        api = "%s/search" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
 
         result = {'albums': []}
@@ -82,7 +82,7 @@ class WangYiparser(baseParser):
             'offset': int(p) * int(n),
         }
         # this api is coincident with your creeper service
-        api = "%s/search" % self.baseurl
+        api = "%s/search" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
 
         result = {'videos': []}
@@ -110,7 +110,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/mv/url" % self.baseurl
+        api = "%s/mv/url" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         result = self._uri(jsonresp['data']['url'])
         return result
@@ -122,7 +122,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/song/url" % self.baseurl
+        api = "%s/song/url" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         result = self._uri(jsonresp['data'][0]['url'])
         return result
@@ -134,7 +134,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/lyric" % self.baseurl
+        api = "%s/lyric" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
 
         return jsonresp['lrc']['lyric']
@@ -146,7 +146,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/playlist/detail" % self.baseurl
+        api = "%s/playlist/detail" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         
         result = {'songs':[]}
@@ -176,7 +176,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/album" % self.baseurl
+        api = "%s/album" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'songs':[]}
         append = result['songs'].append
@@ -207,7 +207,7 @@ class WangYiparser(baseParser):
             "id": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/comment/%s" % (self.baseurl, t)
+        api = "%s/comment/%s" % (self.thirdparty, t)
         data = await self._asyncGetJson(api, params=params)
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
@@ -246,7 +246,7 @@ class WangYiparser(baseParser):
             "keywords":user,
             "type":1002
         }
-        searchapi = "%s/search" % self.baseurl
+        searchapi = "%s/search" % self.thirdparty
         userinfo = await self._asyncGetJson(searchapi, params=searchparams)
         uid = userinfo["result"]["userprofiles"][0]["userId"]
 
@@ -255,7 +255,7 @@ class WangYiparser(baseParser):
             "uid":uid
         }
         
-        api = "%s/user/playlist" % self.baseurl
+        api = "%s/user/playlist" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         res = {"allLists":[]}
         for _list in jsonresp['playlist']:
@@ -273,7 +273,7 @@ class WangYiparser(baseParser):
         params = {
             "id":_id
         }
-        api = "%s/album" % self.baseurl
+        api = "%s/album" % self.thirdparty
         info = await self._asyncGetJson(api, params=params)
         return info['album']['picUrl'];
 
@@ -285,7 +285,7 @@ async def __test():
     num = 20
     
     '''
-        test at 2019-07-12 20:12, all passed
+        test at 2019-09-28 18:16, all passed
     '''
     # √ print((await p.searchSong(searchkey,page,num)).keys())
     # √ print((await p.searchAlbum(searchkey,page,num)).keys())

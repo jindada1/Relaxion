@@ -1,14 +1,14 @@
 {
     "qq": {
-        "target": "local",
+        "third": "",
         "parser": "QQparser"
     },
     "wangyi": {
-        "target": "http://api.goldenproud.cn/wangyi",
+        "third": "http://api.goldenproud.cn/wangyi",
         "parser": "WangYiparser"
     },
     "kugou": {
-        "target": "local",
+        "third": "",
         "parser": "KuGouparser"
     }
 }

@@ -12,8 +12,9 @@ except:
 
 
 class QQparser(baseParser):
-    def __init__(self, baseurl):
-        self.baseurl = baseurl
+    def __init__(self, thirdparty = None):
+
+        baseParser.__init__(self, name = "QQ", third = thirdparty)
 
         self.headers = {
             'referer': 'http://y.qq.com',
@@ -31,8 +32,6 @@ class QQparser(baseParser):
             'album':2,
             'mv':5
         }
-
-        print("construct QQ on %s" % baseurl)
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -175,7 +174,7 @@ class QQparser(baseParser):
             "idforres": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/song" % self.baseurl
+        api = "%s/song" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         return self._uri(jsonresp['uri'])
 
@@ -391,7 +390,7 @@ class QQparser(baseParser):
 
 
 async def __test():
-    p = QQparser("http://api.goldenproud.cn/qq")
+    p = QQparser()
     searchkey = "周杰伦"
     page = 2
     num = 20

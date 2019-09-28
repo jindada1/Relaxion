@@ -12,15 +12,16 @@ except:
 
 
 class KuGouparser(baseParser):
-    def __init__(self, baseurl):
-        self.baseurl = baseurl
-        print("construct KuGou on %s" % baseurl)
+    def __init__(self, thirdparty = None):
 
+        baseParser.__init__(self, name = "KuGou", third = thirdparty)
+        
         self.cookies = {
             "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',
             "Hm_lvt_aedee6983d4cfc62f509129360d6bb3d": '1565879171,1566012408,1566137661,1566286143',
             "kg_dfid": '10P9yI2EfXk70MCKMa4TFGjg'
         }
+
         self.headers = {
             'upgrade-insecure-requests': '1',  # important when '---/index.php' get play information
             'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
@@ -143,7 +144,7 @@ class KuGouparser(baseParser):
             "key": 'play_url'
         }
         # this api is from local midware
-        api = "%s/playres" % self.baseurl
+        api = "%s/playres" % self.thirdparty
         url = await self._asyncGetText(api, params=params)
         return self._uri(url)
 
@@ -220,7 +221,7 @@ class KuGouparser(baseParser):
             "albumid": _id
         }
         # this api is from kugou
-        api = "%s/songs/album" % self.baseurl
+        api = "%s/songs/album" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'songs': []}
         append = result['songs'].append
@@ -253,7 +254,7 @@ class KuGouparser(baseParser):
             "num": n
         }
         # this api is from kugou
-        api = "%s/comments" % self.baseurl
+        api = "%s/comments" % self.thirdparty
         data = await self._asyncGetJson(api, params=params)
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
@@ -303,7 +304,7 @@ class KuGouparser(baseParser):
 
 
 async def __test():
-    p = KuGouparser("http://localhost:8081/kugou")
+    p = KuGouparser()
     searchkey = "周杰伦"
     page = 2
     num = 10

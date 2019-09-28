@@ -23,11 +23,11 @@ class PraserService(object):
 
 
         for name, prop in cfg.items():
-            # we can validate the target url here
+            # we can validate the third url here
             # '''
             # construct instance according to cfg
             constructor = globals()[prop['parser']]
-            instance = constructor(prop['target'])
+            instance = constructor(prop['third'])
             self.platforms[name] = instance
     
     # override [], return parser

@@ -13,6 +13,20 @@ import base64
 
 
 class baseParser(object):
+
+    def __init__(self, **kwargs):
+
+        third = kwargs["third"]
+        name = kwargs["name"]
+
+        if third:
+            self.thirdparty = third
+            print("[ok] connect %s to third party server: %s" % (name, self.thirdparty))
+
+        else:
+            print("[ok] construct %s" % name)
+
+
     async def _asyncGetText(self, url, params):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
@@ -140,8 +154,3 @@ class baseParser(object):
 
     async def songsinAlbum(self, _id):
         return "songsinAlbum"
-
-    def testDynamic(self, a, b):
-        print(a)
-        print(b)
-        return (a, b)
