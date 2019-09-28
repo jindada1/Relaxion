@@ -12,7 +12,7 @@ import json
 from aiohttp import web
 from platforms import PraserService
 from db import dbService
-from core import extractor
+from core import extractor, downloader
 
 with open('./config.json', 'r') as f:
     cfg = json.loads(f.read())
@@ -20,11 +20,12 @@ with open('./config.json', 'r') as f:
     platforms_cfg = cfg['platforms']
     dbpath = cfg['database']['path']
     ffmpegpath = cfg['core-extract']["ffmpeg-path"]
-    mediafolder = cfg['core-extract']["local-folder"]
+    mediafolder = cfg['mediafolder']["path"]
 
 superParser = PraserService(platforms_cfg)
 localdb = dbService(dbpath)
 extractor = extractor(ffmpegpath, mediafolder)
+Dolder = downloader(mediafolder)
 
 
 class argsCheckerPost(object):
@@ -348,13 +349,15 @@ async def hateSong(params):
 async def extractAudio(params):
 
     mvurl = params['mvurl']
+    albumcover = params['picurl']
+    metadata = params['metadata']
 
-    metadata = {
-        'title': "告白气球",
-        'album': "周杰伦的床边故事",
-        'artist': "周杰伦"
-    }
+    '''
+    video = downloader.download(mvurl, metadata['title'], '.mp4')
 
-    extractor.extract("gbqq.mp4", metadata)
+    downloader.download(albumcover, metadata['album'], '.jpg')
+
+    extractor.extract(video, metadata)
+    '''
 
     return web.json_response(extractor.version)

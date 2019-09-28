@@ -11,5 +11,4 @@ db/__pycache__
 
 */__pycache__
 
-core/audios
-core/videos
+files/

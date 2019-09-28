@@ -1,4 +1,5 @@
 import os
+import re
 
 class extractor(object):
     '''
@@ -16,7 +17,7 @@ class extractor(object):
 
         self.__initFolders(mediafolder)
 
-        print('init extractor based on ffmpeg in %s' % P)
+        print('[ok] init extractor based on ffmpeg in %s' % P)
 
     '''
     init ffmpeg command code
@@ -58,8 +59,9 @@ class extractor(object):
         
         self.videoFolder = os.path.join(mediafolder, "videos")
         self.audioFolder = os.path.join(mediafolder, "audios")
+        self.picFolder = os.path.join(mediafolder, "pics")
 
-        for path in [self.videoFolder, self.audioFolder]:
+        for path in [self.videoFolder, self.audioFolder, self.picFolder]:
             if not os.path.exists(path):
                 os.makedirs(path)
 
@@ -70,7 +72,7 @@ class extractor(object):
 
         cover = ""
         if meta['album']:
-            pic = os.path.join(self.videoFolder, meta['album'] + ".jpg")
+            pic = os.path.join(self.picFolder, meta['album'] + ".jpg")
             
             if os.path.exists(pic):
                 cover = "-i {0}".format(pic)
@@ -87,14 +89,25 @@ class extractor(object):
     '''
     def extract(self, videoname, meta = None):
 
-        vFilename = videoname
-        audioType = "mp3"
-        aFilename = "%s.%s" % (vFilename.split('.')[0], audioType)
+        if os.path.exists(videoname):
+            # user path
+            vFullFilename = videoname
+        
+        else:
+            # default folder
+            vFullFilename = os.path.join(self.videoFolder, videoname)
 
-        vFullFilename = os.path.join(self.videoFolder, vFilename)
-        aFullFilename = os.path.join(self.audioFolder, aFilename)
+        # if no video file
+        if not os.path.exists(vFullFilename):
+            return 'error: no video file'
 
-        # if exists
+        realname = re.findall(r'([^<>/\\\|:""\*\?]+)\.\w+$',videoname)[0]
+
+        dfaudioType = "mp3"
+
+        aFullFilename = os.path.join(self.audioFolder, "%s.%s" % (realname, dfaudioType))
+
+        # if audio exists
         if os.path.exists(aFullFilename):
             return aFullFilename
         
@@ -149,7 +162,7 @@ class extractor(object):
 
 if __name__ == '__main__':
 
-    e = extractor("F:\\tool\\ffmpeg\\bin\\")
+    e = extractor("F:\\tool\\ffmpeg\\bin\\", "F:\\Project\\Relaxion\\files")
 
     metadata = {
         'title': "告白气球",
@@ -157,4 +170,6 @@ if __name__ == '__main__':
         'artist': "周杰伦"
     }
 
-    # a = e.extract("gbqq.mp4", metadata)
+    a = e.extract("gbqq.mp4", metadata)
+
+    print(a)

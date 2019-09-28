@@ -19,7 +19,10 @@
     },
 
     "core-extract" : {
-        "ffmpeg-path": "F:/tool/ffmpeg/bin/",
-        "local-folder": "./core/"
+        "ffmpeg-path": "F:/tool/ffmpeg/bin/"
+    },
+
+    "mediafolder": {
+        "path": "./files/"
     }
 }
