@@ -343,8 +343,8 @@ async def hateSong(params):
 
 @argsCheckerPost({
     'mvurl': "*",
-    'picurl' ""
-    'metadata': {},
+    'picurl': "",
+    'metadata': {}
 })
 async def extractAudio(params):
 
@@ -352,12 +352,18 @@ async def extractAudio(params):
     albumcover = params['picurl']
     metadata = params['metadata']
 
-    '''
-    video = downloader.download(mvurl, metadata['title'], '.mp4')
+    video = await Dolder.download(mvurl, metadata['title'], 'mp4')
 
-    downloader.download(albumcover, metadata['album'], '.jpg')
+    print(video)
 
-    extractor.extract(video, metadata)
-    '''
+    if video['err']:
+        return web.json_response({"err": video['err']})
 
-    return web.json_response(extractor.version)
+    if albumcover:
+        cover = await Dolder.download(albumcover, metadata['album'], 'jpg')
+    
+    print(cover)
+
+    audio = extractor.extract(video['content'], cover)
+
+    return web.json_response({"path": audio})

@@ -70,24 +70,17 @@ class extractor(object):
     '''
     def __metadataFormat(self, meta):
 
-        cover = ""
-        if meta['album']:
-            pic = os.path.join(self.picFolder, meta['album'] + ".jpg")
-            
-            if os.path.exists(pic):
-                cover = "-i {0}".format(pic)
-
         metadata = ""
         for data in meta.items():
 
             metadata += "-metadata {0}={1} ".format(data[0], data[1])
 
-        return (cover, metadata)
+        return metadata
 
     '''
     interface for extract audio from local video file, and set cover img if exists
     '''
-    def extract(self, videoname, meta = None):
+    def extract(self, videoname, meta = None, cover = None):
 
         if os.path.exists(videoname):
             # user path
@@ -113,9 +106,13 @@ class extractor(object):
         
         # if has metadata
         if meta:
-            cover, metadata = self.__metadataFormat(meta)
-            if cover:
+            metadata = self.__metadataFormat(meta)
+
+            if cover and os.path.exists(cover):
+
+                cover = "-i {0}".format(cover)
                 cmd = self.extractCoverMetaCode.format(vFullFilename, cover, metadata, aFullFilename)
+            
             else:
                 cmd = self.extractMetaCode.format(vFullFilename, metadata, aFullFilename) 
         else:
@@ -128,16 +125,20 @@ class extractor(object):
     '''
     change metadata or cover image of a local mp3 file
     '''
-    def setinfo(self, audio, meta):
+    def setinfo(self, audio, meta, cover = None):
 
         newaudio = audio.replace('.mp3', '-new.mp3')
 
-        cover, metadata = self.__metadataFormat(meta)
+        metadata = self.__metadataFormat(meta)
 
-        if cover:
+        if os.path.exists(cover):
+
+            cover = "-i {0}".format(cover)
             cmd = self.setcoverCode.format(audio, cover, metadata, newaudio)
+
         else:
             cmd = self.setmetaCode.format(audio, metadata, newaudio)
+
         os.system(cmd)
         
         return newaudio
@@ -165,11 +166,9 @@ if __name__ == '__main__':
     e = extractor("F:\\tool\\ffmpeg\\bin\\", "F:\\Project\\Relaxion\\files")
 
     metadata = {
-        'title': "告白气球",
-        'album': "周杰伦的床边故事",
+        'title': "说好不哭（with 五月天阿信）",
+        'album': "说好不哭（with 五月天阿信）",
         'artist': "周杰伦"
     }
 
-    a = e.extract("gbqq.mp4", metadata)
-
-    print(a)
+    # a = e.extract("F:\\Project\\Relaxion\\files\\videos\\ef5011f4cde10899b3b9b77a0387f81f.mp4", metadata)

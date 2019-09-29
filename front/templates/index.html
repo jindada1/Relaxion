@@ -236,6 +236,12 @@
                                         </div>
                                     </div>
                                 </div>
+                                <el-divider></el-divider>
+                                <div>
+                                    <h3>从 mv 中提取音频</h3>
+                                    <el-button type="primary" @click="extractAudio">点击提取</el-button>
+                                    <div>{{extract.musicurl}}</div>
+                                </div>
                             </el-col>
                             <el-col :span="10">
                                 <div class="col-head">参数
@@ -301,6 +307,10 @@
                         platform: "qq",
                         input: "",
                         result: []
+                    },
+
+                    extract: {
+                        musicurl:""
                     }
                 }
             },
@@ -396,6 +406,18 @@
                     }).catch(function (error) {
                         _this.postpanel.response = error;
                     });
+                },
+                extractAudio(){
+                    params = {
+                        mvurl : "http://117.169.107.82/vcloud1049.tc.qq.com/1049_M0135300000HdtXk2avwNV1001676254.f9844.mp4?vkey=C0B3080CFEAA4ED70072AC07B579F1F8FDD52960231DFA5D495D20394967A968DD578D1FFC9B5A18DAC31F1486071742E2935CB66F3DC7291F11A33E942F08FD61AC146BF0C7521DFFBDAD5E5095DCAC05B9D9230BD7433A",
+                        picurl : "https://y.gtimg.cn/music/photo_new/T002R300x300M000002gBTVk4JEE2T.jpg?max_age=2592000",
+                        metadata: {
+                            title: "说好不哭（with 五月天阿信）",
+                            album: "说好不哭（with 五月天阿信）",
+                            artist: "周杰伦"
+                        }
+                    }
+                    this.postTo('/extract', params)
                 }
             },
             mounted() {

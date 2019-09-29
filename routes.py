@@ -69,4 +69,4 @@ def setup_routes(app):
     app.router.add_post('/user/hate/song', hateSong)
 
     # extract music from mv
-    app.router.add_get('/extract', extractAudio)
+    app.router.add_post('/extract', extractAudio)
