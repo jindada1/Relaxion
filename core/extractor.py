@@ -27,18 +27,18 @@ class extractor(object):
         # extract audio from video --------------
 
         # {0: input mp4}; {1: output file type}; {2: output file}
-        self.extractCode = P + 'ffmpeg -i {0} -f {1} -vn {2} -hide_banner'
+        self.extractCode = P + 'ffmpeg -i {0} -f {1} -vn {2} -loglevel quiet'
 
         # {0: input mp4}; {1: input cover img}; {2: -metadata}; {3: output file}
-        self.extractCoverMetaCode = P + 'ffmpeg -i {0} {1} -map 0:1 -map 1:0 -acodec libmp3lame -id3v2_version 3 {2} {3} -hide_banner'
+        self.extractCoverMetaCode = P + 'ffmpeg -i {0} {1} -map 0:1 -map 1:0 -acodec libmp3lame -id3v2_version 3 {2} {3} -loglevel quiet'
         
         # {0: input mp4}; {1: -metadata}; {2: output file}
-        self.extractMetaCode = P + 'ffmpeg -i {0} -acodec libmp3lame -id3v2_version 3 {1} {2} -hide_banner'
+        self.extractMetaCode = P + 'ffmpeg -i {0} -acodec libmp3lame -id3v2_version 3 {1} {2} -loglevel quiet'
 
         # set metadata --------------------------
 
         # {0: input mp3}; {1: input cover img}; {2: -metadata}; {3: output file}
-        self.setcoverCode = P + 'ffmpeg -i {0} {1} -map 0:0 -map 1:0 -c copy -id3v2_version 3 {2} {3} -hide_banner'
+        self.setcoverCode = P + 'ffmpeg -i {0} {1} -map 0:0 -map 1:0 -c copy -id3v2_version 3 {2} {3} -loglevel quiet'
 
         # {0: input mp4}; {1: -metadata}; {2: output file}
         self.setmetaCode = P + 'ffmpeg -i {0} -c copy -id3v2_version 3 {1} {2} -loglevel quiet'

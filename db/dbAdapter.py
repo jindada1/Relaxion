@@ -18,12 +18,12 @@ import json
 
 
 class dbAdapter(object):
-    def __init__(self, dbfile=None):
+    def __init__(self, dbfile=None, table=None):
         self.conn = None
         self.cursor = None
 
         if dbfile:
-            self.__connect(dbfile)
+            self.__connect(dbfile, table)
 
     def __connect(self, dbfile, table):
         try:
