@@ -25,14 +25,14 @@ class dbAdapter(object):
         if dbfile:
             self.__connect(dbfile)
 
-    def __connect(self, dbfile):
+    def __connect(self, dbfile, table):
         try:
             self.conn = sqlite3.connect(dbfile)
             self.cursor = self.conn.cursor()
-            print("connect %s file successful" % dbfile)
+            print("[ok] find table:%s in %s" % (table, dbfile))
 
         except sqlite3.Error as e:
-            print("Error connecting to database!")
+            print("[err] failed to connect to %s" % dbfile)
 
     def __enter__(self):
 

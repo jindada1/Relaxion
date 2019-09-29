@@ -41,7 +41,7 @@ class extractor(object):
         self.setcoverCode = P + 'ffmpeg -i {0} {1} -map 0:0 -map 1:0 -c copy -id3v2_version 3 {2} {3} -hide_banner'
 
         # {0: input mp4}; {1: -metadata}; {2: output file}
-        self.setmetaCode = P + 'ffmpeg -i {0} -c copy -id3v2_version 3 {1} {2} -hide_banner'
+        self.setmetaCode = P + 'ffmpeg -i {0} -c copy -id3v2_version 3 {1} {2} -loglevel quiet'
 
         # show metadata -------------------------
 
@@ -118,7 +118,6 @@ class extractor(object):
         else:
             cmd = self.extractCode.format(vFullFilename, audioType, aFullFilename)
 
-        print(cmd)
         os.system(cmd)
 
         return aFullFilename
@@ -140,7 +139,6 @@ class extractor(object):
         else:
             cmd = self.setmetaCode.format(audio, metadata, newaudio)
 
-        print(cmd)
         os.system(cmd)
         
         return newaudio
@@ -173,10 +171,10 @@ if __name__ == '__main__':
         'artist': "周杰伦"
     }
 
-    video = "F:\\Project\\Relaxion\\files\\videos\\ef5011f4cde10899b3b9b77a0387f81f.mp4"
-    pic = "F:\\Project\\Relaxion\\files\\pics\\414a7de6fb6b487e8ee07f2fc0a475a9.jpg"
+    video = "F:\\Project\\Relaxion\\files\\videos\\说好不哭（with五月天阿信）.mp4"
+    pic = "F:\\Project\\Relaxion\\files\\pics\\说好不哭（with五月天阿信）.jpg"
 
     a = e.extract(video, metadata, pic)
     
-    # audio = "F:\\Project\\Relaxion\\files\\audios\\ef5011f4cde10899b3b9b77a0387f81f.mp3"
-    # e.setinfo(audio, metadata)
+    audio = "F:\\Project\\Relaxion\\files\\audios\\说好不哭（with五月天阿信）.mp3"
+    e.setinfo(audio, metadata)

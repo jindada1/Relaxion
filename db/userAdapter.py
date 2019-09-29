@@ -8,8 +8,8 @@ class userAdapter(dbAdapter):
 
     def __init__(self, db, table):
 
-        super().__init__(db)
-        print(table)
+        super().__init__(db, table)
+        
         self.table = table
 
     def insert(self, row):
