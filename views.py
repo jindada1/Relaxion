@@ -152,12 +152,12 @@ async def files(request):
     filename = request.match_info['filename']
     return web.FileResponse('./front/static/' + filename)
 
+
 search_args = {
     "keyword": "*",
     "num": 20,
     "page": 0
 }
-
 
 @pltfGet(search_args)
 async def searchSong(P, params):
@@ -354,16 +354,14 @@ async def extractAudio(params):
 
     video = await Dolder.download(mvurl, metadata['title'], 'mp4')
 
-    print(video)
-
     if video['err']:
         return web.json_response({"err": video['err']})
 
     if albumcover:
         cover = await Dolder.download(albumcover, metadata['album'], 'jpg')
-    
-    print(cover)
+        albumcover = cover['content']
 
-    audio = extractor.extract(video['content'], cover)
+    audio = extractor.extract(video['content'], metadata, albumcover)
+    
 
     return web.json_response({"path": audio})

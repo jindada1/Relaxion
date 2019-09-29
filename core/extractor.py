@@ -73,7 +73,7 @@ class extractor(object):
         metadata = ""
         for data in meta.items():
 
-            metadata += "-metadata {0}={1} ".format(data[0], data[1])
+            metadata += "-metadata {0}={1} ".format(data[0], data[1].replace(" ",""))
 
         return metadata
 
@@ -109,7 +109,7 @@ class extractor(object):
             metadata = self.__metadataFormat(meta)
 
             if cover and os.path.exists(cover):
-
+                
                 cover = "-i {0}".format(cover)
                 cmd = self.extractCoverMetaCode.format(vFullFilename, cover, metadata, aFullFilename)
             
@@ -118,6 +118,7 @@ class extractor(object):
         else:
             cmd = self.extractCode.format(vFullFilename, audioType, aFullFilename)
 
+        print(cmd)
         os.system(cmd)
 
         return aFullFilename
@@ -131,7 +132,7 @@ class extractor(object):
 
         metadata = self.__metadataFormat(meta)
 
-        if os.path.exists(cover):
+        if cover and os.path.exists(cover):
 
             cover = "-i {0}".format(cover)
             cmd = self.setcoverCode.format(audio, cover, metadata, newaudio)
@@ -139,6 +140,7 @@ class extractor(object):
         else:
             cmd = self.setmetaCode.format(audio, metadata, newaudio)
 
+        print(cmd)
         os.system(cmd)
         
         return newaudio
@@ -171,4 +173,10 @@ if __name__ == '__main__':
         'artist': "周杰伦"
     }
 
-    # a = e.extract("F:\\Project\\Relaxion\\files\\videos\\ef5011f4cde10899b3b9b77a0387f81f.mp4", metadata)
+    video = "F:\\Project\\Relaxion\\files\\videos\\ef5011f4cde10899b3b9b77a0387f81f.mp4"
+    pic = "F:\\Project\\Relaxion\\files\\pics\\414a7de6fb6b487e8ee07f2fc0a475a9.jpg"
+
+    a = e.extract(video, metadata, pic)
+    
+    # audio = "F:\\Project\\Relaxion\\files\\audios\\ef5011f4cde10899b3b9b77a0387f81f.mp3"
+    # e.setinfo(audio, metadata)

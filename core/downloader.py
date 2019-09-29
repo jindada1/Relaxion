@@ -1,6 +1,5 @@
 import os
 import aiofiles
-import hashlib
 from aiohttp import ClientSession
 
 class downloader(object):
@@ -46,8 +45,8 @@ class downloader(object):
             "jpg" : 2
         }
 
-        # 这里下载好的文件会成为 ffmpeg 命令行的输入，如果是文件名中文的话，要配置终端字符编码，影响可移植性
-        fname = self.md5hash(fname)
+        # 这里下载好的文件会成为 ffmpeg 命令行的输入，去掉空格
+        fname = fname.replace(" ","")
 
         p = os.path.join(self.rootFolder, self.__subfolders[ftypes[ftype]], "%s.%s" % (fname, ftype))
 
@@ -99,12 +98,6 @@ class downloader(object):
     
         self.__tasksCount -= 1
         return self.__err('download error')
-
-    def md5hash(self, string):
-        
-        self.__md.update(string.encode("utf-8"))
-        
-        return self.__md.hexdigest()
 
 
 async def __test():
