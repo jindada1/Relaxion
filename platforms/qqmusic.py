@@ -175,8 +175,8 @@ class QQparser(baseParser):
         }
         # this api is coincident with your creeper service
         api = "%s/song" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
-        return self._uri(jsonresp['uri'])
+        # jsonresp = await self._asyncGetJson(api, params=params)
+        return self._uri()
 
     # override
     async def lyric(self, songmid):

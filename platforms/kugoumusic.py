@@ -145,8 +145,8 @@ class KuGouparser(baseParser):
         }
         # this api is from local midware
         api = "%s/playres" % self.thirdparty
-        url = await self._asyncGetText(api, params=params)
-        return self._uri(url)
+        # url = await self._asyncGetText(api, params=params)
+        return self._uri()
 
     # override
     async def lyric(self, _hash):
@@ -222,11 +222,12 @@ class KuGouparser(baseParser):
         }
         # this api is from kugou
         api = "%s/songs/album" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+        # jsonresp = await self._asyncGetJson(api, params=params)
+        songlist = []
         result = {'songs': []}
         append = result['songs'].append
         try:
-            for song in jsonresp['data']['songlist']:
+            for song in songlist:
                 append(self._song(
                     "kugou",
                     song['songmid'],
@@ -255,10 +256,13 @@ class KuGouparser(baseParser):
         }
         # this api is from kugou
         api = "%s/comments" % self.thirdparty
-        data = await self._asyncGetJson(api, params=params)
+        # data = await self._asyncGetJson(api, params=params)
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
                   'normal': {'num': 0, 'comments': []}}
+                  
+        return result
+
         try:
             for comment in data['comment']['commentlist']:
                 result['normal']['comments'].append(self._comment(
@@ -319,7 +323,7 @@ async def __test():
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    print(await p.mvuri(mvhash))
+    # √ print(await p.mvuri(mvhash))
     # √ print(await p.lyric(gbqq))
     # √ print(await p.picurl(gbqq))
     # √ print((await p.songsinList("547134", page, num)).keys())

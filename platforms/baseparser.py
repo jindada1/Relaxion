@@ -100,7 +100,7 @@ class baseParser(object):
             "publish_date": pub_day
         }
 
-    def _uri(self, uri):
+    def _uri(self, uri = None):
         if uri:
             return {"uri": uri}
         return {"uri": uri, "error": 1}
