@@ -7,7 +7,7 @@ for : check request params
       dispatch request to services
 '''
 
-import re
+import os
 import json
 from aiohttp import web
 from platforms import PraserService
@@ -152,6 +152,17 @@ async def files(request):
     filename = request.match_info['filename']
     return web.FileResponse('./front/static/' + filename)
 
+async def getResource(request):
+    ftype = request.match_info['ftype']
+    fname = request.match_info['fname']
+
+    path = os.path.join('./files/', ftype, fname)
+
+    if os.path.exists(path):
+        return web.FileResponse(path)
+
+    return web.Response(text="no file error")
+
 
 search_args = {
     "keyword": "*",
@@ -262,7 +273,6 @@ async def songsinSonglist(P, params):
 
 # get lyric of a song
 
-
 @Redrict
 async def lyric(P, _id):
     return web.Response(text=await P.lyric(_id))
@@ -361,7 +371,7 @@ async def extractAudio(params):
         cover = await Dolder.download(albumcover, metadata['album'], 'jpg')
         albumcover = cover['content']
 
-    audio = extractor.extract(video['content'], metadata, albumcover)
+    path, audiofile = extractor.extract(video['content'], metadata, albumcover)
     
 
-    return web.json_response({"path": audio})
+    return web.json_response({"url": "/resource/audios/%s" % audiofile})

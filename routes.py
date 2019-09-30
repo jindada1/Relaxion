@@ -4,8 +4,11 @@ def setup_routes(app):
     # index html
     app.router.add_get('/', index)
 
-    # return static files
+    # return frontend static files
     app.router.add_get('/static/{filename}', files)
+
+    # return media file resource
+    app.router.add_get('/resource/{ftype}/{fname}', getResource)
 
     # search and return song
     app.router.add_get('/{platform}/songs', searchSong)

@@ -84,25 +84,27 @@ class extractor(object):
 
         if os.path.exists(videoname):
             # user path
-            vFullFilename = videoname
+            videopath = videoname
         
         else:
             # default folder
-            vFullFilename = os.path.join(self.videoFolder, videoname)
+            videopath = os.path.join(self.videoFolder, videoname)
 
         # if no video file
-        if not os.path.exists(vFullFilename):
+        if not os.path.exists(videopath):
             return 'error: no video file'
 
         realname = re.findall(r'([^<>/\\\|:""\*\?]+)\.\w+$',videoname)[0]
 
         dfaudioType = "mp3"
 
-        aFullFilename = os.path.join(self.audioFolder, "%s.%s" % (realname, dfaudioType))
+        audiofile = "%s.%s" % (realname, dfaudioType)
+
+        audiopath = os.path.join(self.audioFolder, audiofile)
 
         # if audio exists
-        if os.path.exists(aFullFilename):
-            return aFullFilename
+        if os.path.exists(audiopath):
+            return (audiopath, audiofile)
         
         # if has metadata
         if meta:
@@ -111,16 +113,21 @@ class extractor(object):
             if cover and os.path.exists(cover):
                 
                 cover = "-i {0}".format(cover)
-                cmd = self.extractCoverMetaCode.format(vFullFilename, cover, metadata, aFullFilename)
+                cmd = self.extractCoverMetaCode.format(videopath, cover, metadata, audiopath)
             
             else:
-                cmd = self.extractMetaCode.format(vFullFilename, metadata, aFullFilename) 
+                cmd = self.extractMetaCode.format(videopath, metadata, audiopath) 
         else:
-            cmd = self.extractCode.format(vFullFilename, audioType, aFullFilename)
+            cmd = self.extractCode.format(videopath, audioType, audiopath)
 
         os.system(cmd)
 
-        return aFullFilename
+        # if successfully extract audio out
+        if os.path.exists(audiopath):
+            
+            return  (audiopath, audiofile)
+        
+        return "error"
 
     '''
     change metadata or cover image of a local mp3 file
