@@ -2,7 +2,7 @@ import os
 import aiofiles
 from aiohttp import ClientSession
 
-class downloader(object):
+class Downloader(object):
 
     '''
     this class can download file from url and set file name

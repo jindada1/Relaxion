@@ -12,20 +12,20 @@ import json
 from aiohttp import web
 from platforms import PraserService
 from db import dbService
-from core import extractor, downloader
+from core import Extractor, Downloader
 
 with open('./config.json', 'r') as f:
     cfg = json.loads(f.read())
 
     platforms_cfg = cfg['platforms']
-    dbpath = cfg['database']['path']
-    ffmpegpath = cfg['core-extract']["ffmpeg-path"]
-    mediafolder = cfg['mediafolder']["path"]
+    # dbpath = cfg['database']['path']
+    # ffmpegpath = cfg['core-extract']["ffmpeg-path"]
+    # mediafolder = cfg['mediafolder']["path"]
 
 superParser = PraserService(platforms_cfg)
-localdb = dbService(dbpath)
-extractor = extractor(ffmpegpath, mediafolder)
-Dolder = downloader(mediafolder)
+# localdb = dbService(dbpath)
+# extractor = Extractor(ffmpegpath, mediafolder)
+# dolder = Downloader(mediafolder)
 
 
 class argsCheckerPost(object):
@@ -78,19 +78,21 @@ class argsCheckerGet(object):
             print(req)
 
             # validate arguments in request according to self.argSchema
-            validation = self.validate(request.rel_url)
+            validation = self.validate(request.rel_url.query)
             if validation['err']:
                 return errorHandler(validation['err'])
             else:
                 return handler(validation)
         return wrapper
 
-    def validate(self, rq_args):
+    def validate(self, dict_args):
         params = {}
         for arg, prpty in self.argSchema.items():
-            try:
-                params[arg] = rq_args.query[arg]
-            except:
+            # get value
+            if arg in dict_args.keys():
+                params[arg] = dict_args[arg]
+
+            else:
                 # if param is required, raise error
                 if prpty == "*":
                     return {"err": "%s is required" % arg}
@@ -115,7 +117,7 @@ class pltfGet(argsCheckerGet):
             # filter invalid platforms
             if superParser[platform]:
                 # validate arguments in request according to self.argSchema
-                validation = self.validate(request.rel_url)
+                validation = self.validate(request.rel_url.query)
                 if validation['err']:
                     return errorHandler(validation['err'])
                 else:
@@ -362,13 +364,13 @@ async def extractAudio(params):
     albumcover = params['picurl']
     metadata = params['metadata']
 
-    video = await Dolder.download(mvurl, metadata['title'], 'mp4')
+    video = await dolder.download(mvurl, metadata['title'], 'mp4')
 
     if video['err']:
         return web.json_response({"err": video['err']})
 
     if albumcover:
-        cover = await Dolder.download(albumcover, metadata['album'], 'jpg')
+        cover = await dolder.download(albumcover, metadata['album'], 'jpg')
         albumcover = cover['content']
 
     path, audiofile = extractor.extract(video['content'], metadata, albumcover)

@@ -1,7 +1,7 @@
 import os
 import re
 
-class extractor(object):
+class Extractor(object):
     '''
         params: P is the path of ffmpeg in your computer
 

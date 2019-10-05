@@ -8,10 +8,10 @@ for : integrate functional operation modules to package -- "core"
 from __future__ import barry_as_FLUFL
 
 
-__all__ = ['extractor', 'downloader']
+__all__ = ['Extractor', 'Downloader']
 __version__ = '0.1'
 __author__ = 'Kris Huang'
 
 
-from .extractor import extractor
-from .downloader import downloader
+from .extractor import Extractor
+from .downloader import Downloader
