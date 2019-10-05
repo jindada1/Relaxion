@@ -29,7 +29,7 @@ class args_check(object):
         params["err"] = ""
         return params
 
-    async def errorHandler(errmsg):
+    async def errorHandler(self, errmsg):
         return web.Response(text=errmsg)
 
 
@@ -82,6 +82,38 @@ class check_args_get(args_check):
         return wrapper
 
 
+class pltf_get(args_check):
+    '''
+    Get from platforms 
+    '''
+    def __init__(self, argSchema):
+
+        args_check.__init__(self, argSchema)
+
+    def __call__(self, handler):
+
+        async def wrapper(caller, request):
+            # print("%s is running" % handler.__name__)
+            platform = request.match_info['platform']
+            req = request.path_qs
+            print(req)
+
+            # filter invalid platforms
+            if caller.parser[platform]:
+                validation = self._validate(request.rel_url.query)
+
+                if validation['err']:
+                    return await self.errorHandler(validation['err'])
+
+                else:
+                    return await handler(caller, caller.parser[platform], validation)
+
+            # handle error platforms
+            return await self.errorHandler("platform: %s is not supported" % platform)
+
+        return wrapper
+
+
 class BaseView(object):
     '''
     this class is a basic View, which contains some basic functions
@@ -92,3 +124,12 @@ class BaseView(object):
 
     def _json_response(self, dict_resp):
         return web.json_response(dict_resp)
+
+    def _textmsg(self, msg):
+        return web.Response(text=msg)
+
+    def _send_file(self, file_path):
+        return web.FileResponse(file_path)
+
+    def _redrict_to(self, url):
+        return web.HTTPFound(url)

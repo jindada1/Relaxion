@@ -8,9 +8,10 @@ from __future__ import barry_as_FLUFL
 
 
 
-__all__ = ['Cores', 'Users']
+__all__ = ['Cores', 'Users', 'Platforms']
 __version__ = '0.1'
 __author__ = 'Kris Huang'
 
 from .cores import Cores
 from .users import Users
+from .platforms import Platforms

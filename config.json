@@ -5,7 +5,7 @@
             "parser": "QQparser"
         },
         "wangyi": {
-            "third": "http:\\\\api.goldenproud.cn\\wangyi",
+            "third": "http://api.goldenproud.cn/wangyi",
             "parser": "WangYiparser"
         },
         "kugou": {

@@ -1,4 +1,5 @@
 from .baseview import BaseView, check_args_post, check_args_get
+import os
 
 class Cores(BaseView):
     '''
@@ -9,6 +10,25 @@ class Cores(BaseView):
         self.extractor = workers[0]
 
         self.downloader = workers[1]
+
+    async def index(self, request):
+        return self._send_file('./front/templates/index.html')
+
+
+    async def static(self, request):
+        filename = request.match_info['filename']
+        return self._send_file('./front/static/' + filename)
+
+    async def getResource(self, request):
+        ftype = request.match_info['ftype']
+        fname = request.match_info['fname']
+
+        path = os.path.join('./files/', ftype, fname)
+
+        if os.path.exists(path):
+            return self._send_file(path)
+
+        return self._textmsg("no file error")
 
     @check_args_post({
         'mvurl': "*",
