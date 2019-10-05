@@ -1,5 +1,5 @@
 import json
-from newviews import *
+from views import *
 from db import dbService
 from platforms import PraserService
 from core import Extractor, Downloader
