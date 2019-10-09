@@ -1,4 +1,4 @@
-from .baseview import BaseView, check_args_post, check_args_get
+from .baseview import BaseView, check_args_post, check_args_get, router_recorder
 import os
 
 class Cores(BaseView):
@@ -11,15 +11,21 @@ class Cores(BaseView):
 
         self.downloader = workers[1]
 
+    @router_recorder()
     async def index(self, request):
+
         return self._send_file('./front/templates/index.html')
 
-
+    @router_recorder()
     async def static(self, request):
+
         filename = request.match_info['filename']
+
         return self._send_file('./front/static/' + filename)
 
+    @router_recorder()
     async def getResource(self, request):
+
         ftype = request.match_info['ftype']
         fname = request.match_info['fname']
 

@@ -5,6 +5,21 @@
 
 from aiohttp import web
 
+class router_recorder(object):
+
+    def __init__(self):
+
+        pass
+
+    def __call__(self, handler):
+        async def wrapper(caller, request):
+            
+            req = request.path_qs
+            print(req)
+
+            return await handler(caller, request)
+
+        return wrapper
 
 class args_check(object):
 
