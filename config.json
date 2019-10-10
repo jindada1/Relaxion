@@ -15,14 +15,14 @@
     },
 
     "database": {
-        "path": ".\\db\\User.db"
+        "path": "./db/User.db"
     },
 
     "core-extract" : {
-        "ffmpeg-path": "F:\\tool\\ffmpeg\\bin\\"
+        "ffmpeg-path": "F:/tool/ffmpeg/bin/"
     },
 
     "mediafolder": {
-        "path": ".\\files\\"
+        "path": "./files/"
     }
 }

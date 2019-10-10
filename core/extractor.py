@@ -54,8 +54,11 @@ class Extractor(object):
     '''
     def __initFolders(self, mediafolder = None):
         
-        if not mediafolder or not os.path.exists(mediafolder):
+        if not mediafolder:
             mediafolder = os.getcwd()
+        
+        elif not os.path.exists(mediafolder):
+            os.makedirs(mediafolder)
         
         self.videoFolder = os.path.join(mediafolder, "videos")
         self.audioFolder = os.path.join(mediafolder, "audios")

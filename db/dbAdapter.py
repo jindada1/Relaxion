@@ -29,10 +29,12 @@ class dbAdapter(object):
         try:
             self.conn = sqlite3.connect(dbfile)
             self.cursor = self.conn.cursor()
+
+            self.cursor.execute('select * from {}'.format(table))
             print("[ok] find table:%s in %s" % (table, dbfile))
 
         except sqlite3.Error as e:
-            print("[err] failed to connect to %s" % dbfile)
+            print("[err] %s" % e)
 
     def __enter__(self):
 
