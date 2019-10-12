@@ -1,5 +1,7 @@
 import os
 import re
+import asyncio
+from functools import wraps, partial
 
 class Extractor(object):
     '''
@@ -79,6 +81,26 @@ class Extractor(object):
             metadata += "-metadata {0}={1} ".format(data[0], data[1].replace(" ",""))
 
         return metadata
+
+    
+    def async_wrap(func):
+
+        @wraps(func)
+        async def run(*args, loop=None, executor=None, **kwargs):
+
+            if loop is None:
+                loop = asyncio.get_event_loop()
+
+            pfunc = partial(func, *args, **kwargs)
+            return await loop.run_in_executor(executor, pfunc)
+
+        return run
+
+    
+    @async_wrap
+    def asyn_extract(self, videoname, meta = None, cover = None):
+        
+        return self.extract(videoname, meta, cover)
 
     '''
     interface for extract audio from local video file, and set cover img if exists
@@ -170,10 +192,9 @@ class Extractor(object):
         return self.__version
 
 
-
-if __name__ == '__main__':
-
-    e = extractor("F:\\tool\\ffmpeg\\bin\\", "F:\\Project\\Relaxion\\files")
+def single_test():
+    
+    e = Extractor("F:/tool/ffmpeg/bin/", "F:/Project/Relaxion/files")
 
     metadata = {
         'title': "说好不哭（with 五月天阿信）",
@@ -181,10 +202,60 @@ if __name__ == '__main__':
         'artist': "周杰伦"
     }
 
-    video = "F:\\Project\\Relaxion\\files\\videos\\说好不哭（with五月天阿信）.mp4"
-    pic = "F:\\Project\\Relaxion\\files\\pics\\说好不哭（with五月天阿信）.jpg"
+    video = "F:/Project/Relaxion/files/videos/说好不哭（with五月天阿信）.mp4"
+    pic = "F:/Project/Relaxion/files/pics/说好不哭（with五月天阿信）.jpg"
 
     a = e.extract(video, metadata, pic)
     
-    audio = "F:\\Project\\Relaxion\\files\\audios\\说好不哭（with五月天阿信）.mp3"
-    e.setinfo(audio, metadata)
+    # audio = "F:/Project/Relaxion/files/audios/说好不哭（with五月天阿信）.mp3"
+    # e.setinfo(audio, metadata)
+
+def async_tests():
+
+    e = Extractor("F:/tool/ffmpeg/bin/", "F:/Project/Relaxion/files")
+
+    folder = "F:/Project/Relaxion/files/videos"
+
+    files= os.listdir(folder)
+
+    tasks = []
+
+    for f in files:
+
+        fullpath = os.path.join(folder, f)
+        
+        metadata = {
+            'title': f,
+            'album': f,
+            'artist': "周杰伦"
+        }
+
+        task = e.asyn_extract(fullpath, metadata)
+
+        tasks.append(task)
+
+
+    loop = asyncio.get_event_loop()
+    
+    done, _ = loop.run_until_complete(asyncio.wait(tasks))
+
+    for fut in done:
+        print("return value is {}".format(fut.result()))
+
+    loop.close()
+
+
+
+if __name__ == '__main__':
+
+    import time
+
+    now = lambda: time.time()
+
+    start = now()
+
+    async_tests()
+    # single_test()
+
+    print('TIME: ', now() - start)
+
