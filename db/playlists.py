@@ -3,9 +3,9 @@ handle the operation on user's playlist
 '''
 
 try:
-    from .dbAdapter import dbAdapter
+    from .adapter import dbAdapter
 except:
-    from dbAdapter import dbAdapter
+    from adapter import dbAdapter
 
 
 

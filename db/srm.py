@@ -1,11 +1,11 @@
 try:
-    from .userAdapter import userAdapter
-    from .listAdapter import listAdapter
-    from .songAdapter import songAdapter
+    from .users import userAdapter
+    from .songs import songAdapter
+    from .playlists import listAdapter
 except:
-    from userAdapter import userAdapter
-    from listAdapter import listAdapter
-    from songAdapter import songAdapter
+    from users import userAdapter
+    from songs import songAdapter
+    from playlists import listAdapter
 
 import json
 
@@ -81,6 +81,12 @@ class dbService(object):
 
 
 if __name__ == '__main__':
-    localdb = dbService('User.db')
+    
+    import os, sys
+
+    dbf = os.path.join(sys.path[0], "User.db")
+    
+    localdb = dbService(dbf)
+    
     # √ print(localdb.get_songlist('Kris'))
     # √ print(localdb.login({'name':'Kris','pw':'1234'}))

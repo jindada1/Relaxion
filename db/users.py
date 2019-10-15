@@ -1,7 +1,12 @@
+
+'''
+handle the operation on user sign in/up and info
+'''
+
 try:
-    from .dbAdapter import dbAdapter
+    from .adapter import dbAdapter
 except:
-    from dbAdapter import dbAdapter
+    from adapter import dbAdapter
 
 
 class userAdapter(dbAdapter):

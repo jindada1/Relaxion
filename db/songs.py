@@ -1,12 +1,12 @@
-try:
-    from .dbAdapter import dbAdapter
-except:
-    from dbAdapter import dbAdapter
-
-
 '''
 handle the operation on song info and download
 '''
+
+
+try:
+    from .adapter import dbAdapter
+except:
+    from adapter import dbAdapter
 
 
 class songAdapter(dbAdapter):

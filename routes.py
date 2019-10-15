@@ -4,8 +4,8 @@ from db import dbService
 from platforms import PraserService
 from core import Extractor, Downloader
 
-def setup_routes(app):
-    
+def register_services():
+
     with open('./config.json', 'r') as f:
         cfg = json.loads(f.read())
         
@@ -14,14 +14,22 @@ def setup_routes(app):
         ffmpegpath = cfg['core-extract']["ffmpeg-path"]
         mediafolder = cfg['mediafolder']["path"]
 
-    parser = PraserService(platforms_cfg)
-    extractor = Extractor(ffmpegpath, mediafolder)
-    dolder = Downloader(mediafolder)
-    localdb = dbService(dbpath)
+        parser = PraserService(platforms_cfg)
+        extractor = Extractor(ffmpegpath, mediafolder)
+        dolder = Downloader(mediafolder)
+        localdb = dbService(dbpath)
 
-    core = Cores([extractor, dolder])
-    user = Users([localdb])
-    platform = Platforms([parser])
+        return (
+            Cores([extractor, dolder]),
+            Users([localdb]),
+            Platforms([parser])
+        )
+
+
+def setup_routes(app):
+
+    # register services
+    core, user, platform = register_services()
 
     # index html
     app.router.add_get('/', core.index)

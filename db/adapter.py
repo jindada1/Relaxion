@@ -14,7 +14,6 @@ refer :
 '''
 
 import sqlite3
-import json
 
 
 class dbAdapter(object):
@@ -29,9 +28,10 @@ class dbAdapter(object):
         try:
             self.conn = sqlite3.connect(dbfile)
             self.cursor = self.conn.cursor()
-
+            print("[ok] connect db file %s" % dbfile)
+            
             self.cursor.execute('select * from {}'.format(table))
-            print("[ok] find table:%s in %s" % (table, dbfile))
+            print("[ok] find table:%s" % table)
 
         except sqlite3.Error as e:
             print("[err] %s" % e)
