@@ -1,13 +1,15 @@
 '''
 
-    integrate all functional modules and return service instance
+    integrate all functional modules and services into views instance
+
+    return views instance out
 
 '''
 import json
 from views import *
-from db import dbService
-from platforms import PraserService
-from core import Extractor, Downloader
+from db import *
+from platforms import *
+from core import *
 
 def register_services():
 
