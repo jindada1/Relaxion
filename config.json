@@ -11,6 +11,10 @@
         "kugou": {
             "third": "",
             "parser": "KuGou"
+        },
+        "youku": {
+            "third": "",
+            "parser": "YouKu"
         }
     },
 

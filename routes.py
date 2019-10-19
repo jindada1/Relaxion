@@ -72,7 +72,7 @@ def setup_routes(app):
     video creepers
     '''
     # video uris
-    # app.router.add_get('/{platform}/uri/video', platform.videoUri)
+    app.router.add_get('/{platform}/uri/video', platform.videoUri)
 
     '''
         local service

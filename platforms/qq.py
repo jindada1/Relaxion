@@ -136,7 +136,7 @@ class QQ(Music):
     async def mvuri(self, mvid):
 
         params = {
-            'data': self._jsonify({
+            'data': self.jsonify({
                 "getMvUrl": {
                     "module": "gosrf.Stream.MvUrlProxy",
                     "method": "GetMvUrls",

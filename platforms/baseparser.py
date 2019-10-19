@@ -8,8 +8,10 @@ for : parse data from other platforms to the format of our platform
 # define data schema of our platform
 
 from aiohttp import ClientSession
+import time
 import json
 import base64
+import urllib
 
 
 class Base(object):
@@ -22,53 +24,67 @@ class Base(object):
         self.thirdparty = third
         
         if third:
-            
             print("[ok] connect %s to third party server: %s" % (name, self.thirdparty))
 
         else:
             print("[ok] construct %s" % name)
 
 
-    async def _asyncGetText(self, url, params):
+    async def _asyncGetHeaders(self, url, params = None):
+        async with ClientSession() as session:
+            resp = await session.get(url, params=params)
+            return resp.headers
+
+    async def _asyncGetText(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
             return await resp.text()
 
 
-    async def _asyncGetJson(self, url, params):
+    async def _asyncGetJson(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
             return json.loads(await resp.text())
 
 
-    async def _asyncPostJson(self, url, params):
+    async def _asyncPostJson(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.post(url, data=params)
             return json.loads(await resp.text())
 
 
-    async def _asyncGetJsonHeaders(self, url, params):
+    async def _asyncGetJsonHeaders(self, url, params = None):
         async with ClientSession() as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
                 a = await resp.text()
                 return json.loads(a)
 
 
-    async def _asyncGetJsonHeadersCookies(self, url, params):
+    async def _asyncGetJsonHeadersCookies(self, url, params = None):
         async with ClientSession(cookies=self.cookies) as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
                 a = await resp.text()
                 return json.loads(a)
 
 
-    def _jsonify(self, _dict):
+    def jsonify(self, _dict):
 
         return json.dumps(_dict).replace(" ", '')
 
 
-    def _base64(self, text):
+    def base64(self, text):
         
         return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+    @property
+    def now_str(self):
+
+        return str(int(time.time()))
+
+    def quote_cna(self, val):
+        if '%' in val:
+            return val
+        return urllib.parse.quote(val)
 
 
 

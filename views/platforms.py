@@ -125,6 +125,11 @@ class Platforms(BaseView):
         n = params['num']
         return self._json_response(await P.songsinList(dissid, p, n))
 
+    @pltf_get({'id': "*"})
+    async def videoUri(self, P, params):
+        _id = params['id']
+        return self._json_response(await P.videouri(_id))
+
     # get lyric of a song
 
     @redrict
