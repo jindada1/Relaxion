@@ -2,15 +2,15 @@
     "platforms": {
         "qq": {
             "third": "",
-            "parser": "QQparser"
+            "parser": "QQ"
         },
         "wangyi": {
             "third": "http://api.goldenproud.cn/wangyi",
-            "parser": "WangYiparser"
+            "parser": "WangYi"
         },
         "kugou": {
             "third": "",
-            "parser": "KuGouparser"
+            "parser": "KuGou"
         }
     },
 

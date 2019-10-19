@@ -12,4 +12,4 @@ __all__ = ['PraserService']
 __version__ = '0.1'
 __author__ = 'Kris Huang'
 
-from .parseService import PraserService
+from .parser import PraserService

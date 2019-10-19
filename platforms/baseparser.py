@@ -12,15 +12,17 @@ import json
 import base64
 
 
-class baseParser(object):
+class Base(object):
 
     def __init__(self, **kwargs):
 
         third = kwargs["third"]
         name = kwargs["name"]
-
+        
+        self.thirdparty = third
+        
         if third:
-            self.thirdparty = third
+            
             print("[ok] connect %s to third party server: %s" % (name, self.thirdparty))
 
         else:
@@ -32,27 +34,49 @@ class baseParser(object):
             resp = await session.get(url, params=params)
             return await resp.text()
 
+
     async def _asyncGetJson(self, url, params):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
             return json.loads(await resp.text())
+
 
     async def _asyncPostJson(self, url, params):
         async with ClientSession() as session:
             resp = await session.post(url, data=params)
             return json.loads(await resp.text())
 
-    async def asyncGetJsonHeaders(self, url, params):
+
+    async def _asyncGetJsonHeaders(self, url, params):
         async with ClientSession() as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
                 a = await resp.text()
                 return json.loads(a)
 
-    async def asyncGetJsonHeadersCookies(self, url, params):
+
+    async def _asyncGetJsonHeadersCookies(self, url, params):
         async with ClientSession(cookies=self.cookies) as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
                 a = await resp.text()
                 return json.loads(a)
+
+
+    def _jsonify(self, _dict):
+
+        return json.dumps(_dict).replace(" ", '')
+
+
+    def _base64(self, text):
+        
+        return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+
+
+class Music(Base):
+
+    def __init__(self, **kwargs):
+
+        Base.__init__(self, **kwargs)
 
     def _getname(self, singers):
         artist = ""
@@ -123,14 +147,6 @@ class baseParser(object):
             "songnum": songnum
         }
 
-    def _base64(self, text):
-        
-        return base64.b64decode(text).decode(encoding="utf-8-sig")
-
-    def _jsonify(self, _dict):
-
-        return json.dumps(_dict).replace(" ", '')
-
     async def searchSong(self, k, p, n):
         return "base search result"
 
@@ -154,3 +170,15 @@ class baseParser(object):
 
     async def songsinAlbum(self, _id):
         return "songsinAlbum"
+
+class Video(Base):
+    
+    def __init__(self, **kwargs):
+
+        Base.__init__(self, **kwargs)
+
+    def search(self, _id):
+        pass
+    
+    def videouri(self, _id):
+        pass

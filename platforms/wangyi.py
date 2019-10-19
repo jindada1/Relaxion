@@ -1,13 +1,13 @@
 try:
-    from .baseparser import baseParser
+    from .baseparser import Music
 except:
-    from baseparser import baseParser
+    from baseparser import Music
 
 
-class WangYiparser(baseParser):
+class WangYi(Music):
     def __init__(self, thirdparty = None):
 
-        baseParser.__init__(self, name = "WangYi", third = thirdparty)
+        Music.__init__(self, name = "WangYi", third = thirdparty)
 
     # override, return object
     async def searchSong(self, k, p, n):
@@ -279,7 +279,7 @@ class WangYiparser(baseParser):
 
 
 async def __test():
-    p = WangYiparser("http://api.goldenproud.cn/wangyi")
+    p = WangYi("http://api.goldenproud.cn/wangyi")
     searchkey = "林俊杰"
     page = 1
     num = 20

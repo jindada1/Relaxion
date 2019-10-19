@@ -6,15 +6,15 @@ for : get data from qq music directly
 '''
 
 try:
-    from .baseparser import baseParser
+    from .baseparser import Music
 except:
-    from baseparser import baseParser
+    from baseparser import Music
 
 
-class QQparser(baseParser):
+class QQ(Music):
     def __init__(self, thirdparty = None):
 
-        baseParser.__init__(self, name = "QQ", third = thirdparty)
+        Music.__init__(self, name = "QQ", third = thirdparty)
 
         self.headers = {
             'referer': 'http://y.qq.com',
@@ -149,7 +149,7 @@ class QQparser(baseParser):
         }
 
         api = "https://u.y.qq.com/cgi-bin/musicu.fcg"
-        jsonresp = await self.asyncGetJsonHeaders(api, params=params)
+        jsonresp = await self._asyncGetJsonHeaders(api, params=params)
 
         mp4s = jsonresp['getMvUrl']['data'][mvid]['mp4']
         i = len(mp4s)
@@ -174,7 +174,7 @@ class QQparser(baseParser):
             "idforres": _id
         }
         # this api is coincident with your creeper service
-        api = "%s/song" % self.thirdparty
+        # api = "%s/song" % self.thirdparty
         # jsonresp = await self._asyncGetJson(api, params=params)
         return self._uri()
 
@@ -194,7 +194,7 @@ class QQparser(baseParser):
         }
 
         api = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg"
-        jsonresp = await self.asyncGetJsonHeaders(api, params=params)
+        jsonresp = await self._asyncGetJsonHeaders(api, params=params)
 
         try:
             lyric = jsonresp['lyric']
@@ -225,7 +225,7 @@ class QQparser(baseParser):
         }
 
         api = "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg"
-        jsonresp = await self.asyncGetJsonHeaders(api, params=params)
+        jsonresp = await self._asyncGetJsonHeaders(api, params=params)
 
         result = {'songs': []}
         append = result['songs'].append
@@ -298,7 +298,7 @@ class QQparser(baseParser):
 
         api = "https://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg"
         data = await self._asyncGetJson(api, params=params)
-        print(data)
+
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
                   'normal': {'num': 0, 'comments': []}}
@@ -348,7 +348,7 @@ class QQparser(baseParser):
         }
 
         api = "https://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg"
-        jsonresp = await self.asyncGetJsonHeadersCookies(api, params=params)
+        jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
 
         data = jsonresp['data']
         res = {"allLists": [self._songlist(
@@ -380,7 +380,7 @@ class QQparser(baseParser):
         }
 
         api = "https://c.y.qq.com/soso/fcgi-bin/client_search_user"
-        user = self.asyncGetJsonHeadersCookies['data']['user']['list'][0]
+        user = self._asyncGetJsonHeadersCookies['data']['user']['list'][0]
         result = {
             'title': user['title'],
             'pic': user['pic'],
@@ -390,7 +390,7 @@ class QQparser(baseParser):
 
 
 async def __test():
-    p = QQparser()
+    p = QQ()
     searchkey = "周杰伦"
     page = 2
     num = 20

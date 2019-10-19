@@ -6,15 +6,15 @@ for : get data from kugou music directly
 '''
 
 try:
-    from .baseparser import baseParser
+    from .baseparser import Music
 except:
-    from baseparser import baseParser
+    from baseparser import Music
 
 
-class KuGouparser(baseParser):
+class KuGou(Music):
     def __init__(self, thirdparty = None):
 
-        baseParser.__init__(self, name = "KuGou", third = thirdparty)
+        Music.__init__(self, name = "KuGou", third = thirdparty)
         
         self.cookies = {
             "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',
@@ -300,7 +300,7 @@ class KuGouparser(baseParser):
         
         api = "https://wwwapi.kugou.com/yy/index.php"
 
-        result = await self.asyncGetJsonHeadersCookies(api, params=params)
+        result = await self._asyncGetJsonHeadersCookies(api, params=params)
 
         img = result['data']['img']
 
@@ -308,7 +308,7 @@ class KuGouparser(baseParser):
 
 
 async def __test():
-    p = KuGouparser()
+    p = KuGou()
     searchkey = "周杰伦"
     page = 2
     num = 10

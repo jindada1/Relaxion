@@ -5,9 +5,10 @@ by  :  Kris Huang
 for : init data formater of other paltforms
 '''
 
-from .qqmusic import QQparser
-from .wangyimusic import WangYiparser
-from .kugoumusic import KuGouparser
+from .qq import QQ
+from .wangyi import WangYi
+from .kugou import KuGou
+from .youku import YouKu
 
 class PraserService(object):
     def __init__(self, cfg):

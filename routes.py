@@ -22,7 +22,7 @@ def setup_routes(app):
     app.router.add_post('/extract', core.extractAudio)
 
     '''
-    Creepers from platform
+    music creepers
     '''
 
     # search and return song
@@ -66,6 +66,13 @@ def setup_routes(app):
 
     # redirect pic
     app.router.add_get('/{platform}/albumcover/{id}', platform.albumPic)
+    
+
+    '''
+    video creepers
+    '''
+    # video uris
+    # app.router.add_get('/{platform}/uri/video', platform.videoUri)
 
     '''
         local service
