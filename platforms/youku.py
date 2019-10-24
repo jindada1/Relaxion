@@ -42,14 +42,9 @@ class YouKu(Video):
 
         Video.__init__(self, name = "YouKu", third = thirdparty)
 
-        self.page = None
-        self.password = None
-
         self.dispatcher_url = 'vali.cp31.ott.cibntv.net'
 
         self.ccode = '0519'
-        # Found in http://g.alicdn.com/player/ykplayer/0.5.64/youku-player.min.js
-        # grep -oE '"[0-9a-zA-Z+/=]{256}"' youku-player.min.js
         self.ckey = 'DIl58SLFxFNndSV1GFNnMQVYkx1PP5tKe1siZu/86PR1u/Wh1Ptd+WOZsHHWxysSfAOhNJpdVWsdVJNsfJ8Sxd8WKVvNfAS8aS8fAOzYARzPyPc3JvtnPHjTdKfESTdnuTW6ZPvk2pNDh4uFzotgdMEFkzQ5wZVXl2Pf1/Y6hLK0OnCNxBj3+nb0v72gZ6b0td+WOZsHHWxysSo/0y9D2K42SaB8Y/+aD2K42SaB8Y/+ahU+WOZsHcrxysooUeND'
         self.utid = None
 
@@ -95,6 +90,8 @@ class YouKu(Video):
         data_error = resp_data.get('error')
 
         if data_error:
+            
+            self.utid = await self.fetch_cna()
             return data_error
 
         stream_types = dict([(i['id'], i) for i in self.stream_types])
@@ -109,38 +106,28 @@ class YouKu(Video):
                 if 'alias-of' in stream_types[stream_id]:
                     stream_id = stream_types[stream_id]['alias-of']
 
+                src = []
+                for seg in stream['segs']:
+                    if seg.get('cdn_url'):
+                        src.append(self.change_cdn(seg['cdn_url']))
+                    else:
+                        is_preview = True
+
                 if stream_id not in results:
                     results[stream_id] = {
                         'container': stream_types[stream_id]['container'],
                         'video_profile': stream_types[stream_id]['video_profile'],
                         'size': stream['size'],
-                        'pieces': [{
-                            'segs': stream['segs']
-                        }],
                         'm3u8_url': stream['m3u8_url']
                     }
-                    src = []
-                    for seg in stream['segs']:
-                        if seg.get('cdn_url'):
-                            src.append(self.change_cdn(seg['cdn_url']))
-                        else:
-                            is_preview = True
                     results[stream_id]['src'] = src
+
                 else:
                     results[stream_id]['size'] += stream['size']
-                    results[stream_id]['pieces'].append({
-                        'segs': stream['segs']
-                    })
-                    src = []
-                    for seg in stream['segs']:
-                        if seg.get('cdn_url'):
-                            src.append(self.change_cdn(seg['cdn_url']))
-                        else:
-                            is_preview = True
                     results[stream_id]['src'].extend(src)
 
             if is_preview:
-                print('{} is a preview'.format(stream_id))
+                results['info'] = '{} is a preview'.format(stream_id)
 
         return results
 
@@ -158,7 +145,6 @@ class YouKu(Video):
                 if name == 'cna':
                     return self.quote_cna(value)
         
-        print('It seems that the client failed to fetch a cna cookie. Please load your own cookie if possible')
         return self.quote_cna('DOG4EdW4qzsCAbZyXbU+t7Jt')
 
 
