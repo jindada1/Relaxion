@@ -86,6 +86,13 @@ class Base(object):
             return val
         return urllib.parse.quote(val)
 
+    def split_url(self, url):
+
+        return urllib.parse.urlsplit(url)
+
+    def unsplit_url(self, url):
+
+        return urllib.parse.urlunsplit(url)
 
 
 class Music(Base):

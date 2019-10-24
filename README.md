@@ -37,6 +37,8 @@
 
 ### 优酷
 
+- [x] 通过输入视频 id，获取该视频资源链接
+
 ## 文档与说明
 
 + apigateway 文档 [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
