@@ -4,6 +4,28 @@
 '''
 
 from aiohttp import web
+import time
+
+class logger(object):
+    
+    infofile = './logs/records.txt'
+
+    @classmethod
+    def log_info(cls, info):
+
+        t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        
+        mid = info.split('//')[1]
+
+        # get the query string. e.g., /app/blog?id=10
+        cls.__writeline("%s -ROUTE: %s" % (t, mid[mid.find('/'):]))
+
+    def __writeline(line):
+
+        with open(logger.infofile, 'a') as f:
+            
+            f.write(line + '\n')
+
 
 class router_recorder(object):
 
@@ -14,8 +36,8 @@ class router_recorder(object):
     def __call__(self, handler):
         async def wrapper(caller, request):
             
-            req = request.path_qs
-            print(req)
+            req = request.url.human_repr()
+            logger.log_info(req)
 
             return await handler(caller, request)
 
@@ -57,8 +79,8 @@ class check_args_post(args_check):
     def __call__(self, handler):
         async def wrapper(caller, request):
             # print("%s is running" % handler.__name__)
-            req = request.path_qs
-            print(req)
+            req = request.url.human_repr()
+            logger.log_info(req)
 
             # get form data
             data = await request.json()
@@ -83,8 +105,8 @@ class check_args_get(args_check):
     def __call__(self, handler):
         def wrapper(caller, request):
             # print("%s is running" % handler.__name__)
-            req = request.path_qs
-            print(req)
+            req = request.url.human_repr()
+            logger.log_info(req)
 
             # validate arguments in request according to self.argSchema
             validation = self._validate(request.rel_url.query)
@@ -110,8 +132,8 @@ class pltf_get(args_check):
         async def wrapper(caller, request):
             # print("%s is running" % handler.__name__)
             platform = request.match_info['platform']
-            req = request.path_qs
-            print(req)
+            req = request.url.human_repr()
+            logger.log_info(req)
 
             # filter invalid platforms
             if caller.parser[platform]:

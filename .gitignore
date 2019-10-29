@@ -12,3 +12,5 @@ db/__pycache__
 */__pycache__
 
 files/
+
+logs/
