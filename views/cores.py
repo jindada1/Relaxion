@@ -7,14 +7,42 @@ class Cores(BaseView):
     '''
     def __init__(self, workers):
 
+        self.__init_path()
+
         self.extractor = workers[0]
 
         self.downloader = workers[1]
 
+    def __init_path(self):
+
+        root = os.getcwd()
+
+        self.front_path = os.path.join(root, 'front')
+
+        self.resource_path = os.path.join(root, 'files')
+
     @router_recorder()
     async def index(self, request):
 
-        return self._send_file('./front/templates/index.html')
+        f = os.path.join(self.front_path, 'templates', 'index.html')
+
+        if os.path.exists(f):
+            return self._send_file('./front/templates/index.html')
+        
+        return self._json_response({'err': "no index file"})
+
+    @router_recorder()
+    async def pages(self, request):
+
+        page = request.match_info['page']
+        page = page.split('.')[0] + '.html'
+
+        f = os.path.join(self.front_path, 'templates', page)
+
+        if os.path.exists(f):
+            return self._send_file(f)
+
+        return self._json_response({'err': "no html file named %s" % page})
 
     @router_recorder()
     async def static(self, request):

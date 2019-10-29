@@ -12,6 +12,9 @@ def setup_routes(app):
     # index html
     app.router.add_get('/', core.index)
 
+    # html page
+    app.router.add_get('/pages/{page}', core.pages)
+
     # return frontend static files
     app.router.add_get('/static/{filename}', core.static)
 
