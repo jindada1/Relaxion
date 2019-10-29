@@ -39,66 +39,115 @@ $(document).ready(function () {
         return;
     }
 
-    $("body").prepend('<div class="BlogAnchor">' +
-
-        '<p class="html_header">' +
-        '<span></span>' +
-        '</p>' +
-        '<div class="AnchorContent" id="AnchorContent"> </div>' +
-        '</div>');
-
-    var vH1Index = 0;
-    var vH2Index = 0;
-    $("body").find("h1,h2,h3,h4,h5,h6").each(function (i, item) {
-        var id = '';
-        var name = '';
-        var tag = $(item).get(0).tagName.toLowerCase();
-        var className = '';
-        if (tag == vH1Tag) {
-            id = name = ++vH1Index;
-            name = id;
-            vH2Index = 0;
-            className = 'item_h1';
-        } else if (tag == vH2Tag) {
-            id = vH1Index + '_' + ++vH2Index;
-            name = vH1Index + '.' + vH2Index;
-            className = 'item_h2';
-        }
-        $(item).attr("id", "wow" + id);
-        $(item).addClass("wow_head");
-        $("#AnchorContent").css('max-height', ($(window).height() - 80) + 'px');
-        $("#AnchorContent").append('<li><a class="nav_item ' + className + ' anchor-link" onclick="return false;" href="#" link="#wow' + id + '">' + "" + "" + $(this).text() + '</a></li>');
-    });
-
-
-    $(".anchor-link").click(function () {
-        $("html,body").animate({ scrollTop: $($(this).attr("link")).offset().top }, 500);
-    });
-
-    var headerNavs = $(".BlogAnchor li .nav_item");
-    var headerTops = [];
-    $(".wow_head").each(function (i, n) {
-        headerTops.push($(n).offset().top);
-    });
-    $(window).scroll(function () {
-        var scrollTop = $(window).scrollTop();
-        $.each(headerTops, function (i, n) {
-            var distance = n - scrollTop;
-            if (distance >= 0) {
-                $(".BlogAnchor li .nav_item.current").removeClass('current');
-                $(headerNavs[i]).addClass('current');
-                return false;
-            }
-        });
-    });
-
-    if (!showNavBar) {
-        $('.BlogAnchor').hide();
+    if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        add_mobile()
+    } else {
+        add_pc();
     }
-    if (!expandNavBar) {
-        $(this).html("目录▼");
-        $(this).attr({ "title": "展开" });
-        $("#AnchorContent").hide();
+
+
+    function add_mobile(){
+
+        $("body").prepend('<div class="MobileAnchor">' +
+            '<div id="MobileContent"> </div>' +
+            '</div>');
+        
+        var vH1Index = 0;
+        $("body").find("h1").each(function (i, item) {
+            var name = '';
+            var tag = $(item).get(0).tagName.toLowerCase();
+            
+            $(item).attr("id", "wow" + i);
+            $(item).addClass("wow_head");
+            // $("#MobileContent").css('max-height', ($(window).height() - 80) + 'px');
+            $("#MobileContent").append('<li><a class="m_nav_item anchor-link" onclick="return false;" href="#" link="#wow' + i + '">' + "" + "" + $(this).text() + '</a></li>');
+        });
+
+        $(".anchor-link").click(function () {
+            $("html,body").animate({ scrollTop: $($(this).attr("link")).offset().top }, 500);
+        });
+
+        var headerNavs = $(".MobileAnchor li .m_nav_item");
+        var headerTops = [];
+        $(".wow_head").each(function (i, n) {
+            headerTops.push($(n).offset().top);
+        });
+        $(window).scroll(function () {
+            var scrollTop = $(window).scrollTop();
+            $.each(headerTops, function (i, n) {
+                var distance = n - scrollTop;
+                if (distance >= 0) {
+                    $(".MobileAnchor li .m_nav_item.current").removeClass('current');
+                    $(headerNavs[i-1]).addClass('current');
+                    return false;
+                }
+            });
+        });
+    }
+
+    function add_pc() {
+
+        $("body").prepend('<div class="BlogAnchor">' +
+
+            '<p class="html_header">' +
+            '<span></span>' +
+            '</p>' +
+            '<div class="AnchorContent" id="AnchorContent"> </div>' +
+            '</div>');
+
+        var vH1Index = 0;
+        var vH2Index = 0;
+        $("body").find("h1,h2,h3,h4,h5,h6").each(function (i, item) {
+            var id = '';
+            var name = '';
+            var tag = $(item).get(0).tagName.toLowerCase();
+            var className = '';
+            if (tag == vH1Tag) {
+                id = name = ++vH1Index;
+                name = id;
+                vH2Index = 0;
+                className = 'item_h1';
+            } else if (tag == vH2Tag) {
+                id = vH1Index + '_' + ++vH2Index;
+                name = vH1Index + '.' + vH2Index;
+                className = 'item_h2';
+            }
+            $(item).attr("id", "wow" + id);
+            $(item).addClass("wow_head");
+            $("#AnchorContent").css('max-height', ($(window).height() - 80) + 'px');
+            $("#AnchorContent").append('<li><a class="nav_item ' + className + ' anchor-link" onclick="return false;" href="#" link="#wow' + id + '">' + "" + "" + $(this).text() + '</a></li>');
+        });
+
+
+        $(".anchor-link").click(function () {
+            $("html,body").animate({ scrollTop: $($(this).attr("link")).offset().top }, 500);
+        });
+
+        var headerNavs = $(".BlogAnchor li .nav_item");
+        var headerTops = [];
+        $(".wow_head").each(function (i, n) {
+            headerTops.push($(n).offset().top);
+        });
+        $(window).scroll(function () {
+            var scrollTop = $(window).scrollTop();
+            $.each(headerTops, function (i, n) {
+                var distance = n - scrollTop;
+                if (distance >= 0) {
+                    $(".BlogAnchor li .nav_item.current").removeClass('current');
+                    $(headerNavs[i]).addClass('current');
+                    return false;
+                }
+            });
+        });
+
+        if (!showNavBar) {
+            $('.BlogAnchor').hide();
+        }
+        if (!expandNavBar) {
+            $(this).html("目录▼");
+            $(this).attr({ "title": "展开" });
+            $("#AnchorContent").hide();
+        }
     }
 });
 

@@ -164,3 +164,49 @@
         display: block;
         border-radius: 0px;
     }
+
+
+    .MobileAnchor {
+        background: white;
+        padding: 10px 0 ;
+        line-height: 120%;
+        position: fixed;
+        z-index: 9;
+        height: 100%;
+        width: 26px;
+        left: 0;
+        top: 0;
+        border-right: 1px solid #E6ECF1;
+    }
+
+    .MobileAnchor #AnchorContent {
+        overflow: auto;
+    }
+    .MobileAnchor li{
+        text-indent: 1.5rem;
+        font-size: 10px;
+        list-style: none;
+        padding: 0px;
+    }
+
+    .MobileAnchor a {
+        margin-left: -16px;
+        text-decoration: none;
+        color: #333;
+        display: block;
+        border-radius: 0px;
+    }
+
+    .MobileAnchor a:hover {
+        color: #087cd2  ;
+        background:rgba(238,242,249,.5);
+    }
+    
+    .MobileAnchor li .m_nav_item.current{
+        color: #087cd2;
+        background-color: rgba(238,242,249,.8);
+        border-left:4px solid #087cd2;
+        text-indent: 20px;
+        font-weight: bold;
+
+    }
