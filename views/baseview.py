@@ -6,24 +6,43 @@
 from aiohttp import web
 import time
 
+
 class logger(object):
-    
+
     infofile = './logs/records.txt'
 
     @classmethod
-    def log_info(cls, info):
+    def get_query_route(cls, req):
 
         t = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        
-        mid = info.split('//')[1]
+
+        mid = req.split('//')[1]
+
+        return (t, mid[mid.find('/'):])
+
+    @classmethod
+    def log_get(cls, info):
+
+        time, query = cls.get_query_route(info)
 
         # get the query string. e.g., /app/blog?id=10
-        cls.__writeline("%s -ROUTE: %s" % (t, mid[mid.find('/'):]))
+        cls.__writeline("%s - %5s: %s" % (time, 'GET', query))
 
-    def __writeline(line):
+    @classmethod
+    def log_post(cls, info, data):
 
+        time, query = cls.get_query_route(info)
+
+        # get the query string. e.g., /app/blog?id=10
+        cls.__writeline("%s - %5s: %s - DATA: %s" %
+                        (time, 'POST', query, data))
+
+    @classmethod
+    def __writeline(cls, line):
+        
+        print(line)
         with open(logger.infofile, 'a') as f:
-            
+
             f.write(line + '\n')
 
 
@@ -35,13 +54,14 @@ class router_recorder(object):
 
     def __call__(self, handler):
         async def wrapper(caller, request):
-            
+
             req = request.url.human_repr()
-            logger.log_info(req)
+            logger.log_get(req)
 
             return await handler(caller, request)
 
         return wrapper
+
 
 class args_check(object):
 
@@ -80,10 +100,11 @@ class check_args_post(args_check):
         async def wrapper(caller, request):
             # print("%s is running" % handler.__name__)
             req = request.url.human_repr()
-            logger.log_info(req)
 
             # get form data
             data = await request.json()
+
+            logger.log_post(req, data)
 
             # validate arguments in request according to self.argSchema
             validation = self._validate(data)
@@ -106,7 +127,7 @@ class check_args_get(args_check):
         def wrapper(caller, request):
             # print("%s is running" % handler.__name__)
             req = request.url.human_repr()
-            logger.log_info(req)
+            logger.log_get(req)
 
             # validate arguments in request according to self.argSchema
             validation = self._validate(request.rel_url.query)
@@ -123,6 +144,7 @@ class pltf_get(args_check):
     '''
     Get from platforms 
     '''
+
     def __init__(self, argSchema):
 
         args_check.__init__(self, argSchema)
@@ -133,7 +155,7 @@ class pltf_get(args_check):
             # print("%s is running" % handler.__name__)
             platform = request.match_info['platform']
             req = request.url.human_repr()
-            logger.log_info(req)
+            logger.log_get(req)
 
             # filter invalid platforms
             if caller.parser[platform]:
@@ -149,6 +171,25 @@ class pltf_get(args_check):
             return await self.errorHandler("platform: %s is not supported" % platform)
 
         return wrapper
+
+
+def redrict(handler):
+    def wrapper(caller, request):
+
+        # print("%s is running" % handler.__name__)
+        platform = request.match_info['platform']
+        _id = request.match_info['id']
+        req = request.url.human_repr()
+        logger.log_get(req)
+
+        # filter invalid platforms
+        if caller.parser[platform]:
+            return handler(caller, caller.parser[platform], _id)
+            
+        # handle error platforms
+        return caller._textmsg(caller, "platform: %s is not supported" % platform)
+
+    return wrapper
 
 
 class BaseView(object):
