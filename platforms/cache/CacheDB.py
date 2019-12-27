@@ -51,7 +51,7 @@ def updateMusicQuality(songmid,quality,time):
 def addMusicQuality(songmid,quality,time):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO SONGQUALITIES (SONGMID,QUALITY,TIME)  VALUES (?, ?, ?)",(songmid,quality,time,));
+    c.execute("INSERT INTO SONGQUALITIES (SONGMID,QUALITY,TIME)  VALUES (?, ?, ?)",(songmid,quality,time,))
     conn.commit()
     conn.close()
 
@@ -65,7 +65,7 @@ def deleteMusicQuality(songmid):
 def addQQLyric(songmid,lyric):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO QQLyric (SONGMID,LYRIC)  VALUES (?, ?)",(songmid,lyric,));
+    c.execute("INSERT INTO QQLyric (SONGMID,LYRIC)  VALUES (?, ?)",(songmid,lyric,))
     conn.commit()
     conn.close()
 
@@ -82,7 +82,7 @@ def getLyric(songmid):
 def addQQUserid(qqnum,userid):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute("INSERT INTO QQUSER (QQNUM,USERID)  VALUES (?, ?)",(qqnum,userid,));
+    c.execute("INSERT INTO QQUSER (QQNUM,USERID)  VALUES (?, ?)",(qqnum,userid,))
     conn.commit()
     conn.close()
 

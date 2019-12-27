@@ -275,16 +275,16 @@ class WangYi(Music):
         }
         api = "%s/album" % self.thirdparty
         info = await self._asyncGetJson(api, params=params)
-        return info['album']['picUrl'];
+        return info['album']['picUrl']
 
 
 async def __test():
+    '''
     p = WangYi("http://api.goldenproud.cn/wangyi")
     searchkey = "林俊杰"
     page = 1
     num = 20
     
-    '''
         test at 2019-09-28 18:16, all passed
     '''
     # √ print((await p.searchSong(searchkey,page,num)).keys())

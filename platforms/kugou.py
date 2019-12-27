@@ -134,17 +134,20 @@ class KuGou(Music):
         api = "http://m.kugou.com/app/i/mv.php"
         
         jsonresp = await self._asyncGetJson(api, params=params)
-        url = list(jsonresp['mvdata'].items())[0][1]['downurl']
+        try:
+            url = list(jsonresp['mvdata'].items())[0][1]['downurl']
+        except:
+            url = None
         return self._uri(url)
 
     # override
     async def musicuri(self, _hash):
-        params = {
-            "hash": _hash,
-            "key": 'play_url'
-        }
+        # params = {
+        #     "hash": _hash,
+        #     "key": 'play_url'
+        # }
         # this api is from local midware
-        api = "%s/playres" % self.thirdparty
+        # api = "%s/playres" % self.thirdparty
         # url = await self._asyncGetText(api, params=params)
         return self._uri()
 
@@ -216,78 +219,51 @@ class KuGou(Music):
 
     # override
     async def songsinAlbum(self, _id):
-        # this params is coincident with kugou
-        params = {
-            "albumid": _id
-        }
-        # this api is from kugou
-        api = "%s/songs/album" % self.thirdparty
-        # jsonresp = await self._asyncGetJson(api, params=params)
-        songlist = []
+        # # this params is coincident with kugou
+        # params = {
+        #     "albumid": _id
+        # }
+        # # this api is from kugou
+        # api = "%s/songs/album" % self.thirdparty
+        # # jsonresp = await self._asyncGetJson(api, params=params)
+        # songlist = []
         result = {'songs': []}
-        append = result['songs'].append
-        try:
-            for song in songlist:
-                append(self._song(
-                    "kugou",
-                    song['songmid'],
-                    song['songid'],
-                    song['vid'],
-                    "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
-                    song['albummid'] + ".jpg?max_age=2592000",
-                    song['albumname'],
-                    "/kugou/lyric/" + song['songmid'],
-                    song['songname'],
-                    self._getname(song['singer']),
-                    song['interval']
-                ))
-        except:
-            result['error'] = 1
+        # append = result['songs'].append
+        # try:
+        #     for song in songlist:
+        #         append(self._song(
+        #             "kugou",
+        #             song['songmid'],
+        #             song['songid'],
+        #             song['vid'],
+        #             "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
+        #             song['albummid'] + ".jpg?max_age=2592000",
+        #             song['albumname'],
+        #             "/kugou/lyric/" + song['songmid'],
+        #             song['songname'],
+        #             self._getname(song['singer']),
+        #             song['interval']
+        #         ))
+        # except:
+        result['error'] = 1
         return result
 
     # special
     async def getComments(self, _id, t, p, n):
-        # this params is coincident with kugou
-        params = {
-            "idforcomments": _id,
-            "type": t,
-            "page": p,
-            "num": n
-        }
-        # this api is from kugou
-        api = "%s/comments" % self.thirdparty
+        
+        # params = {
+        #     "idforcomments": _id,
+        #     "type": t,
+        #     "page": p,
+        #     "num": n
+        # }
+        
+        # api = "%s/comments" % self.thirdparty
         # data = await self._asyncGetJson(api, params=params)
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
                   'normal': {'num': 0, 'comments': []}}
-                  
-        return result
 
-        try:
-            for comment in data['comment']['commentlist']:
-                result['normal']['comments'].append(self._comment(
-                    comment['avatarurl'],
-                    comment['nick'],
-                    comment['rootcommentcontent'],
-                    comment['praisenum'],
-                    comment['time']
-                ))
-        except:
-            result['error'] = 1
-            return result
-        try:
-            result['normal']['num'] = data['comment']['commenttotal']
-            for comment in data['hot_comment']['commentlist']:
-                result['hot']['comments'].append(self._comment(
-                    comment['avatarurl'],
-                    comment['nick'],
-                    comment['rootcommentcontent'],
-                    comment['praisenum'],
-                    comment['time']
-                ))
-            result['hot']['num'] = data['hot_comment']['commenttotal']
-        except:
-            pass
         return result
 
     # special
@@ -308,14 +284,14 @@ class KuGou(Music):
 
 
 async def __test():
+
     p = KuGou()
-    searchkey = "周杰伦"
-    page = 2
-    num = 10
-    songhash = "382DC60D2879205633FBB7F2685D9840"
-    gbqq = "5FCE4CBCB96D6025033BCE2025FC3943"
+    # searchkey = "周杰伦"
+    # page = 2
+    # num = 10
+    # songhash = "382DC60D2879205633FBB7F2685D9840"
+    # gbqq = "5FCE4CBCB96D6025033BCE2025FC3943"
     mvhash = "1b43baaf79c20489c85def55e2ba7af0"
-    
     '''
         test at 2019-09-26 14:06
     '''
@@ -323,7 +299,7 @@ async def __test():
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # √ print(await p.mvuri(mvhash))
+    print(await p.mvuri(mvhash))
     # √ print(await p.lyric(gbqq))
     # √ print(await p.picurl(gbqq))
     # √ print((await p.songsinList("547134", page, num)).keys())

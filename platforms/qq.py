@@ -7,8 +7,10 @@ for : get data from qq music directly
 
 try:
     from .baseparser import Music
+    from .cache import CacheDB
 except:
     from baseparser import Music
+    from cache import CacheDB
 
 
 class QQ(Music):
@@ -170,9 +172,9 @@ class QQ(Music):
     # override
     async def musicuri(self, _id):
         # this params is coincident with your creeper service
-        params = {
-            "idforres": _id
-        }
+        # params = {
+        #     "idforres": _id
+        # }
         # this api is coincident with your creeper service
         # api = "%s/song" % self.thirdparty
         # jsonresp = await self._asyncGetJson(api, params=params)
@@ -335,7 +337,7 @@ class QQ(Music):
         userid = CacheDB.getQQUserid(str(qqnum))
 
         if not userid:
-            userid = await __getuserid(qqnum)
+            userid = await self.__getuserid(qqnum)
             CacheDB.addQQUserid(qqnum, userid)
 
         params = {
@@ -369,7 +371,7 @@ class QQ(Music):
         return res
 
     # special
-    async def __getuserid(qqnum):
+    async def __getuserid(self, qqnum):
         params = {
             'p': 1,
             'n': 30,
@@ -380,22 +382,22 @@ class QQ(Music):
         }
 
         api = "https://c.y.qq.com/soso/fcgi-bin/client_search_user"
-        user = self._asyncGetJsonHeadersCookies['data']['user']['list'][0]
-        result = {
-            'title': user['title'],
-            'pic': user['pic'],
-            'userid': user['docid']
-        }
+        user = self._asyncGetJsonHeadersCookies(api, params)['data']['user']['list'][0]
+        # result = {
+        #     'title': user['title'],
+        #     'pic': user['pic'],
+        #     'userid': user['docid']
+        # }
         return user['docid']
 
 
 async def __test():
+    '''
     p = QQ()
     searchkey = "周杰伦"
     page = 2
     num = 20
 
-    '''
         test at 2019-09-25 20:11
     '''
     # √ print((await p.searchSong(searchkey, page, num)).keys())

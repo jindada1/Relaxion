@@ -22,7 +22,9 @@ class Base(object):
         name = kwargs["name"]
         
         self.thirdparty = third
-        
+        self.cookies = {}
+        self.headers = {}
+
         if third:
             print("[ok] connect %s to third party server: %s" % (name, self.thirdparty))
 
