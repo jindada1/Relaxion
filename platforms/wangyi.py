@@ -96,7 +96,7 @@ class WangYi(Music):
                     mv['id'],
                     mv['id'],
                     self._getname(mv['artists']),
-                    mv['duration'],
+                    int(mv['duration']),
                     '-',
                 ))
         except:

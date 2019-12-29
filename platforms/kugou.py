@@ -78,7 +78,7 @@ class KuGou(Music):
                 append(self._album(
                     "kugou",
                     album['albumid'],
-                    album['imgurl'],
+                    album['imgurl'].replace('{size}','150'),
                     album['albumname'],
                     album['albumid'],
                     album['singername'],
@@ -109,7 +109,7 @@ class KuGou(Music):
                 append(self._mv(
                     "kugou",
                     mv['filename'],
-                    mv['imgurl'],
+                    mv['imgurl'].replace('{size}','240'),
                     mv['hash'],
                     mv['hash'],
                     mv['singername'],
@@ -178,7 +178,7 @@ class KuGou(Music):
 
         resp = await self._asyncGetJson(api, params=params)
 
-        return self._base64(resp['content'])
+        return self.base64(resp['content'])
 
     # override
     async def songsinList(self, _id, p, n):
@@ -278,9 +278,7 @@ class KuGou(Music):
 
         result = await self._asyncGetJsonHeadersCookies(api, params=params)
 
-        img = result['data']['img']
-
-        return self._uri(img)
+        return result['data']['img']
 
 
 async def __test():
@@ -291,7 +289,7 @@ async def __test():
     # num = 10
     # songhash = "382DC60D2879205633FBB7F2685D9840"
     # gbqq = "5FCE4CBCB96D6025033BCE2025FC3943"
-    mvhash = "1b43baaf79c20489c85def55e2ba7af0"
+    # mvhash = "1b43baaf79c20489c85def55e2ba7af0"
     '''
         test at 2019-09-26 14:06
     '''
@@ -299,7 +297,7 @@ async def __test():
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    print(await p.mvuri(mvhash))
+    # √ print(await p.mvuri(mvhash))
     # √ print(await p.lyric(gbqq))
     # √ print(await p.picurl(gbqq))
     # √ print((await p.songsinList("547134", page, num)).keys())
