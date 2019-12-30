@@ -219,7 +219,7 @@ class WangYi(Music):
                     comment['user']['nickname'],
                     comment['content'],
                     comment['likedCount'],
-                    comment['time']
+                    self.to_time(int(comment['time']/1000))
                 ))
             result['normal']['num'] = data['total']
         except:
@@ -232,7 +232,7 @@ class WangYi(Music):
                     comment['user']['nickname'],
                     comment['content'],
                     comment['likedCount'],
-                    comment['time']
+                    self.to_time(int(comment['time']/1000))
                 ))
             result['hot']['num'] = len(data['hotComments'])
         except:
@@ -279,12 +279,12 @@ class WangYi(Music):
 
 
 async def __test():
+
+    # p = WangYi("http://api.goldenproud.cn/wangyi")
+    # searchkey = "林俊杰"
+    # page = 1
+    # num = 20
     '''
-    p = WangYi("http://api.goldenproud.cn/wangyi")
-    searchkey = "林俊杰"
-    page = 1
-    num = 20
-    
         test at 2019-09-28 18:16, all passed
     '''
     # √ print((await p.searchSong(searchkey,page,num)).keys())

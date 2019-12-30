@@ -293,7 +293,7 @@ class QQ(Music):
             'format': 'json',
             'pagenum': p,
             'pagesize': n,
-            'reqtype': 2,
+            'reqtype': 1,
             'biztype': self.commentMap[t],  # 1: for song ; 2: for album ; 5: for mv
             'topid': _id
         }
@@ -311,7 +311,7 @@ class QQ(Music):
                     comment['nick'],
                     comment['rootcommentcontent'],
                     comment['praisenum'],
-                    comment['time']
+                    self.to_time(comment['time'])
                 ))
         except:
             result['error'] = 1
@@ -324,7 +324,7 @@ class QQ(Music):
                     comment['nick'],
                     comment['rootcommentcontent'],
                     comment['praisenum'],
-                    comment['time']
+                    self.to_time(comment['time'])
                 ))
             result['hot']['num'] = data['hot_comment']['commenttotal']
         except:

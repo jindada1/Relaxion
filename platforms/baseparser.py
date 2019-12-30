@@ -8,6 +8,7 @@ for : parse data from other platforms to the format of our platform
 # define data schema of our platform
 
 from aiohttp import ClientSession
+from datetime import datetime
 import time
 import json
 import base64
@@ -77,6 +78,10 @@ class Base(object):
     def base64(self, text):
         
         return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+    def to_time(self, timestamp):
+        
+        return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d, %H:%M:%S")
 
     @property
     def now_str(self):
