@@ -283,7 +283,7 @@ class KuGou(Music):
 
 async def __test():
 
-    p = KuGou()
+    # p = KuGou()
     # searchkey = "周杰伦"
     # page = 2
     # num = 10
