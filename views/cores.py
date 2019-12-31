@@ -1,10 +1,12 @@
 from .baseview import BaseView, check_args_post, check_args_get, router_recorder
 import os
 
+
 class Cores(BaseView):
     '''
     this class contains many instrumental functions
     '''
+
     def __init__(self, workers):
 
         self.__init_path()
@@ -28,7 +30,7 @@ class Cores(BaseView):
 
         if os.path.exists(f):
             return self._send_file('./front/templates/index.html')
-        
+
         return self._json_response({'err': "no index file"})
 
     @router_recorder()
@@ -75,16 +77,45 @@ class Cores(BaseView):
         albumcover = params['picurl']
         metadata = params['metadata']
 
-        video = await self.downloader.download(mvurl, metadata['title'], 'mp4')
+        audiofile = self.extractor.getAudio(metadata['title'])
+
+        if not audiofile:
+            
+            video = await self.downloader.download(mvurl, metadata['title'], 'mp4')
+
+            if video['err']:
+                return self._json_response({"err": video['err']})
+
+            audiofile = self.extractor.extract(video['content'], metadata)
+
+        return self._json_response({"url": "/resource/audios/%s" % audiofile})
+
+    @check_args_post({
+        'mvurl': "*",
+        'picurl': "",
+        'metadata': {}
+    })
+    async def downloadRes(self, params):
+
+        mvurl = params['mvurl']
+        albumcover = params['picurl']
+        metadata = params['metadata']
+
+        video = await self.downloader.getFile(mvurl, metadata['title'], 'mp4')
 
         if video['err']:
             return self._json_response({"err": video['err']})
 
         if albumcover:
-            cover = await self.downloader.download(albumcover, metadata['album'], 'jpg')
-            albumcover = cover['content']
+            cover = await self.downloader.getFile(albumcover, metadata['album'], 'jpg')
 
-        path, audiofile = self.extractor.extract(video['content'], metadata, albumcover)
+        return self._json_response(video)
+
+    @check_args_get({
+        're_path': '*'
+    })
+    async def dlProgress(self, params):
+
+        re_path = params['re_path']
         
-        return self._json_response({"url": "/resource/audios/%s" % audiofile})
-    
+        return self._json_response({'size': self.downloader.fileSize(re_path)})

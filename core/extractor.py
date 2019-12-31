@@ -102,6 +102,30 @@ class Extractor(object):
         
         return self.extract(videoname, meta, cover)
 
+    def matchCover(self, name):
+        
+        path = os.path.join(self.picFolder, '%s.jpg' % name)
+
+        if os.path.exists(path):
+
+            return path
+        
+        return None
+
+    def getAudio(self, realname):
+
+        dfaudioType = "mp3"
+
+        audiofile = "%s.%s" % (realname, dfaudioType)
+
+        audiopath = os.path.join(self.audioFolder, audiofile)
+
+        # if audio exists
+        if os.path.exists(audiopath):
+            return audiofile
+        
+        return None
+
     '''
     interface for extract audio from local video file, and set cover img if exists
     '''
@@ -129,14 +153,18 @@ class Extractor(object):
 
         # if audio exists
         if os.path.exists(audiopath):
-            return (audiopath, audiofile)
+            return audiofile
         
+        # if cover prepared
+        if not (cover and os.path.exists(cover)):
+            # try to match cover automatically
+            cover = self.matchCover(realname)
+
         # if has metadata
         if meta:
             metadata = self.__metadataFormat(meta)
 
-            if cover and os.path.exists(cover):
-                
+            if cover:
                 cover = "-i {0}".format(cover)
                 cmd = self.extractCoverMetaCode.format(videopath, cover, metadata, audiopath)
             
@@ -146,11 +174,11 @@ class Extractor(object):
             cmd = self.extractCode.format(videopath, audioType, audiopath)
 
         os.system(cmd)
-
+        
         # if successfully extract audio out
         if os.path.exists(audiopath):
             
-            return  (audiopath, audiofile)
+            return audiofile
         
         return "error"
 
@@ -194,7 +222,7 @@ class Extractor(object):
 
 def single_test():
     
-    e = Extractor("F:/tool/ffmpeg/bin/", "F:/Project/Relaxion/files")
+    e = Extractor("D:/tool/ffmpeg/bin/", "D:/Project/Relaxion/files")
 
     metadata = {
         'title': "说好不哭（with 五月天阿信）",
@@ -202,19 +230,22 @@ def single_test():
         'artist': "周杰伦"
     }
 
-    video = "F:/Project/Relaxion/files/videos/说好不哭（with五月天阿信）.mp4"
-    pic = "F:/Project/Relaxion/files/pics/说好不哭（with五月天阿信）.jpg"
+    video = "D:/Project/Relaxion/files/videos/说好不哭（with五月天阿信）.mp4"
+    # pic = "D:/Project/Relaxion/files/pics/说好不哭（with五月天阿信）.jpg"
+    pic = None
 
     a = e.extract(video, metadata, pic)
+
+    print(a)
     
-    # audio = "F:/Project/Relaxion/files/audios/说好不哭（with五月天阿信）.mp3"
+    # audio = "D:/Project/Relaxion/files/audios/说好不哭（with五月天阿信）.mp3"
     # e.setinfo(audio, metadata)
 
 def async_tests():
 
-    e = Extractor("F:/tool/ffmpeg/bin/", "F:/Project/Relaxion/files")
+    e = Extractor("F:/tool/ffmpeg/bin/", "D:/Project/Relaxion/files")
 
-    folder = "F:/Project/Relaxion/files/videos"
+    folder = "D:/Project/Relaxion/files/videos"
 
     files= os.listdir(folder)
 
@@ -254,8 +285,8 @@ if __name__ == '__main__':
 
     start = now()
 
-    async_tests()
-    # single_test()
+    # async_tests()
+    single_test()
 
     print('TIME: ', now() - start)
 

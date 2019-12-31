@@ -24,6 +24,12 @@ def setup_routes(app):
     # extract music from mv
     app.router.add_post('/extract', core.extractAudio)
 
+    # start download
+    app.router.add_post('/download', core.downloadRes)
+
+    # get download progress
+    app.router.add_get('/download/progress', core.dlProgress)
+
     '''
     music creepers
     '''
