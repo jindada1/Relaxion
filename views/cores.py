@@ -119,3 +119,18 @@ class Cores(BaseView):
         re_path = params['re_path']
         
         return self._json_response({'size': self.downloader.fileSize(re_path)})
+
+
+    @check_args_get({
+        'name':"*"
+    })
+    async def findAudio(self, params):
+        
+        name = params['name']
+
+        audiofile = self.extractor.getAudio(name)
+
+        if audiofile:
+            return self._json_response({"url": "/resource/audios/%s" % audiofile})
+        
+        return self._json_response({"url": ""})

@@ -21,6 +21,9 @@ def setup_routes(app):
     # return media file resource
     app.router.add_get('/resource/{ftype}/{fname}', core.getResource)
 
+    # find audio of mv
+    app.router.add_get('/audio', core.findAudio)
+
     # extract music from mv
     app.router.add_post('/extract', core.extractAudio)
 
