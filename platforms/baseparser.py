@@ -117,7 +117,7 @@ class Music(Base):
                 artist += "," + singer['name']
         return artist
 
-    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time):
+    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time, playable = True):
         return {
             "platform": p,
             "idforres": res_id,
@@ -125,10 +125,11 @@ class Music(Base):
             "mvid": mv_id,
             "cover": pic_url,
             "albumname": alb_name,
-            "lrcurl": lrc_url,
+            "lrc": lrc_url,
             "name": name,
             "artist": arts,
-            "interval": time
+            "interval": time,
+            "playable": playable
         }
 
     def _album(self, p, alb_id, pic_url, name, com_id, arts, pub_day):

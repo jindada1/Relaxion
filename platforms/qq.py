@@ -35,6 +35,23 @@ class QQ(Music):
             'mv':5
         }
 
+    def playable(self, number):
+        '''
+        song.switch 628481
+        song.switch.toString(2) 10011001011100000001
+        pop->reverse (19) ["0", "0", "0", "0", "0", "0", "0", "1", "1", "1", "0", "1", "0", "0", "1", "1", "0", "0", "1"]
+        '''
+        # convert decimal to binary code array
+        string = list(bin(number))
+        # remove last char
+        string.pop()
+        # reverse string
+        string = string[::-1]
+        play_flag = string[0]
+        try_flag = string[13]
+        return ((play_flag == '1') or ((play_flag == '1') and (try_flag == '1')))
+
+
     # override, return object
     async def searchSong(self, k, p, n):
         # this params is coincident with your creeper service
@@ -65,7 +82,8 @@ class QQ(Music):
                     "/qq/lyric/" + qqsong['songmid'],
                     qqsong['songname'],
                     self._getname(qqsong['singer']),
-                    qqsong['interval']
+                    qqsong['interval'],
+                    self.playable(qqsong['switch'])
                 ))
         except:
             result['error'] = 1
@@ -172,13 +190,38 @@ class QQ(Music):
     # override
     async def musicuri(self, _id):
         # this params is coincident with your creeper service
-        # params = {
-        #     "idforres": _id
-        # }
+        params = {
+            'data': self.jsonify({
+                "req_0":{
+                    "module":"vkey.GetVkeyServer",
+                    "method":"CgiGetVkey",
+                    "param":{
+                        "guid":"10000",
+                        "songmid":[_id],
+                        "songtype":[0],
+                        "uin":"0",
+                        "loginflag":1,
+                        "platform":"20"
+                    }
+                }
+            })
+        }
         # this api is coincident with your creeper service
-        # api = "%s/song" % self.thirdparty
-        # jsonresp = await self._asyncGetJson(api, params=params)
-        return self._uri()
+        api = "https://u.y.qq.com/cgi-bin/musicu.fcg"
+        jsonresp = await self._asyncGetJson(api, params=params)
+        
+        try:
+            info = jsonresp['req_0']['data']
+            host = info['sip'][0]
+
+            route = info['midurlinfo'][0]['purl']
+            if route:
+                return self._uri(host + route)
+
+            return self._uri()
+
+        except:
+            return self._uri()
 
     # override
     async def lyric(self, songmid):

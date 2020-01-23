@@ -9,6 +9,10 @@ class WangYi(Music):
 
         Music.__init__(self, name = "WangYi", third = thirdparty)
 
+    def playable(self, fee):
+
+        return not (fee == 4 or fee == 1);
+
     # override, return object
     async def searchSong(self, k, p, n):
         # this params is coincident with your creeper service
@@ -37,6 +41,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['artists']),
                     wangyisong['duration'],
+                    self.playable(wangyisong['fee'])
                 ))
         except:
             result['error'] = 1
