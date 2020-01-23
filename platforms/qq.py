@@ -79,7 +79,7 @@ class QQ(Music):
                     "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
                     qqsong['albummid'] + ".jpg?max_age=2592000",
                     qqsong['albumname'],
-                    "/qq/lyric/" + qqsong['songmid'],
+                    "/gateway/qq/lyric/" + qqsong['songmid'],
                     qqsong['songname'],
                     self._getname(qqsong['singer']),
                     qqsong['interval'],
@@ -284,7 +284,7 @@ class QQ(Music):
                     "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
                     qqsong['albummid'] + ".jpg?max_age=2592000",
                     qqsong['albumname'],
-                    "/qq/lyric/" + qqsong['songmid'],
+                    "/gateway/qq/lyric/" + qqsong['songmid'],
                     qqsong['songname'],
                     self._getname(qqsong['singer']),
                     qqsong['interval']
@@ -319,7 +319,7 @@ class QQ(Music):
                     "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
                     qqsong['albummid'] + ".jpg?max_age=2592000",
                     qqsong['albumname'],
-                    "/qq/lyric/" + qqsong['songmid'],
+                    "/gateway/qq/lyric/" + qqsong['songmid'],
                     qqsong['songname'],
                     self._getname(qqsong['singer']),
                     qqsong['interval']

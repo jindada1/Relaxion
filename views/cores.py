@@ -88,7 +88,7 @@ class Cores(BaseView):
 
             audiofile = self.extractor.extract(video['content'], metadata)
 
-        return self._json_response({"url": "/resource/audios/%s" % audiofile})
+        return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
 
     @check_args_post({
         'mvurl': "*",
@@ -131,6 +131,6 @@ class Cores(BaseView):
         audiofile = self.extractor.getAudio(name)
 
         if audiofile:
-            return self._json_response({"url": "/resource/audios/%s" % audiofile})
+            return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
         
         return self._json_response({"url": ""})
