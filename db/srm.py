@@ -2,19 +2,24 @@ try:
     from .users import userAdapter
     from .songs import songAdapter
     from .playlists import listAdapter
+    from .adapter import connect
 except:
     from users import userAdapter
     from songs import songAdapter
     from playlists import listAdapter
+    from adapter import connect
 
 import json
 
 
 class dbService(object):
     def __init__(self, dbfile):
-        self.users = userAdapter(dbfile, 'userinfo')
-        self.songs = songAdapter(dbfile, 'song')
-        self.songlist = listAdapter(dbfile, 'playlist')
+        conn = connect(dbfile)
+        if conn:
+            self.users = userAdapter(conn, 'userinfo')
+            self.songs = songAdapter(conn, 'song')
+            self.songlist = listAdapter(conn, 'playlist')
+        
 
     def register(self, user):
         user['info'] = '{}'
@@ -28,13 +33,16 @@ class dbService(object):
 
         pw = self.users.find_property(user['name'], 'pw')
         if not pw:
-            return {'err': 'no-user'}
+            return {'err': 'no user'}
 
         if user['pw'] == pw:
             info = self.users.find_property(user['name'], 'info')
-            return json.loads(info)
+            return {
+                "name": user['name'],
+                "info": json.loads(info)
+            }
 
-        return {'err': 'password-error'}
+        return {'err': 'password error'}
 
     def bind_info(self, user):
 
@@ -47,8 +55,12 @@ class dbService(object):
 
         for songid in ids:
             info_json_str = self.songs.find_property(songid, 'info')
-            if info_json_str:
+            try:
                 songs.append(json.loads(info_json_str))
+
+            # if this info is invalid, remove this record from database
+            except:
+                self.hate_song(userid, songid)
 
         return songs
 
@@ -89,4 +101,6 @@ if __name__ == '__main__':
     localdb = dbService(dbf)
     
     # √ print(localdb.get_songlist('Kris'))
-    # √ print(localdb.login({'name':'Kris','pw':'1234'}))
+    # √ print(localdb.login({'name':'听说你锁了','pw':'1234'}))
+    # √ print(localdb.register({'name':'Kun','pw':'1234'}))
+    # √ print(localdb.love_song('Kris','test','test'))

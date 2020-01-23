@@ -19,9 +19,10 @@ class userAdapter(dbAdapter):
 
     def insert(self, row):
         try:
-            self.sql_do('insert into {} (name, pw, info) values (?, ?, ?)'.format(
+            a = self.sql_do('insert into {} (name, pw, info) values (?, ?, ?)'.format(
                 self.table), (row['name'], row['pw'], row['info'],))
-            return True
+            
+            return a
             
         except:
             return False

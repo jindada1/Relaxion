@@ -262,9 +262,9 @@ class WangYi(Music):
         
         api = "%s/user/playlist" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
-        res = {"allLists":[]}
+        res = {"lists":[]}
         for _list in jsonresp['playlist']:
-            res["allLists"].append(self._songlist(
+            res["lists"].append(self._songlist(
                 "wangyi",
                 _list['id'],
                 _list['name'],
