@@ -104,3 +104,6 @@ def setup_routes(app):
 
     # user dislike a song, remove song from his list
     app.router.add_post('/user/hate/song', user.hateSong)
+
+    # update user's info
+    app.router.add_post('/user/info/update',user.update)

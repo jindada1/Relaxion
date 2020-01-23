@@ -53,8 +53,6 @@ class dbAdapter(object):
 
     # execute sql commands
     def sql_do(self, sql, params):
-        
-        print(sql, params)
 
         self.cursor.execute(sql, params)
         self.conn.commit()

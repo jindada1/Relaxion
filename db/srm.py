@@ -39,13 +39,15 @@ class dbService(object):
             info = self.users.find_property(user['name'], 'info')
             return {
                 "name": user['name'],
+                "pw": pw,
                 "info": json.loads(info)
             }
 
         return {'err': 'password error'}
 
-    def bind_info(self, user):
-
+    def update(self, user):
+        
+        user['info'] = json.dumps(user['info'])
         return self.users.update(user)
 
     def get_songlist(self, userid):

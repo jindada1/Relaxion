@@ -30,6 +30,20 @@ class Users(BaseView):
 
 
     @check_args_post({
+        'name': '*',
+        'pw': '*',
+        'info':'*'
+    })
+    async def update(self, params):
+        result = self.localdb.update({
+            'name': params['name'],
+            'pw': params['pw'],
+            'info': params['info']
+        })
+        return self._json_response(result)
+
+
+    @check_args_post({
         'username': '*',
         'password': '*'
     })
