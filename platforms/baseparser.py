@@ -52,7 +52,7 @@ class Base(object):
 
     async def _asyncPostJson(self, url, params = None):
         async with ClientSession() as session:
-            resp = await session.post(url, data=params)
+            resp = await session.post(url, data=params, headers=self.headers)
             return json.loads(await resp.text())
 
 

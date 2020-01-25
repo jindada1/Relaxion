@@ -9,12 +9,18 @@ class WangYi(Music):
 
         Music.__init__(self, name = "WangYi", third = thirdparty)
 
+        self.headers = {
+            'Referer': 'https://music.163.com',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
+        }
+
     def playable(self, fee):
 
         return not (fee == 4 or fee == 1);
 
     # override, return object
-    async def searchSong(self, k, p, n):
+    async def oldVersion(self, k, p, n):
         # this params is coincident with your creeper service
         params = {
             'keywords': k,
@@ -25,6 +31,20 @@ class WangYi(Music):
         # this api is coincident with your creeper service
         api = "%s/search" % self.thirdparty
         jsonresp = await self._asyncGetJson(api, params=params)
+
+        return jsonresp
+
+    # override, return object
+    async def searchSong(self, k, p, n):
+        params = {
+            'type': 1,
+            'limit': n,
+            'offset': int(p) * int(n),
+            's': k,
+        }
+        
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'songs': []}
         append = result['songs'].append
@@ -49,16 +69,15 @@ class WangYi(Music):
 
     # override
     async def searchAlbum(self, k, p, n):
-        # this params is coincident with your creeper service
         params = {
-            'keywords': k,
+            's': k,
             'type': 10,  # 1: song, 10: album, 1004: MV 100: singer, 1000: songlist, 1002: user, 1006: 歌词, 1009: 电台, 1014: 视频
             'limit': n,
             'offset': int(p) * int(n),
         }
-        # this api is coincident with your creeper service
-        api = "%s/search" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'albums': []}
         append = result['albums'].append
@@ -79,16 +98,15 @@ class WangYi(Music):
 
     # override
     async def searchMV(self, k, p, n):
-        # this params is coincident with your creeper service
         params = {
-            'keywords': k,
+            's': k,
             'type': 1004,  # 1: song, 10: album, 1004: MV 100: singer, 1000: songlist, 1002: user, 1006: 歌词, 1009: 电台, 1014: 视频
             'limit': n,
             'offset': int(p) * int(n),
         }
-        # this api is coincident with your creeper service
-        api = "%s/search" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'videos': []}
         append = result['videos'].append
@@ -285,7 +303,8 @@ class WangYi(Music):
 
 async def __test():
 
-    # p = WangYi("http://api.goldenproud.cn/wangyi")
+    # p = WangYi("https://music.linkorg.club")
+    # p = WangYi("http://localhost:3000")
     # searchkey = "林俊杰"
     # page = 1
     # num = 20
