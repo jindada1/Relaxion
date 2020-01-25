@@ -184,7 +184,7 @@ class KuGou(Music):
 
         resp = await self._asyncGetJson(api, params=params)
 
-        return self.base64(resp['content'])
+        return self.base64decode(resp['content'])
 
     # override
     async def songsinList(self, _id, p, n):

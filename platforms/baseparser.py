@@ -50,8 +50,8 @@ class Base(object):
             return json.loads(await resp.text())
 
 
-    async def _asyncPostJson(self, url, params = None):
-        async with ClientSession() as session:
+    async def _asyncPostJson(self, url, params = None, cookies = None):
+        async with ClientSession(cookies = cookies) as session:
             resp = await session.post(url, data=params, headers=self.headers)
             return json.loads(await resp.text())
 
@@ -75,9 +75,13 @@ class Base(object):
         return json.dumps(_dict).replace(" ", '')
 
 
-    def base64(self, text):
+    def base64decode(self, text):
         
         return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+    def base64encode(self, text):
+
+        return base64.b64encode(text)
 
     def to_time(self, timestamp):
         
