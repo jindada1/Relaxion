@@ -1,4 +1,4 @@
-from .baseview import BaseView, check_args_post, check_args_get, router_recorder, check_args_upload
+from .baseview import BaseView, check_args_post, check_args_get, router_recorder
 import os
 
 
@@ -89,27 +89,6 @@ class Cores(BaseView):
             audiofile = self.extractor.extract(video['content'], metadata)
 
         return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
-
-
-    @check_args_upload({
-        'user': "*"
-    })
-    async def upLoad(self, meta):
-        
-        b_file = meta['file']
-        user = meta['user']
-
-        avator_path = './files/avators/%s.jpg'% user
-
-        try:
-            with open(avator_path, 'wb') as f:
-
-                f.write(b_file)
-
-            return self._json_response({"url": "/gateway/resource/avators/%s.jpg" % user})
-
-        except:
-            return self._json_response({"err": "failed"})
 
 
     @check_args_post({

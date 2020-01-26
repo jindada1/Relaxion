@@ -50,17 +50,20 @@ class dbService(object):
         user['info'] = json.dumps(user['info'])
         return self.users.update(user)
 
-    def update_avator(self, username, url):
+    def userinfo(self, username):
         
         j_info = self.users.find_property(username, 'info')
 
-        print(j_info)
+        return json.loads(j_info)
 
-        info = json.loads(j_info)
+
+    def update_avator(self, username, url):
+
+        info = self.userinfo(username)
 
         info['avator'] = url
 
-        return self.users.update_property(username, 'info', info)
+        return self.users.update_info(username, json.dumps(info))
         
 
     def get_songlist(self, userid):
@@ -119,3 +122,5 @@ if __name__ == '__main__':
     # √ print(localdb.login({'name':'听说你锁了','pw':'1234'}))
     # √ print(localdb.register({'name':'Kun','pw':'1234'}))
     # √ print(localdb.love_song('Kris','test','test'))
+    # √ print(localdb.update_avator('KunKun','test'))
+    print(localdb.userinfo('KunKun'))

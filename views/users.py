@@ -1,4 +1,4 @@
-from .baseview import BaseView, check_args_post, check_args_get
+from .baseview import BaseView, check_args_post, check_args_get, check_args_upload
 
 class Users(BaseView):
     '''
@@ -79,3 +79,27 @@ class Users(BaseView):
             params['songid']
         )
         return self._json_response(result)
+
+    @check_args_upload({
+        'user': "*"
+    })
+    async def uploadAvator(self, meta):
+        
+        b_file = meta['file']
+        user = meta['user']
+
+        avator_path = './files/avators/%s.jpg'% user
+
+        try:
+            with open(avator_path, 'wb') as f:
+
+                f.write(b_file)
+
+            url = "/gateway/resource/avators/%s.jpg" % user
+
+            self.localdb.update_avator(user, url)
+
+            return self._json_response({"url": url})
+
+        except:
+            return self._json_response({"err": "failed"})
