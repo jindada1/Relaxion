@@ -50,6 +50,19 @@ class dbService(object):
         user['info'] = json.dumps(user['info'])
         return self.users.update(user)
 
+    def update_avator(self, username, url):
+        
+        j_info = self.users.find_property(username, 'info')
+
+        print(j_info)
+
+        info = json.loads(j_info)
+
+        info['avator'] = url
+
+        return self.users.update_property(username, 'info', info)
+        
+
     def get_songlist(self, userid):
 
         ids = self.songlist.fetch_all(userid)

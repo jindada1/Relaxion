@@ -33,6 +33,9 @@ def setup_routes(app):
     # get download progress
     app.router.add_get('/download/progress', core.dlProgress)
 
+    # upload file
+    app.router.add_post('/upload/avator', core.upLoad)
+
     '''
     music creepers
     '''

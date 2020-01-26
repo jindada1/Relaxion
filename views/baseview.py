@@ -140,6 +140,39 @@ class check_args_get(args_check):
         return wrapper
 
 
+class check_args_upload(args_check):
+
+    def __init__(self, argSchema):
+
+        args_check.__init__(self, argSchema)
+
+    def __call__(self, handler):
+        async def wrapper(caller, request):
+            # print("%s is running" % handler.__name__)
+            req = request.url.human_repr()
+
+            # get form data
+            data = await request.post()
+
+            logger.log_post(req, data)
+            
+            # validate arguments in request according to self.argSchema
+            meta = self._validate(data)
+
+            try:
+                meta['file'] = data['file'].file.read()
+            except:
+                meta['err'] = 'no file'
+
+            if meta['err']:
+                return await self.errorHandler(meta['err'])
+
+            else:
+                return await handler(caller, meta)
+
+        return wrapper
+
+
 class pltf_get(args_check):
     '''
     Get from platforms 

@@ -51,6 +51,13 @@ class userAdapter(dbAdapter):
         # no row
         return None
 
+    def update_property(self, key, prop, value):
+
+        rows = self.sql_do('update {0} set {1} = ? where name = ?'.format(
+            self.table, prop), (value, key,))
+
+        return rows
+
     def update(self, row):
 
         rows = self.sql_do('update {} set pw = ?,info = ? where name = ?'.format(
