@@ -80,6 +80,7 @@ class Users(BaseView):
         )
         return self._json_response(result)
 
+
     @check_args_upload({
         'user': "*"
     })
