@@ -234,6 +234,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
                     wangyisong['dt'],
+                    self.playable(wangyisong['fee'])
               ))
         except:
             result['error'] = 1
@@ -261,6 +262,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
                     "",
+                    self.playable(wangyisong['fee'])
                 ))
         except:
             result['error'] = 1
