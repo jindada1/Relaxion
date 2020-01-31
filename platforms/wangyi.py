@@ -201,16 +201,23 @@ class WangYi(Music):
         api = "https://music.163.com/weapi/song/lyric"
         jsonresp = await self._asyncPostJson(api, encrypt_data)
 
-        return jsonresp['lrc']['lyric']
+        lrc = '[00:01.000] 没有歌词哦~'
+
+        try:
+            lrc = jsonresp['lrc']['lyric']
+        except:
+            pass
+
+        return lrc
 
     # override
     async def songsinList(self, _id, p, n):
-        
+        # no page, I made pages start from 0
+        total = (int(p) + 1) * int(n)
         params = {
             "id" : _id,
-            "limit" : n,
-            "n" : n,
-            "offest" : int(p) * int(n)
+            "limit" : total,
+            "n" : total
         }
         
         api = "https://music.163.com/weapi/v3/playlist/detail"
@@ -218,11 +225,12 @@ class WangYi(Music):
         params = self.encrypted_request(params)
 
         jsonresp = await self._asyncPostJson(api, params = params)
-        
+        songscut = jsonresp['playlist']['tracks'][total-int(n):]
+
         result = {'songs':[]}
         append = result['songs'].append
         try:
-            for wangyisong in jsonresp['playlist']['tracks']:
+            for wangyisong in songscut:
                 append(self._song(
                     'wangyi',
                     wangyisong['id'],
@@ -357,19 +365,38 @@ class WangYi(Music):
 
         jsonresp = await self._asyncPostJson(api, params = self.encrypted_request({}))
 
-        return jsonresp['album']['picUrl']
+        url = "https://i.loli.net/2020/01/31/9yvblCJoiVw1kAX.jpg"
+        try:
+            url = jsonresp['album']['picUrl']
+        except:
+            pass
+        return url
 
 
 async def __test():
 
-    # p = WangYi("https://music.linkorg.club")
-    # p = WangYi("http://localhost:3000")
-    # searchkey = "林俊杰"
-    # page = 1
-    # num = 20
+    p = WangYi()
+    searchkey = "林俊杰"
+    page = 1
+    num = 20
     '''
         test at 2020-01-25 21:27, all passed
     '''
+    songs_0 = await p.searchSong(searchkey, 0, num)
+    songs_1 = await p.searchSong(searchkey, 1, num)
+    one = (songs_0['songs'][0]['idforres'] == songs_1['songs'][0]['idforres'])
+    print('search: start from %s' % one)
+
+    comments_0 = await p.getComments("33894312", "music", 0, num)
+    comments_1 = await p.getComments("33894312", "music", 1, num)
+    two = (comments_0['normal']['comments'][0]['username'] == comments_1['normal']['comments'][0]['username'])
+    print('comments: start from %s' % two)
+
+    list_0 = await p.songsinList("24381616", 0, num)
+    list_1 = await p.songsinList("24381616", 1, num)
+    three = (list_0['songs'][0]['idforres'] == list_1['songs'][0]['idforres'])
+    print('list: start from %s' % three)
+
     # √ print((await p.searchSong(searchkey,page,num)).keys())
     # √ print((await p.searchAlbum(searchkey,page,num)).keys())
     # √ print((await p.searchMV(searchkey,page,num)).keys())
@@ -378,6 +405,7 @@ async def __test():
     # √ print((await p.getComments("5436712", "mv", page, num)).keys())
     # √ print((await p.musicuri("33894312")).keys())
     # √ print((await p.mvuri("5436712")).keys())
+    # √ print(len(await p.lyric("33894312")))
     # √ print(len(await p.lyric("33894312")))
     # √ print(await p.userlist("同济吴亦凡"))
     # √ print((await p.songsinList("24381616")).keys())

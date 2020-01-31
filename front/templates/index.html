@@ -135,8 +135,8 @@
                                     {{platform.zhName}}里 搜索“{{platform.keyword}}”的歌曲的第 1 页</a></li>
                             <li><a :href="`/${platformName}/albums?keyword=${platform.keyword}&page=2`">在
                                     {{platform.zhName}}里 搜索“{{platform.keyword}}”的专辑的第 2 页</a></li>
-                            <li><a :href="`/${platformName}/mv?keyword=${platform.keyword}&page=3`">在
-                                    {{platform.zhName}}里 搜索“{{platform.keyword}}”的MV的第 3 页</a></li>
+                            <li><a :href="`/${platformName}/mv?keyword=${platform.keyword}&page=0`">在
+                                    {{platform.zhName}}里 搜索“{{platform.keyword}}”的MV的第 0 页</a></li>
                             <li><a :href="`/${platformName}/songs/album?albumid=${platform.albumid}`">在
                                     {{platform.zhName}}里 获取专辑 id 为 {{platform.albumid}} 里面的所有歌曲</a></li>
                             <li><a :href="`/${platformName}/songs/songlist?dissid=${platform.dissid}`">在

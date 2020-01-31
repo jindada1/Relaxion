@@ -53,7 +53,7 @@ class QQ(Music):
 
 
     # override, return object
-    async def searchSong(self, k, p, n):
+    async def searchSong(self, k, p, n):        
         # this params is coincident with your creeper service
         params = {
             # 'aggr':1, 聚合多版本音乐
@@ -61,7 +61,7 @@ class QQ(Music):
             'format': 'json',
             't': 0,  # song
             'n': n,
-            'p': p,
+            'p': int(p) + 1, # pages start from 1 in qq, we set to 0
             'w': k
         }
         # this api is coincident with your creeper service
@@ -97,7 +97,7 @@ class QQ(Music):
             't': 8,
             'format': 'json',
             'n': n,
-            'p': p,
+            'p': int(p) + 1,
             'w': k
         }
 
@@ -128,7 +128,7 @@ class QQ(Music):
             't': 12,
             'format': 'json',
             'n': n,
-            'p': p,
+            'p': int(p) + 1,
             'w': k
         }
 
@@ -245,7 +245,7 @@ class QQ(Music):
             lyric = jsonresp['lyric']
             # CacheDB.addQQLyric(songmid, lyric)
         except:
-            lyric = "没有歌词的纯音乐哦~"
+            lyric = '[00:01.000] 没有歌词哦~'
 
         return lyric
 
@@ -265,7 +265,7 @@ class QQ(Music):
             'platform': 'yqq.json',
             'needNewCode': 0,
             'song_num': n,
-            'song_begin': p*20,
+            'song_begin': int(p)*int(n),   # page start from 0
             'disstid': _id
         }
 
@@ -334,7 +334,7 @@ class QQ(Music):
         params = {
             'cmd': 8,
             'format': 'json',
-            'pagenum': p,
+            'pagenum': p,  # start from 0
             'pagesize': n,
             'reqtype': 1,
             'biztype': self.commentMap[t],  # 1: for song ; 2: for album ; 5: for mv
@@ -435,21 +435,36 @@ class QQ(Music):
 
 
 async def __test():
-    '''
+    
     p = QQ()
     searchkey = "周杰伦"
     page = 2
     num = 20
 
-        test at 2019-09-25 20:11
-    '''
+    #    test at 2019-09-25 20:11
+    
+    songs_0 = await p.searchSong(searchkey, 0, num)
+    songs_1 = await p.searchSong(searchkey, 1, num)
+    one = (songs_0['songs'][0]['idforres'] == songs_1['songs'][0]['idforres'])
+    print('search: start from %s' % one)
+
+    comments_0 = await p.getComments("107192078", "music", 0, num)
+    comments_1 = await p.getComments("107192078", "music", 1, num)
+    two = (comments_0['normal']['comments'][0]['username'] == comments_1['normal']['comments'][0]['username'])
+    print('comments: start from %s' % two)
+
+    list_0 = await p.songsinList("1304470181", 0, num)
+    list_1 = await p.songsinList("1304470181", 1, num)
+    three = (list_0['songs'][0]['idforres'] == list_1['songs'][0]['idforres'])
+    print('list: start from %s' % three)
+
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # - print((await p.getComments("107192078", "music", page, num)).keys())
-    # - print((await p.getComments("14536", "album", page, num)).keys())
-    # - print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # × print(await p.musicuri("002WCV372JMZJw"))
+    # √ print((await p.getComments("107192078", "music", page, num)).keys())
+    # √ print((await p.getComments("14536", "album", page, num)).keys())
+    # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
+    # - print(await p.musicuri("002WCV372JMZJw"))
     # √ print(await p.mvuri("m00119xeo83"))
     # √ print(await p.lyric("002WCV372JMZJw"))
     # √ print(await p.userlist("406143883"))

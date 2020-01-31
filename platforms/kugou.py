@@ -32,7 +32,7 @@ class KuGou(Music):
         # this params is coincident with kugou
         params = {
             "keyword": k,
-            "page": p,
+            "page": int(p) + 1, # pages start from 1 in qq, we set to 0
             "pagesize": n,
             "plat": 2
         }
@@ -64,7 +64,7 @@ class KuGou(Music):
         # this params is coincident with kugou
         params = {
             "keyword": k,
-            "page": p,
+            "page": int(p) + 1, # pages start from 1 in qq, we set to 0
             "pagesize": n,
             "plat": 2
         }
@@ -93,7 +93,7 @@ class KuGou(Music):
         
         params = {
             "keyword": k,
-            "page": p,
+            "page": int(p) + 1, # pages start from 1 in qq, we set to 0
             "pagesize": n,
             "plat": 2
         }
