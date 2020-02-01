@@ -92,7 +92,7 @@ class WangYi(Music):
                     "/gateway/wangyi/lyric/%s" % wangyisong['id'],
                     wangyisong['name'],
                     self._getname(wangyisong['artists']),
-                    wangyisong['duration'],
+                    int(wangyisong['duration']/1000),
                     self.playable(wangyisong['fee'])
                 ))
         except:
@@ -241,7 +241,7 @@ class WangYi(Music):
                     "/gateway/wangyi/lyric/%s" % wangyisong['id'],
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
-                    wangyisong['dt'],
+                    int(wangyisong['dt']/1000),
                     self.playable(wangyisong['fee'])
               ))
         except:
