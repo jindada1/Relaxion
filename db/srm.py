@@ -74,7 +74,9 @@ class dbService(object):
         for songid in ids:
             info_json_str = self.songs.find_property(songid, 'info')
             try:
-                songs.append(json.loads(info_json_str))
+                song = json.loads(info_json_str)
+                song['loved'] = True
+                songs.append(song)
 
             # if this info is invalid, remove this record from database
             except:
