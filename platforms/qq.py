@@ -7,10 +7,8 @@ for : get data from qq music directly
 
 try:
     from .baseparser import Music
-    from .cache import CacheDB
 except:
     from baseparser import Music
-    from cache import CacheDB
 
 
 class QQ(Music):
@@ -24,8 +22,25 @@ class QQ(Music):
         }
 
         self.cookies = {
-            'p_luin': 'o2835893638',
-            'p_lskey': '0004000024d53616cf3c76ca7ab957fa2c798af92411300d609c0c7f82168c0d0c60790e3e0ae9b2f1bd4eac',
+            'yqq_stat':'0',
+            'pgv_pvid':'6752240106',
+            'ts_last':'y.qq.com/portal/search.html',
+            'pgv_info':'ssid=s949853372',
+            'ts_uid':'2152329792',
+            'pgv_pvi':'6650337280',
+            'pgv_si':'s2263478272',
+            '_qpsvr_localtk':'0.7473915824304862',
+            'RK':'uKhE+YMD0s',
+            'ptcz':'144078cffd56e8a20873fa3908a34bc08d48c23ea5733750fe055f448ece53ae',
+            'psrf_qqaccess_token':'E7D834DF69EE3E85195F9E54EA3F3169',
+            'psrf_qqunionid':'C4F7D9644B5FDA8016F51534E9A503F2',
+            'psrf_qqrefresh_token':'4A44971CECE648BD2E00E072414C55AD',
+            'psrf_musickey_createtime':'1580724330',
+            'psrf_access_token_expiresAt':'1588500330',
+            'uin':'2835893638',
+            'qm_keyst':'Q_H_L_2e6ytu50eKxeEFjGR_pi6Vuztc6mXXNTHedp1gyawKdtleb9Zw2yaDCJbyWuF-B',
+            'psrf_qqopenid':'00CCC32C1F366E9A521155BA9802E901',
+            'userAction':'1',
         }
 
         self.commentMap = {
@@ -34,6 +49,8 @@ class QQ(Music):
             'album':2,
             'mv':5
         }
+
+        self.cache = {}
 
     def playable(self, number):
         '''
@@ -225,12 +242,6 @@ class QQ(Music):
 
     # override
     async def lyric(self, songmid):
-        '''
-        cache = CacheDB.getLyric(songmid)
-        if cache:
-            return cache
-        '''
-
         params = {
             'format': 'json',
             'g_tk': 5381,
@@ -243,7 +254,6 @@ class QQ(Music):
 
         try:
             lyric = jsonresp['lyric']
-            # CacheDB.addQQLyric(songmid, lyric)
         except:
             lyric = '[00:01.000] 没有歌词哦~'
 
@@ -377,11 +387,16 @@ class QQ(Music):
     # special
     async def userlist(self, qqnum):
 
-        userid = CacheDB.getQQUserid(str(qqnum))
+        userid = await self.getuserid(qqnum)
 
-        if not userid:
-            userid = await self.__getuserid(qqnum)
-            CacheDB.addQQUserid(qqnum, userid)
+        if userid:
+            
+            return await self.userdetail(userid)
+        
+        return ['no user matched']
+
+    # special
+    async def userdetail(self, userid):
 
         params = {
             "hostUin": 0,
@@ -394,27 +409,36 @@ class QQ(Music):
 
         api = "https://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg"
         jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
-
-        data = jsonresp['data']
-        res = {"allLists": [self._songlist(
-            "qq",
-            data['mymusic'][0]['id'],
-            data['mymusic'][0]['title'],
-            data['mymusic'][0]['laypic'],
-            data['mymusic'][0]['num0']
-        )]}
-        for _list in data['mydiss']['list']:
-            res["allLists"].append(self._songlist(
+        
+        try:
+            data = jsonresp['data']
+            res = {"allLists": [self._songlist(
                 "qq",
-                _list['dissid'],
-                _list['title'],
-                _list['picurl'],
-                int(_list['subtitle'].split('首')[0])
-            ))
-        return res
+                data['mymusic'][0]['id'],
+                data['mymusic'][0]['title'],
+                data['mymusic'][0]['laypic'],
+                data['mymusic'][0]['num0']
+            )]}
+            for _list in data['mydiss']['list']:
+                res["allLists"].append(self._songlist(
+                    "qq",
+                    _list['dissid'],
+                    _list['title'],
+                    _list['picurl'],
+                    int(_list['subtitle'].split('首')[0])
+                ))
+            return res
+
+        except:
+            return []
 
     # special
-    async def __getuserid(self, qqnum):
+    async def getuserid(self, qqnum):
+
+        if qqnum in self.cache.keys():
+            print('hit cache')
+            return self.cache[qqnum]
+
         params = {
             'p': 1,
             'n': 30,
@@ -425,39 +449,28 @@ class QQ(Music):
         }
 
         api = "https://c.y.qq.com/soso/fcgi-bin/client_search_user"
-        user = self._asyncGetJsonHeadersCookies(api, params)['data']['user']['list'][0]
-        # result = {
-        #     'title': user['title'],
-        #     'pic': user['pic'],
-        #     'userid': user['docid']
-        # }
-        return user['docid']
+        
+        resp = await self._asyncGetJsonHeadersCookies(api, params)
+        
+        try:
+            userid = resp['data']['user']['list'][0]['docid']
+            self.cache[qqnum] = userid
+            return userid
+
+        except:
+            return False
 
 
-async def __test():
+async def test():
     
     p = QQ()
     searchkey = "周杰伦"
     page = 2
     num = 20
+    userid = '7ensoKviNeci'
 
-    #    test at 2019-09-25 20:11
+    # test at 2019-09-25 20:11
     
-    songs_0 = await p.searchSong(searchkey, 0, num)
-    songs_1 = await p.searchSong(searchkey, 1, num)
-    one = (songs_0['songs'][0]['idforres'] == songs_1['songs'][0]['idforres'])
-    print('search: start from %s' % one)
-
-    comments_0 = await p.getComments("107192078", "music", 0, num)
-    comments_1 = await p.getComments("107192078", "music", 1, num)
-    two = (comments_0['normal']['comments'][0]['username'] == comments_1['normal']['comments'][0]['username'])
-    print('comments: start from %s' % two)
-
-    list_0 = await p.songsinList("1304470181", 0, num)
-    list_1 = await p.songsinList("1304470181", 1, num)
-    three = (list_0['songs'][0]['idforres'] == list_1['songs'][0]['idforres'])
-    print('list: start from %s' % three)
-
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
@@ -467,7 +480,9 @@ async def __test():
     # - print(await p.musicuri("002WCV372JMZJw"))
     # √ print(await p.mvuri("m00119xeo83"))
     # √ print(await p.lyric("002WCV372JMZJw"))
-    # √ print(await p.userlist("406143883"))
+    # √ print(await p.getuserid("406143883"))
+    print(await p.userlist("406143883"))
+    # √ print(await p.userdetail(userid))
     # √ print((await p.songsinList("1304470181", page, num)).keys())
     # √ print((await p.songsinAlbum("14536")).keys())
 
@@ -475,5 +490,4 @@ async def __test():
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
-    loop.close()
+    loop.run_until_complete(test())

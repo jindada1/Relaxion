@@ -373,7 +373,7 @@ class WangYi(Music):
         return url
 
 
-async def __test():
+async def test():
 
     p = WangYi()
     searchkey = "林俊杰"
@@ -382,20 +382,6 @@ async def __test():
     '''
         test at 2020-01-25 21:27, all passed
     '''
-    songs_0 = await p.searchSong(searchkey, 0, num)
-    songs_1 = await p.searchSong(searchkey, 1, num)
-    one = (songs_0['songs'][0]['idforres'] == songs_1['songs'][0]['idforres'])
-    print('search: start from %s' % one)
-
-    comments_0 = await p.getComments("33894312", "music", 0, num)
-    comments_1 = await p.getComments("33894312", "music", 1, num)
-    two = (comments_0['normal']['comments'][0]['username'] == comments_1['normal']['comments'][0]['username'])
-    print('comments: start from %s' % two)
-
-    list_0 = await p.songsinList("24381616", 0, num)
-    list_1 = await p.songsinList("24381616", 1, num)
-    three = (list_0['songs'][0]['idforres'] == list_1['songs'][0]['idforres'])
-    print('list: start from %s' % three)
 
     # √ print((await p.searchSong(searchkey,page,num)).keys())
     # √ print((await p.searchAlbum(searchkey,page,num)).keys())
@@ -416,5 +402,4 @@ async def __test():
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
-    loop.close()
+    loop.run_until_complete(test())

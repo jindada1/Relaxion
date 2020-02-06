@@ -287,7 +287,7 @@ class KuGou(Music):
         return result['data']['img']
 
 
-async def __test():
+async def test():
 
     p = KuGou()
     # searchkey = "周杰伦"
@@ -317,5 +317,4 @@ async def __test():
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
-    loop.close()
+    loop.run_until_complete(test())
