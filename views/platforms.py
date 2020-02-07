@@ -1,10 +1,11 @@
-from .baseview import BaseView, pltf_get, redrict
+from .baseview import BaseView, pltf_get, redirect
 
 
 class Platforms(BaseView):
 
     def __init__(self, workers):
 
+        BaseView.__init__(self)
         self.parser = workers[0]
 
     search_args = {
@@ -108,17 +109,16 @@ class Platforms(BaseView):
 
     # get lyric of a song
 
-    @redrict
+    @redirect('txt')
     async def lyric(self, P, _id):
-        return self._textmsg(await P.lyric(_id))
+        return await P.lyric(_id)
 
-    @redrict
+    @redirect('url')
     async def albumPic(self, P, _id):
-        newurl = await P.picurl(_id)
-        raise self._redrict_to(newurl)
+        return await P.picurl(_id)
 
-    @redrict
+    @redirect('url')
     async def song(self, P, _id):
-        newurl = await P.musicuri(_id)
-        # newurl is {"uri":"https://......."}
-        raise self._redrict_to(newurl['uri'])
+        result = await P.musicuri(_id)
+        # result is {"uri":"https://......."}
+        return result['uri']

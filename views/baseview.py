@@ -39,7 +39,7 @@ class logger(object):
 
     @classmethod
     def __writeline(cls, line):
-        
+
         print(line)
         with open(logger.infofile, 'a') as f:
 
@@ -53,12 +53,12 @@ class router_recorder(object):
         pass
 
     def __call__(self, handler):
-        async def wrapper(caller, request):
+        async def wrapper(view, request):
 
             req = request.url.human_repr()
             logger.log_get(req)
 
-            return await handler(caller, request)
+            return await handler(view, request)
 
         return wrapper
 
@@ -86,9 +86,6 @@ class args_check(object):
         params["err"] = ""
         return params
 
-    async def errorHandler(self, errmsg):
-        return web.Response(text=errmsg)
-
 
 class check_args_post(args_check):
 
@@ -97,7 +94,7 @@ class check_args_post(args_check):
         args_check.__init__(self, argSchema)
 
     def __call__(self, handler):
-        async def wrapper(caller, request):
+        async def wrapper(view, request):
             # print("%s is running" % handler.__name__)
             req = request.url.human_repr()
 
@@ -110,9 +107,9 @@ class check_args_post(args_check):
             validation = self._validate(data)
 
             if validation['err']:
-                return await self.errorHandler(validation['err'])
+                return view._textmsg(validation['err'])
             else:
-                return await handler(caller, validation)
+                return await handler(view, validation)
 
         return wrapper
 
@@ -124,7 +121,7 @@ class check_args_get(args_check):
         args_check.__init__(self, argSchema)
 
     def __call__(self, handler):
-        def wrapper(caller, request):
+        def wrapper(view, request):
             # print("%s is running" % handler.__name__)
             req = request.url.human_repr()
             logger.log_get(req)
@@ -133,9 +130,9 @@ class check_args_get(args_check):
             validation = self._validate(request.rel_url.query)
 
             if validation['err']:
-                return self.errorHandler(validation['err'])
+                return view._textmsg(validation['err'])
             else:
-                return handler(caller, validation)
+                return handler(view, validation)
 
         return wrapper
 
@@ -147,7 +144,7 @@ class check_args_upload(args_check):
         args_check.__init__(self, argSchema)
 
     def __call__(self, handler):
-        async def wrapper(caller, request):
+        async def wrapper(view, request):
             # print("%s is running" % handler.__name__)
             req = request.url.human_repr()
 
@@ -155,7 +152,7 @@ class check_args_upload(args_check):
             data = await request.post()
 
             logger.log_post(req, data)
-            
+
             # validate arguments in request according to self.argSchema
             meta = self._validate(data)
 
@@ -165,10 +162,10 @@ class check_args_upload(args_check):
                 meta['err'] = 'no file'
 
             if meta['err']:
-                return await self.errorHandler(meta['err'])
+                return view._textmsg(meta['err'])
 
             else:
-                return await handler(caller, meta)
+                return await handler(view, meta)
 
         return wrapper
 
@@ -177,61 +174,106 @@ class pltf_get(args_check):
     '''
     Get from platforms 
     '''
-
     def __init__(self, argSchema):
 
         args_check.__init__(self, argSchema)
 
     def __call__(self, handler):
 
-        async def wrapper(caller, request):
+        async def wrapper(view, request):
             # print("%s is running" % handler.__name__)
             platform = request.match_info['platform']
             req = request.url.human_repr()
             logger.log_get(req)
 
             # filter invalid platforms
-            if caller.parser[platform]:
+            if view.parser[platform]:
                 validation = self._validate(request.rel_url.query)
 
                 if validation['err']:
-                    return await self.errorHandler(validation['err'])
+                    return view._textmsg(validation['err'])
 
                 else:
-                    return await handler(caller, caller.parser[platform], validation)
+                    return await handler(view, view.parser[platform], validation)
 
             # handle error platforms
-            return await self.errorHandler("platform: %s is not supported" % platform)
+            return view._textmsg("platform: %s is not supported" % platform)
 
         return wrapper
 
 
-def redrict(handler):
-    def wrapper(caller, request):
+class redirect(object):
 
-        # print("%s is running" % handler.__name__)
-        platform = request.match_info['platform']
-        _id = request.match_info['id']
-        req = request.url.human_repr()
-        logger.log_get(req)
+    def __init__(self, response_type = 'txt'):
 
-        # filter invalid platforms
-        if caller.parser[platform]:
-            return handler(caller, caller.parser[platform], _id)
-            
-        # handle error platforms
-        return caller._textmsg(caller, "platform: %s is not supported" % platform)
+        self.response_type = response_type
 
-    return wrapper
+    def __call__(self, handler):
 
+        async def wrapper(view, request):
+
+            if self.response_type == 'url':
+                return_func = view._redrict_to
+            else:
+                return_func = view._textmsg
+
+            platform = request.match_info['platform']
+            _id = request.match_info['id']
+            req = request.url.human_repr()
+            logger.log_get(req)
+
+            # filter invalid platforms
+            if view.parser[platform]:
+                cache = view.get_cache(req)
+                
+                if not type(cache) is dict:
+                    # not dict means readable, hit cache
+                    return return_func(cache)
+
+                result = await handler(view, view.parser[platform], _id)
+                view.set_cache(cache, result)
+                return return_func(result)
+
+            # handle error platforms
+            return view._textmsg("platform: %s is not supported" % platform)
+        return wrapper
+    
 
 class BaseView(object):
     '''
     this class is a basic View, which contains some basic functions
     '''
 
-    def __init__(self, parameter_list):
-        pass
+    def __init__(self):
+        self.cache = {}
+        self.TIME_SPAN = 60 * 60 * 10
+
+    def set_cache(self, cache_block, response):
+        # in order to change self.cache, must use dict[key]...
+        cache_block['content'] = response
+        cache_block['time'] = int(time.time())
+
+    def get_cache(self, req):
+        mid = req.split('//')[1]
+        route = mid.split('/')[1:]
+
+        cache_block = self.cache
+        for layer in route:
+            if not layer in cache_block:
+                cache_block[layer] = {}
+            cache_block = cache_block[layer]
+
+        # block is {}, writable must be dict
+        if not cache_block:
+            return cache_block
+
+        # block is {'content':---,'time': <effect>}, readable can be any type
+        if int(time.time()) - cache_block['time'] < self.TIME_SPAN:
+            return cache_block['content']
+
+        # block is {'content':---,'time': <outdate>}, writable must be dict
+        else:
+            return cache_block
 
     def _json_response(self, dict_resp):
         return web.json_response(dict_resp)
