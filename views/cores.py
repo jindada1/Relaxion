@@ -60,7 +60,7 @@ class Cores(BaseView):
         fname = request.match_info['fname']
 
         path = os.path.join('./files/', ftype, fname)
-
+        print(path)
         if os.path.exists(path):
             return self._send_file(path)
 
@@ -77,40 +77,17 @@ class Cores(BaseView):
         albumcover = params['picurl']
         metadata = params['metadata']
 
-        audiofile = self.extractor.getAudio(metadata['title'])
-
-        if not audiofile:
-            
-            video = await self.downloader.download(mvurl, metadata['title'], 'mp4')
-
-            if video['err']:
-                return self._json_response({"err": video['err']})
-
-            audiofile = self.extractor.extract(video['content'], metadata)
+        audiofile = self.extractor.extract_from_url(mvurl, metadata, cover_url = albumcover)
 
         return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
 
 
     @check_args_post({
-        'mvurl': "*",
-        'picurl': "",
-        'metadata': {}
+        'url': "*",
+        'name': "",
     })
     async def downloadRes(self, params):
-
-        mvurl = params['mvurl']
-        albumcover = params['picurl']
-        metadata = params['metadata']
-
-        video = await self.downloader.getFile(mvurl, metadata['title'], 'mp4')
-
-        if video['err']:
-            return self._json_response({"err": video['err']})
-
-        if albumcover:
-            cover = await self.downloader.getFile(albumcover, metadata['album'], 'jpg')
-
-        return self._json_response(video)
+        return self._textmsg('O(∩_∩)O')
 
     @check_args_get({
         're_path': '*'
@@ -120,18 +97,3 @@ class Cores(BaseView):
         re_path = params['re_path']
         
         return self._json_response({'size': self.downloader.fileSize(re_path)})
-
-
-    @check_args_get({
-        'name':"*"
-    })
-    async def findAudio(self, params):
-        
-        name = params['name']
-
-        audiofile = self.extractor.getAudio(name)
-
-        if audiofile:
-            return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
-        
-        return self._json_response({"url": ""})
