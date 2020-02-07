@@ -9,5 +9,6 @@ files/
 front/deployment
 logs/
 
+db/User.db
 
 platforms/cookies
