@@ -22,25 +22,28 @@ class QQ(Music):
         }
 
         self.cookies = {
-            'yqq_stat':'0',
             'pgv_pvid':'6752240106',
-            'ts_last':'y.qq.com/portal/search.html',
-            'pgv_info':'ssid=s949853372',
             'ts_uid':'2152329792',
             'pgv_pvi':'6650337280',
-            'pgv_si':'s2263478272',
-            '_qpsvr_localtk':'0.7473915824304862',
             'RK':'uKhE+YMD0s',
             'ptcz':'144078cffd56e8a20873fa3908a34bc08d48c23ea5733750fe055f448ece53ae',
             'psrf_qqaccess_token':'E7D834DF69EE3E85195F9E54EA3F3169',
             'psrf_qqunionid':'C4F7D9644B5FDA8016F51534E9A503F2',
             'psrf_qqrefresh_token':'4A44971CECE648BD2E00E072414C55AD',
-            'psrf_musickey_createtime':'1580724330',
-            'psrf_access_token_expiresAt':'1588500330',
             'uin':'2835893638',
-            'qm_keyst':'Q_H_L_2e6ytu50eKxeEFjGR_pi6Vuztc6mXXNTHedp1gyawKdtleb9Zw2yaDCJbyWuF-B',
             'psrf_qqopenid':'00CCC32C1F366E9A521155BA9802E901',
+            'tvfe_boss_uuid':'2ac827d7c1784182',
+            'o_cookie':'2835893638',
+            'yqq_stat':'0',
+            'pgv_si':'s5706949632',
+            'ts_last':'y.qq.com/',
+            'pgv_info':'ssid=s2822839376',
+            'ts_refer':'www.baidu.com/link',
             'userAction':'1',
+            '_qpsvr_localtk':'0.12462460570005507',
+            'psrf_access_token_expiresAt':'1588862100',
+            'qm_keyst':'Q_H_L_2GPTzu50e8a5EDTN9sjuyuVtFC46ui6RLIS5g-oxvAbU3RHaEAa00KU6h0kyjW7',
+            'psrf_musickey_createtime':'1581086100'
         }
 
         self.commentMap = {
