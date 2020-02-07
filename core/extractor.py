@@ -182,7 +182,6 @@ class Extractor(object):
         else:
             cmd = self.extractCode.format(in_put, output)
 
-        print(cmd)
         p = subprocess.Popen(cmd, shell=True)
         p.wait()  
 

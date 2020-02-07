@@ -19,39 +19,15 @@ class Cores(BaseView):
 
         root = os.getcwd()
 
-        self.front_path = os.path.join(root, 'front')
+        self.administrator = os.path.join(root, 'front/administrator')
 
         self.resource_path = os.path.join(root, 'files')
 
-    @router_recorder()
     async def index(self, request):
 
-        f = os.path.join(self.front_path, 'templates', 'index.html')
-
-        if os.path.exists(f):
-            return self._send_file('./front/templates/index.html')
-
-        return self._json_response({'err': "no index file"})
-
-    @router_recorder()
-    async def pages(self, request):
-
-        page = request.match_info['page']
-        page = page.split('.')[0] + '.html'
-
-        f = os.path.join(self.front_path, 'templates', page)
-
-        if os.path.exists(f):
-            return self._send_file(f)
-
-        return self._json_response({'err': "no html file named %s" % page})
-
-    @router_recorder()
-    async def static(self, request):
-
-        filename = request.match_info['filename']
-
-        return self._send_file('./front/static/' + filename)
+        f = './front/deployment/index.html'
+        
+        return self._send_file(f)
 
     @router_recorder()
     async def getResource(self, request):
@@ -60,7 +36,7 @@ class Cores(BaseView):
         fname = request.match_info['fname']
 
         path = os.path.join('./files/', ftype, fname)
-        print(path)
+        
         if os.path.exists(path):
             return self._send_file(path)
 
@@ -79,7 +55,7 @@ class Cores(BaseView):
 
         audiofile = self.extractor.extract_from_url(mvurl, metadata, cover_url = albumcover)
 
-        return self._json_response({"url": "/gateway/resource/audios/%s" % audiofile})
+        return self._json_response({"url": "/resource/audios/%s" % audiofile})
 
 
     @check_args_post({

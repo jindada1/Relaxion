@@ -48,9 +48,9 @@ class KuGou(Music):
                     song['hash'],
                     song['hash'],
                     song['mvhash'],
-                    "/gateway/kugou/albumcover/%s" % song['hash'],
+                    "/kugou/albumcover/%s" % song['hash'],
                     song["album_name"],
-                    "/gateway/kugou/lyric/%s" % song['hash'],
+                    "/kugou/lyric/%s" % song['hash'],
                     song['songname'],
                     song['singername'],
                     song['duration']
@@ -210,9 +210,9 @@ class KuGou(Music):
                     song['hash'],
                     song['hash'],
                     song['mvhash'],
-                    "/gateway/kugou/albumcover/%s" % song['hash'],
+                    "/kugou/albumcover/%s" % song['hash'],
                     song["remark"],
-                    "/gateway/kugou/lyric/%s" % song['hash'],
+                    "/kugou/lyric/%s" % song['hash'],
                     filname[1],
                     filname[0],
                     song['duration']
@@ -245,7 +245,7 @@ class KuGou(Music):
         #             "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
         #             song['albummid'] + ".jpg?max_age=2592000",
         #             song['albumname'],
-        #             "/gateway/kugou/lyric/" + song['songmid'],
+        #             "/kugou/lyric/" + song['songmid'],
         #             song['songname'],
         #             self._getname(song['singer']),
         #             song['interval']

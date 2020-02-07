@@ -12,11 +12,14 @@ def setup_routes(app):
     # index html
     app.router.add_get('/', core.index)
 
-    # html page
-    app.router.add_get('/pages/{page}', core.pages)
+    # static
+    app.router.add_static('/css/', path='front/deployment/css', name='css')
+    app.router.add_static('/fonts/', path='front/deployment/fonts', name='fonts')
+    app.router.add_static('/img/', path='front/deployment/img', name='img')
+    app.router.add_static('/js/', path='front/deployment/js', name='js')
 
-    # return frontend static files
-    app.router.add_get('/static/{filename}', core.static)
+    # html page
+    app.router.add_static('/kris/', path='front/administrator', name='admin', show_index=True)
 
     # return media file resource
     app.router.add_get('/resource/{ftype}/{fname}', core.getResource)

@@ -125,7 +125,7 @@ class Music(Base):
         return {
             "platform": p,
             "idforres": res_id,
-            "url":'/gateway/{}/song/{}'.format(p, res_id),
+            "url":'/{}/song/{}'.format(p, res_id),
             "idforcomments": com_id,
             "mvid": mv_id,
             "cover": pic_url,

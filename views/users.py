@@ -96,7 +96,7 @@ class Users(BaseView):
 
                 f.write(b_file)
 
-            url = "/gateway/resource/avators/%s.jpg" % user
+            url = "/resource/avators/%s.jpg" % user
 
             self.localdb.update_avator(user, url)
 
