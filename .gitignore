@@ -6,9 +6,8 @@ __pycache__
 */__pycache__
 
 files/
-front/
+front/deployment
 logs/
 
-db/User.db
 
 platforms/cookies
