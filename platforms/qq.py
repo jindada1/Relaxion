@@ -415,7 +415,7 @@ class QQ(Music):
         
         try:
             data = jsonresp['data']
-            res = {"allLists": [self._songlist(
+            res = {"lists": [self._songlist(
                 "qq",
                 data['mymusic'][0]['id'],
                 data['mymusic'][0]['title'],
@@ -423,7 +423,7 @@ class QQ(Music):
                 data['mymusic'][0]['num0']
             )]}
             for _list in data['mydiss']['list']:
-                res["allLists"].append(self._songlist(
+                res["lists"].append(self._songlist(
                     "qq",
                     _list['dissid'],
                     _list['title'],
