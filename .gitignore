@@ -10,5 +10,6 @@ front/deployment
 logs/
 
 db/User.db
+todo-list.txt
 
 platforms/cookies

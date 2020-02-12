@@ -12,12 +12,9 @@ def setup_routes(app):
     # index html
     app.router.add_get('/', core.index)
 
-    ''' 
     # for dev
-    app.router.add_static('/kris/', path='front/kris', name='admin', show_index=True)
+    # app.router.add_static('/kris/', path='front/kris', name='admin', show_index=True)
     app.router.add_static('/resource/', path='files', name='resource', show_index=True)
-    '''
-
 
     # extract music from mv
     app.router.add_post('/extract', core.extractAudio)
