@@ -2,19 +2,24 @@ try:
     from .users import userAdapter
     from .songs import songAdapter
     from .playlists import listAdapter
+    from .adapter import connect
 except:
     from users import userAdapter
     from songs import songAdapter
     from playlists import listAdapter
+    from adapter import connect
 
 import json
 
 
 class dbService(object):
     def __init__(self, dbfile):
-        self.users = userAdapter(dbfile, 'userinfo')
-        self.songs = songAdapter(dbfile, 'song')
-        self.songlist = listAdapter(dbfile, 'playlist')
+        conn = connect(dbfile)
+        if conn:
+            self.users = userAdapter(conn, 'userinfo')
+            self.songs = songAdapter(conn, 'song')
+            self.songlist = listAdapter(conn, 'playlist')
+        
 
     def register(self, user):
         user['info'] = '{}'
@@ -28,17 +33,38 @@ class dbService(object):
 
         pw = self.users.find_property(user['name'], 'pw')
         if not pw:
-            return {'err': 'no-user'}
+            return {'err': 'no user'}
 
         if user['pw'] == pw:
             info = self.users.find_property(user['name'], 'info')
-            return json.loads(info)
+            return {
+                "name": user['name'],
+                "pw": pw,
+                "info": json.loads(info)
+            }
 
-        return {'err': 'password-error'}
+        return {'err': 'password error'}
 
-    def bind_info(self, user):
-
+    def update(self, user):
+        
+        user['info'] = json.dumps(user['info'])
         return self.users.update(user)
+
+    def userinfo(self, username):
+        
+        j_info = self.users.find_property(username, 'info')
+
+        return json.loads(j_info)
+
+
+    def update_avator(self, username, url):
+
+        info = self.userinfo(username)
+
+        info['avator'] = url
+
+        return self.users.update_info(username, json.dumps(info))
+        
 
     def get_songlist(self, userid):
 
@@ -47,8 +73,14 @@ class dbService(object):
 
         for songid in ids:
             info_json_str = self.songs.find_property(songid, 'info')
-            if info_json_str:
-                songs.append(json.loads(info_json_str))
+            try:
+                song = json.loads(info_json_str)
+                song['loved'] = True
+                songs.append(song)
+
+            # if this info is invalid, remove this record from database
+            except:
+                self.hate_song(userid, songid)
 
         return songs
 
@@ -89,4 +121,8 @@ if __name__ == '__main__':
     localdb = dbService(dbf)
     
     # √ print(localdb.get_songlist('Kris'))
-    # √ print(localdb.login({'name':'Kris','pw':'1234'}))
+    # √ print(localdb.login({'name':'听说你锁了','pw':'1234'}))
+    # √ print(localdb.register({'name':'Kun','pw':'1234'}))
+    # √ print(localdb.love_song('Kris','test','test'))
+    # √ print(localdb.update_avator('KunKun','test'))
+    print(localdb.userinfo('KunKun'))

@@ -19,9 +19,10 @@ class userAdapter(dbAdapter):
 
     def insert(self, row):
         try:
-            self.sql_do('insert into {} (name, pw, info) values (?, ?, ?)'.format(
+            a = self.sql_do('insert into {} (name, pw, info) values (?, ?, ?)'.format(
                 self.table), (row['name'], row['pw'], row['info'],))
-            return True
+            
+            return a
             
         except:
             return False
@@ -49,6 +50,12 @@ class userAdapter(dbAdapter):
             return t_res[0]
         # no row
         return None
+
+    def update_info(self, username, info):
+
+        rows = self.sql_do('update {0} set info = ? where name = ?'.format(self.table), (info, username,))
+
+        return rows
 
     def update(self, row):
 

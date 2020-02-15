@@ -8,21 +8,32 @@ def setup_routes(app):
 
     # register services
     core, user, platform = register_services()
-
+    
     # index html
     app.router.add_get('/', core.index)
 
-    # html page
-    app.router.add_get('/pages/{page}', core.pages)
+    ''' 
+    # for dev
+    app.router.add_static('/css/', path='front/deployment/css', name='css')
+    app.router.add_static('/fonts/', path='front/deployment/fonts', name='fonts')
+    app.router.add_static('/img/', path='front/deployment/img', name='img')
+    app.router.add_static('/js/', path='front/deployment/js', name='js')
 
-    # return frontend static files
-    app.router.add_get('/static/{filename}', core.static)
+    app.router.add_static('/kris/', path='front/kris', name='admin', show_index=True)
+    app.router.add_static('/resource/', path='files', name='resource', show_index=True)
+    '''
 
     # return media file resource
-    app.router.add_get('/resource/{ftype}/{fname}', core.getResource)
+    # app.router.add_get('/resource/{ftype}/{fname}', core.getResource)
 
     # extract music from mv
     app.router.add_post('/extract', core.extractAudio)
+
+    # start download
+    app.router.add_post('/download', core.downloadRes)
+
+    # get download progress
+    app.router.add_get('/download/progress', core.dlProgress)
 
     '''
     music creepers
@@ -95,3 +106,9 @@ def setup_routes(app):
 
     # user dislike a song, remove song from his list
     app.router.add_post('/user/hate/song', user.hateSong)
+
+    # update user's info
+    app.router.add_post('/user/info/update',user.update)
+
+    # upload avator
+    app.router.add_post('/upload/avator', user.uploadAvator)

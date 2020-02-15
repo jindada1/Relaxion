@@ -8,6 +8,7 @@ for : parse data from other platforms to the format of our platform
 # define data schema of our platform
 
 from aiohttp import ClientSession
+from datetime import datetime
 import time
 import json
 import base64
@@ -22,7 +23,9 @@ class Base(object):
         name = kwargs["name"]
         
         self.thirdparty = third
-        
+        self.cookies = {}
+        self.headers = {}
+
         if third:
             print("[ok] connect %s to third party server: %s" % (name, self.thirdparty))
 
@@ -47,9 +50,9 @@ class Base(object):
             return json.loads(await resp.text())
 
 
-    async def _asyncPostJson(self, url, params = None):
-        async with ClientSession() as session:
-            resp = await session.post(url, data=params)
+    async def _asyncPostJson(self, url, params = None, cookies = None):
+        async with ClientSession(cookies = cookies) as session:
+            resp = await session.post(url, data=params, headers=self.headers)
             return json.loads(await resp.text())
 
 
@@ -72,9 +75,17 @@ class Base(object):
         return json.dumps(_dict).replace(" ", '')
 
 
-    def base64(self, text):
+    def base64decode(self, text):
         
         return base64.b64decode(text).decode(encoding="utf-8-sig")
+
+    def base64encode(self, text):
+
+        return base64.b64encode(text)
+
+    def to_time(self, timestamp):
+        
+        return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d, %H:%M:%S")
 
     @property
     def now_str(self):
@@ -110,18 +121,20 @@ class Music(Base):
                 artist += "," + singer['name']
         return artist
 
-    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time):
+    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time, playable = True):
         return {
             "platform": p,
             "idforres": res_id,
+            "url":'/{}/song/{}'.format(p, res_id),
             "idforcomments": com_id,
             "mvid": mv_id,
             "cover": pic_url,
             "albumname": alb_name,
-            "lrcurl": lrc_url,
+            "lrc": lrc_url,
             "name": name,
             "artist": arts,
-            "interval": time
+            "interval": time,
+            "playable": playable
         }
 
     def _album(self, p, alb_id, pic_url, name, com_id, arts, pub_day):

@@ -22,8 +22,28 @@ class QQ(Music):
         }
 
         self.cookies = {
-            'p_luin': 'o2835893638',
-            'p_lskey': '0004000024d53616cf3c76ca7ab957fa2c798af92411300d609c0c7f82168c0d0c60790e3e0ae9b2f1bd4eac',
+            'pgv_pvid':'6752240106',
+            'ts_uid':'2152329792',
+            'pgv_pvi':'6650337280',
+            'RK':'uKhE+YMD0s',
+            'ptcz':'144078cffd56e8a20873fa3908a34bc08d48c23ea5733750fe055f448ece53ae',
+            'psrf_qqaccess_token':'E7D834DF69EE3E85195F9E54EA3F3169',
+            'psrf_qqunionid':'C4F7D9644B5FDA8016F51534E9A503F2',
+            'psrf_qqrefresh_token':'4A44971CECE648BD2E00E072414C55AD',
+            'uin':'2835893638',
+            'psrf_qqopenid':'00CCC32C1F366E9A521155BA9802E901',
+            'tvfe_boss_uuid':'2ac827d7c1784182',
+            'o_cookie':'2835893638',
+            'yqq_stat':'0',
+            'pgv_si':'s5706949632',
+            'ts_last':'y.qq.com/',
+            'pgv_info':'ssid=s2822839376',
+            'ts_refer':'www.baidu.com/link',
+            'userAction':'1',
+            '_qpsvr_localtk':'0.12462460570005507',
+            'psrf_access_token_expiresAt':'1588862100',
+            'qm_keyst':'Q_H_L_2GPTzu50e8a5EDTN9sjuyuVtFC46ui6RLIS5g-oxvAbU3RHaEAa00KU6h0kyjW7',
+            'psrf_musickey_createtime':'1581086100'
         }
 
         self.commentMap = {
@@ -33,8 +53,27 @@ class QQ(Music):
             'mv':5
         }
 
+        self.cache = {}
+
+    def playable(self, number):
+        '''
+        song.switch 628481
+        song.switch.toString(2) 10011001011100000001
+        pop->reverse (19) ["0", "0", "0", "0", "0", "0", "0", "1", "1", "1", "0", "1", "0", "0", "1", "1", "0", "0", "1"]
+        '''
+        # convert decimal to binary code array
+        string = list(bin(number))
+        # remove last char
+        string.pop()
+        # reverse string
+        string = string[::-1]
+        play_flag = string[0]
+        try_flag = string[13]
+        return ((play_flag == '1') or ((play_flag == '1') and (try_flag == '1')))
+
+
     # override, return object
-    async def searchSong(self, k, p, n):
+    async def searchSong(self, k, p, n):        
         # this params is coincident with your creeper service
         params = {
             # 'aggr':1, 聚合多版本音乐
@@ -42,7 +81,7 @@ class QQ(Music):
             'format': 'json',
             't': 0,  # song
             'n': n,
-            'p': p,
+            'p': int(p) + 1, # pages start from 1 in qq, we set to 0
             'w': k
         }
         # this api is coincident with your creeper service
@@ -63,7 +102,8 @@ class QQ(Music):
                     "/qq/lyric/" + qqsong['songmid'],
                     qqsong['songname'],
                     self._getname(qqsong['singer']),
-                    qqsong['interval']
+                    qqsong['interval'],
+                    self.playable(qqsong['switch'])
                 ))
         except:
             result['error'] = 1
@@ -77,7 +117,7 @@ class QQ(Music):
             't': 8,
             'format': 'json',
             'n': n,
-            'p': p,
+            'p': int(p) + 1,
             'w': k
         }
 
@@ -108,7 +148,7 @@ class QQ(Music):
             't': 12,
             'format': 'json',
             'n': n,
-            'p': p,
+            'p': int(p) + 1,
             'w': k
         }
 
@@ -171,21 +211,40 @@ class QQ(Music):
     async def musicuri(self, _id):
         # this params is coincident with your creeper service
         params = {
-            "idforres": _id
+            'data': self.jsonify({
+                "req_0":{
+                    "module":"vkey.GetVkeyServer",
+                    "method":"CgiGetVkey",
+                    "param":{
+                        "guid":"10000",
+                        "songmid":[_id],
+                        "songtype":[0],
+                        "uin":"0",
+                        "loginflag":1,
+                        "platform":"20"
+                    }
+                }
+            })
         }
         # this api is coincident with your creeper service
-        # api = "%s/song" % self.thirdparty
-        # jsonresp = await self._asyncGetJson(api, params=params)
-        return self._uri()
+        api = "https://u.y.qq.com/cgi-bin/musicu.fcg"
+        jsonresp = await self._asyncGetJson(api, params=params)
+        
+        try:
+            info = jsonresp['req_0']['data']
+            host = info['sip'][0]
+
+            route = info['midurlinfo'][0]['purl']
+            if route:
+                return self._uri(host + route)
+
+            return self._uri()
+
+        except:
+            return self._uri()
 
     # override
     async def lyric(self, songmid):
-        '''
-        cache = CacheDB.getLyric(songmid)
-        if cache:
-            return cache
-        '''
-
         params = {
             'format': 'json',
             'g_tk': 5381,
@@ -198,9 +257,8 @@ class QQ(Music):
 
         try:
             lyric = jsonresp['lyric']
-            # CacheDB.addQQLyric(songmid, lyric)
         except:
-            lyric = "没有歌词的纯音乐哦~"
+            lyric = '[00:01.000] 没有歌词哦~'
 
         return lyric
 
@@ -220,7 +278,7 @@ class QQ(Music):
             'platform': 'yqq.json',
             'needNewCode': 0,
             'song_num': n,
-            'song_begin': p*20,
+            'song_begin': int(p)*int(n),   # page start from 0
             'disstid': _id
         }
 
@@ -289,9 +347,9 @@ class QQ(Music):
         params = {
             'cmd': 8,
             'format': 'json',
-            'pagenum': p,
+            'pagenum': p,  # start from 0
             'pagesize': n,
-            'reqtype': 2,
+            'reqtype': 1,
             'biztype': self.commentMap[t],  # 1: for song ; 2: for album ; 5: for mv
             'topid': _id
         }
@@ -309,7 +367,7 @@ class QQ(Music):
                     comment['nick'],
                     comment['rootcommentcontent'],
                     comment['praisenum'],
-                    comment['time']
+                    self.to_time(comment['time'])
                 ))
         except:
             result['error'] = 1
@@ -322,7 +380,7 @@ class QQ(Music):
                     comment['nick'],
                     comment['rootcommentcontent'],
                     comment['praisenum'],
-                    comment['time']
+                    self.to_time(comment['time'])
                 ))
             result['hot']['num'] = data['hot_comment']['commenttotal']
         except:
@@ -332,11 +390,16 @@ class QQ(Music):
     # special
     async def userlist(self, qqnum):
 
-        userid = CacheDB.getQQUserid(str(qqnum))
+        userid = await self.getuserid(qqnum)
 
-        if not userid:
-            userid = await __getuserid(qqnum)
-            CacheDB.addQQUserid(qqnum, userid)
+        if userid:
+            
+            return await self.userdetail(userid)
+        
+        return ['no user matched']
+
+    # special
+    async def userdetail(self, userid):
 
         params = {
             "hostUin": 0,
@@ -349,27 +412,36 @@ class QQ(Music):
 
         api = "https://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg"
         jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
-
-        data = jsonresp['data']
-        res = {"allLists": [self._songlist(
-            "qq",
-            data['mymusic'][0]['id'],
-            data['mymusic'][0]['title'],
-            data['mymusic'][0]['laypic'],
-            data['mymusic'][0]['num0']
-        )]}
-        for _list in data['mydiss']['list']:
-            res["allLists"].append(self._songlist(
+        
+        try:
+            data = jsonresp['data']
+            res = {"lists": [self._songlist(
                 "qq",
-                _list['dissid'],
-                _list['title'],
-                _list['picurl'],
-                int(_list['subtitle'].split('首')[0])
-            ))
-        return res
+                data['mymusic'][0]['id'],
+                data['mymusic'][0]['title'],
+                data['mymusic'][0]['laypic'],
+                data['mymusic'][0]['num0']
+            )]}
+            for _list in data['mydiss']['list']:
+                res["lists"].append(self._songlist(
+                    "qq",
+                    _list['dissid'],
+                    _list['title'],
+                    _list['picurl'],
+                    int(_list['subtitle'].split('首')[0])
+                ))
+            return res
+
+        except:
+            return []
 
     # special
-    async def __getuserid(qqnum):
+    async def getuserid(self, qqnum):
+
+        if qqnum in self.cache.keys():
+            print('hit cache')
+            return self.cache[qqnum]
+
         params = {
             'p': 1,
             'n': 30,
@@ -380,34 +452,40 @@ class QQ(Music):
         }
 
         api = "https://c.y.qq.com/soso/fcgi-bin/client_search_user"
-        user = self._asyncGetJsonHeadersCookies['data']['user']['list'][0]
-        result = {
-            'title': user['title'],
-            'pic': user['pic'],
-            'userid': user['docid']
-        }
-        return user['docid']
+        
+        resp = await self._asyncGetJsonHeadersCookies(api, params)
+        
+        try:
+            userid = resp['data']['user']['list'][0]['docid']
+            self.cache[qqnum] = userid
+            return userid
+
+        except:
+            return False
 
 
-async def __test():
+async def test():
+    
     p = QQ()
     searchkey = "周杰伦"
     page = 2
     num = 20
+    userid = '7ensoKviNeci'
 
-    '''
-        test at 2019-09-25 20:11
-    '''
+    # test at 2019-09-25 20:11
+    
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # - print((await p.getComments("107192078", "music", page, num)).keys())
-    # - print((await p.getComments("14536", "album", page, num)).keys())
-    # - print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # × print(await p.musicuri("002WCV372JMZJw"))
+    # √ print((await p.getComments("107192078", "music", page, num)).keys())
+    # √ print((await p.getComments("14536", "album", page, num)).keys())
+    # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
+    # - print(await p.musicuri("002WCV372JMZJw"))
     # √ print(await p.mvuri("m00119xeo83"))
     # √ print(await p.lyric("002WCV372JMZJw"))
-    # √ print(await p.userlist("406143883"))
+    # √ print(await p.getuserid("406143883"))
+    print(await p.userlist("406143883"))
+    # √ print(await p.userdetail(userid))
     # √ print((await p.songsinList("1304470181", page, num)).keys())
     # √ print((await p.songsinAlbum("14536")).keys())
 
@@ -415,5 +493,4 @@ async def __test():
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
-    loop.close()
+    loop.run_until_complete(test())

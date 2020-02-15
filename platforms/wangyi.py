@@ -3,24 +3,80 @@ try:
 except:
     from baseparser import Music
 
+from Crypto.Cipher import AES
+import binascii
+import os
+
+
 
 class WangYi(Music):
     def __init__(self, thirdparty = None):
 
         Music.__init__(self, name = "WangYi", third = thirdparty)
 
+        self.headers = {
+            'Referer'       : 'https://music.163.com',
+            'Content-Type'  : 'application/x-www-form-urlencoded',
+            'User-Agent'    : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
+        }
+
+        self.commentType = {
+            'music'     : 'R_SO_4_',
+            'mv'        : 'R_MV_5_',
+            'album'     : 'R_AL_3_',
+            'songlist'  : 'A_PL_0_',
+            'radio'     : 'A_DJ_1_',
+            'video'     : 'R_VI_62_',
+            'dynamic'   : 'A_EV_2_'
+        }
+
+    def playable(self, fee):
+
+        return not (fee == 4 or fee == 1);
+
+    def encrypted_request(self, data) -> dict:
+        MODULUS = (
+            "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7"
+            "b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280"
+            "104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932"
+            "575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b"
+            "3ece0462db0a22b8e7"
+        )
+        PUBKEY = "010001"
+        NONCE = b"0CoJUm6Qyw8W8jud"
+        data = self.jsonify(data).encode("utf-8")
+        secret = self.create_key(16)
+        params = self.aes(self.aes(data, NONCE), secret)
+        encseckey = self.rsa(secret, PUBKEY, MODULUS)
+        
+        return {"params": params.decode(), "encSecKey": encseckey}
+        
+    def aes(self, text, key):
+        pad = 16 - len(text) % 16
+        text = text + bytearray([pad] * pad)
+        encryptor = AES.new(key, 2, b"0102030405060708")
+        ciphertext = encryptor.encrypt(text)
+        return self.base64encode(ciphertext)
+
+    def rsa(self, text, pubkey, modulus):
+        text = text[::-1]
+        rs = pow(int(binascii.hexlify(text), 16), int(pubkey, 16), int(modulus, 16))
+        return format(rs, "x").zfill(256)
+
+    def create_key(self, size):
+        return binascii.hexlify(os.urandom(size))[:16]
+
     # override, return object
     async def searchSong(self, k, p, n):
-        # this params is coincident with your creeper service
         params = {
-            'keywords': k,
-            'type': 1,  # 1: song, 10: album, 1004: MV 100: singer, 1000: songlist, 1002: user, 1006: 歌词, 1009: 电台, 1014: 视频
+            'type': 1,
             'limit': n,
             'offset': int(p) * int(n),
+            's': k
         }
-        # this api is coincident with your creeper service
-        api = "%s/search" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+        
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'songs': []}
         append = result['songs'].append
@@ -36,7 +92,8 @@ class WangYi(Music):
                     "/wangyi/lyric/%s" % wangyisong['id'],
                     wangyisong['name'],
                     self._getname(wangyisong['artists']),
-                    wangyisong['duration'],
+                    int(wangyisong['duration']/1000),
+                    self.playable(wangyisong['fee'])
                 ))
         except:
             result['error'] = 1
@@ -44,16 +101,15 @@ class WangYi(Music):
 
     # override
     async def searchAlbum(self, k, p, n):
-        # this params is coincident with your creeper service
         params = {
-            'keywords': k,
+            's': k,
             'type': 10,  # 1: song, 10: album, 1004: MV 100: singer, 1000: songlist, 1002: user, 1006: 歌词, 1009: 电台, 1014: 视频
             'limit': n,
             'offset': int(p) * int(n),
         }
-        # this api is coincident with your creeper service
-        api = "%s/search" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'albums': []}
         append = result['albums'].append
@@ -74,16 +130,15 @@ class WangYi(Music):
 
     # override
     async def searchMV(self, k, p, n):
-        # this params is coincident with your creeper service
         params = {
-            'keywords': k,
+            's': k,
             'type': 1004,  # 1: song, 10: album, 1004: MV 100: singer, 1000: songlist, 1002: user, 1006: 歌词, 1009: 电台, 1014: 视频
             'limit': n,
             'offset': int(p) * int(n),
         }
-        # this api is coincident with your creeper service
-        api = "%s/search" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+
+        api = "http://music.163.com/api/search/pc"
+        jsonresp = await self._asyncPostJson(api, params=params)
 
         result = {'videos': []}
         append = result['videos'].append
@@ -96,7 +151,7 @@ class WangYi(Music):
                     mv['id'],
                     mv['id'],
                     self._getname(mv['artists']),
-                    mv['duration'],
+                    int(mv['duration']/1000),
                     '-',
                 ))
         except:
@@ -105,54 +160,77 @@ class WangYi(Music):
 
     # override
     async def mvuri(self, _id):
-        # this params is coincident with your creeper service
+        
         params = {
-            "id": _id
+            "id": _id,
+            "r": 1080
         }
-        # this api is coincident with your creeper service
-        api = "%s/mv/url" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+        
+        api = "https://music.163.com/weapi/song/enhance/play/mv/url"
+
+        jsonresp = await self._asyncPostJson(api, params = self.encrypted_request(params))
+
         result = self._uri(jsonresp['data']['url'])
+
         return result
 
     # override
     async def musicuri(self, _id):
-        # this params is coincident with your creeper service
-        params = {
-            "id": _id
-        }
-        # this api is coincident with your creeper service
-        api = "%s/song/url" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+
+        params = self.encrypted_request(dict(ids=[_id], br=32000))
+
+        api = "http://music.163.com/weapi/song/enhance/player/url"
+
+        jsonresp = await self._asyncPostJson(api, params=params)
+
         result = self._uri(jsonresp['data'][0]['url'])
+
         return result
 
     # override
     async def lyric(self, _id):
-        # this params is coincident with your creeper service
         params = {
-            "id": _id
+            "csrf_token": "",
+            "id": _id,
+            "lv": -1,
+            "tv": -1
         }
-        # this api is coincident with your creeper service
-        api = "%s/lyric" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
 
-        return jsonresp['lrc']['lyric']
+        encrypt_data = self.encrypted_request(params)
+
+        api = "https://music.163.com/weapi/song/lyric"
+        jsonresp = await self._asyncPostJson(api, encrypt_data)
+
+        lrc = '[00:01.000] 没有歌词哦~'
+
+        try:
+            lrc = jsonresp['lrc']['lyric']
+        except:
+            pass
+
+        return lrc
 
     # override
-    async def songsinList(self, _id, p = 0, n = "all"):
-        # this params is coincident with your creeper service
+    async def songsinList(self, _id, p, n):
+        # no page, I made pages start from 0
+        total = (int(p) + 1) * int(n)
         params = {
-            "id": _id
+            "id" : _id,
+            "limit" : total,
+            "n" : total
         }
-        # this api is coincident with your creeper service
-        api = "%s/playlist/detail" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
         
+        api = "https://music.163.com/weapi/v3/playlist/detail"
+
+        params = self.encrypted_request(params)
+
+        jsonresp = await self._asyncPostJson(api, params = params)
+        songscut = jsonresp['playlist']['tracks'][total-int(n):]
+
         result = {'songs':[]}
         append = result['songs'].append
         try:
-            for wangyisong in jsonresp['playlist']['tracks']:
+            for wangyisong in songscut:
                 append(self._song(
                     'wangyi',
                     wangyisong['id'],
@@ -163,7 +241,8 @@ class WangYi(Music):
                     "/wangyi/lyric/%s" % wangyisong['id'],
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
-                    wangyisong['dt'],
+                    int(wangyisong['dt']/1000),
+                    self.playable(wangyisong['fee'])
               ))
         except:
             result['error'] = 1
@@ -171,13 +250,11 @@ class WangYi(Music):
 
     # override
     async def songsinAlbum(self, _id):
-        # this params is coincident with your creeper service
-        params = {
-            "id": _id
-        }
-        # this api is coincident with your creeper service
-        api = "%s/album" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
+        
+        api = "https://music.163.com/weapi/v1/album/%s" % _id
+
+        jsonresp = await self._asyncPostJson(api, params = self.encrypted_request({}))
+
         result = {'songs':[]}
         append = result['songs'].append
         try:
@@ -193,6 +270,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
                     "",
+                    self.playable(wangyisong['fee'])
                 ))
         except:
             result['error'] = 1
@@ -200,15 +278,19 @@ class WangYi(Music):
 
     # special
     async def getComments(self, _id, t, p, n):
-        # this params is coincident with your creeper service
         params = {
             "offset": int(p) * int(n),
             "limit": n,
-            "id": _id
+            "rid": _id,
+            "beforeTime": 0
         }
-        # this api is coincident with your creeper service
-        api = "%s/comment/%s" % (self.thirdparty, t)
-        data = await self._asyncGetJson(api, params=params)
+
+        api = "https://music.163.com/weapi/v1/resource/comments/%s" % (self.commentType[t] + _id)
+
+        encrypt_data = self.encrypted_request(params)
+
+        data = await self._asyncPostJson(api, params = encrypt_data)
+
         # parse data
         result = {'hot': {'num': 0, 'comments': []},
                   'normal': {'num': 0, 'comments': []}}
@@ -219,7 +301,7 @@ class WangYi(Music):
                     comment['user']['nickname'],
                     comment['content'],
                     comment['likedCount'],
-                    comment['time']
+                    self.to_time(int(comment['time']/1000))
                 ))
             result['normal']['num'] = data['total']
         except:
@@ -232,7 +314,7 @@ class WangYi(Music):
                     comment['user']['nickname'],
                     comment['content'],
                     comment['likedCount'],
-                    comment['time']
+                    self.to_time(int(comment['time']/1000))
                 ))
             result['hot']['num'] = len(data['hotComments'])
         except:
@@ -241,25 +323,33 @@ class WangYi(Music):
 
     # special
     async def userlist(self, user):
-        # first search user, get user's id
+        
         searchparams = {
-            "keywords":user,
+            "s":user,
             "type":1002
         }
-        searchapi = "%s/search" % self.thirdparty
-        userinfo = await self._asyncGetJson(searchapi, params=searchparams)
+
+        searchapi = "http://music.163.com/api/search/pc"
+        userinfo = await self._asyncPostJson(searchapi, params=searchparams)
+
         uid = userinfo["result"]["userprofiles"][0]["userId"]
 
         # get user's playlist by uid
         params = {
-            "uid":uid
+            "uid": uid,
+            "limit": 300,
+            "offset": 0
         }
         
-        api = "%s/user/playlist" % self.thirdparty
-        jsonresp = await self._asyncGetJson(api, params=params)
-        res = {"allLists":[]}
+        api = "https://music.163.com/weapi/user/playlist"
+        
+        params = self.encrypted_request(params)
+
+        jsonresp = await self._asyncPostJson(api, params = params)
+
+        res = {"lists":[]}
         for _list in jsonresp['playlist']:
-            res["allLists"].append(self._songlist(
+            res["lists"].append(self._songlist(
                 "wangyi",
                 _list['id'],
                 _list['name'],
@@ -270,23 +360,29 @@ class WangYi(Music):
 
     # special
     async def picurl(self, _id):
-        params = {
-            "id":_id
-        }
-        api = "%s/album" % self.thirdparty
-        info = await self._asyncGetJson(api, params=params)
-        return info['album']['picUrl'];
+        
+        api = "https://music.163.com/weapi/v1/album/%s" % _id
+
+        jsonresp = await self._asyncPostJson(api, params = self.encrypted_request({}))
+
+        url = "https://i.loli.net/2020/01/31/9yvblCJoiVw1kAX.jpg"
+        try:
+            url = jsonresp['album']['picUrl']
+        except:
+            pass
+        return url
 
 
-async def __test():
-    p = WangYi("http://api.goldenproud.cn/wangyi")
+async def test():
+
+    p = WangYi()
     searchkey = "林俊杰"
     page = 1
     num = 20
-    
     '''
-        test at 2019-09-28 18:16, all passed
+        test at 2020-01-25 21:27, all passed
     '''
+
     # √ print((await p.searchSong(searchkey,page,num)).keys())
     # √ print((await p.searchAlbum(searchkey,page,num)).keys())
     # √ print((await p.searchMV(searchkey,page,num)).keys())
@@ -295,16 +391,15 @@ async def __test():
     # √ print((await p.getComments("5436712", "mv", page, num)).keys())
     # √ print((await p.musicuri("33894312")).keys())
     # √ print((await p.mvuri("5436712")).keys())
-    # √ print(await p.lyric("33894312"))
+    # √ print(len(await p.lyric("33894312")))
+    # √ print(len(await p.lyric("33894312")))
     # √ print(await p.userlist("同济吴亦凡"))
     # √ print((await p.songsinList("24381616")).keys())
     # √ print((await p.songsinAlbum("32311")).keys())
-    
     # √ print(await p.picurl("32311"))
 
 
 if __name__ == '__main__':
     import asyncio
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(__test())
-    loop.close()
+    loop.run_until_complete(test())

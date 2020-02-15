@@ -5,7 +5,7 @@
             "parser": "QQ"
         },
         "wangyi": {
-            "third": "http://api.goldenproud.cn/wangyi",
+            "third": "",
             "parser": "WangYi"
         },
         "kugou": {
@@ -23,7 +23,7 @@
     },
 
     "core-extract" : {
-        "ffmpeg-path": "F:/tool/ffmpeg/bin/"
+        "ffmpeg-path": ""
     },
 
     "mediafolder": {

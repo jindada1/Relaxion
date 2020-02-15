@@ -15,26 +15,26 @@ refer :
 
 import sqlite3
 
+def connect(dbfile):
+    try:
+        conn = sqlite3.connect(dbfile)
+        # cursor = self.conn.cursor()
+        print("[ok] connect db file %s" % dbfile)
+        return conn
+
+    except sqlite3.Error as e:
+        print("[err] %s" % e)
+        return None
 
 class dbAdapter(object):
-    def __init__(self, dbfile=None, table=None):
-        self.conn = None
-        self.cursor = None
+    def __init__(self, conn, table=None):
+        self.conn = conn
+        self.cursor = conn.cursor()
 
-        if dbfile:
-            self.__connect(dbfile, table)
-
-    def __connect(self, dbfile, table):
-        try:
-            self.conn = sqlite3.connect(dbfile)
-            self.cursor = self.conn.cursor()
-            print("[ok] connect db file %s" % dbfile)
-            
+        if table:
             self.cursor.execute('select * from {}'.format(table))
             print("[ok] find table:%s" % table)
 
-        except sqlite3.Error as e:
-            print("[err] %s" % e)
 
     def __enter__(self):
 
@@ -53,7 +53,7 @@ class dbAdapter(object):
 
     # execute sql commands
     def sql_do(self, sql, params):
-        
+
         self.cursor.execute(sql, params)
         self.conn.commit()
 
