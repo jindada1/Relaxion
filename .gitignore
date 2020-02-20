@@ -8,6 +8,7 @@ __pycache__
 
 platforms/__pycache__
 db/__pycache__
+front/deployment
 
 */__pycache__
 
