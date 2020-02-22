@@ -27,6 +27,8 @@ class KuGou(Music):
             'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
         }
 
+        self.mv_pic_host = 'http://imge.kugou.com/'
+
     # override, return object
     async def searchSong(self, k, p, n):
         # this params is coincident with kugou
