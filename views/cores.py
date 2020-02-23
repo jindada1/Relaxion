@@ -26,19 +26,6 @@ class Cores(BaseView):
     async def index(self, request):
 
         return self._send_file('./front/deployment/index.html')
-        
-    # @router_recorder()
-    # async def getResource(self, request):
-
-    #     ftype = request.match_info['ftype']
-    #     fname = request.match_info['fname']
-
-    #     path = os.path.join('./files/', ftype, fname)
-        
-    #     if os.path.exists(path):
-    #         return self._send_file(path)
-
-    #     return self._textmsg("no file error")
 
     @check_args_post({
         'mvurl': "*",

@@ -80,6 +80,9 @@ def setup_routes(app):
 
     # redirect pic
     app.router.add_get('/{platform}/albumcover/{id}', platform.albumPic)
+
+    # redirect pic
+    app.router.add_get('/redirect/{platform}/{id:.+}', platform.redirect)
     
 
     '''

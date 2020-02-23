@@ -122,3 +122,10 @@ class Platforms(BaseView):
         result = await P.musicuri(_id)
         # result is {"uri":"https://......."}
         return result['uri']
+
+    @redirect('url')
+    async def redirect(self, P, _id):
+        url = P.mvpicCDN(_id)
+        return url
+
+    

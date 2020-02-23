@@ -104,6 +104,7 @@ class Base(object):
     def unsplit_url(self, url):
 
         return urllib.parse.urlunsplit(url)
+    
 
 
 class Music(Base):
@@ -182,6 +183,10 @@ class Music(Base):
             "pic": pic,
             "songnum": songnum
         }
+
+    def mvpicCDN(self, path):
+        # redirect to mv cover url
+        return self.mv_pic_host + path
 
     async def searchSong(self, k, p, n):
         return "base search result"

@@ -55,6 +55,8 @@ class QQ(Music):
 
         self.cache = {}
 
+        self.mv_pic_host = 'https://y.gtimg.cn/'
+
     def playable(self, number):
         '''
         song.switch 628481

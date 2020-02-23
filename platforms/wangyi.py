@@ -30,6 +30,8 @@ class WangYi(Music):
             'dynamic'   : 'A_EV_2_'
         }
 
+        self.mv_pic_host = 'http://p4.music.126.net/'
+
     def playable(self, fee):
 
         return not (fee == 4 or fee == 1);
