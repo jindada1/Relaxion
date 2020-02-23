@@ -126,6 +126,6 @@ class Platforms(BaseView):
     @redirect('url')
     async def redirect(self, P, _id):
         url = P.mvpicCDN(_id)
-        return url
+        return url[:-1]
 
     
