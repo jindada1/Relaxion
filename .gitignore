@@ -6,6 +6,7 @@ __pycache__
 */__pycache__
 
 files/
+front/deployment
 logs/
 
 db/User.db
