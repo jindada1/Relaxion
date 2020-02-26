@@ -89,16 +89,14 @@ class Users(BaseView):
         b_file = meta['file']
         user = meta['user']
 
-        avator_path = './files/avators/%s.jpg'% user
+        avator_path = './resource/avators/%s.jpg'% user
 
         try:
             with open(avator_path, 'wb') as f:
 
                 f.write(b_file)
 
-            url = "/resource/avators/%s.jpg" % user
-
-            self.localdb.update_avator(user, url)
+            self.localdb.update_avator(user, avator_path)
 
             return self._json_response({"url": url})
 

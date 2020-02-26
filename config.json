@@ -27,6 +27,6 @@
     },
 
     "mediafolder": {
-        "path": "./files/"
+        "path": "./resource/"
     }
 }

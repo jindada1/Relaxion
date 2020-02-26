@@ -227,7 +227,7 @@ class Extractor(object):
 
 def single_test():
     
-    e = Extractor("D:/tool/ffmpeg/bin/", "D:/Project/Relaxion/files")
+    e = Extractor("D:/tool/ffmpeg/bin/", "D:/Project/Relaxion/resource")
 
     metadata = {
         'title': "晴天",
@@ -235,8 +235,8 @@ def single_test():
         'artist': "周杰伦"
     }
 
-    # video = "D:/Project/Relaxion/files/videos/晴天.mp4"
-    # pic = "D:/Project/Relaxion/files/pics/default.jpg"
+    # video = "D:/Project/Relaxion/resource/videos/晴天.mp4"
+    # pic = "D:/Project/Relaxion/resource/pics/default.jpg"
 
     # a = e.extract_from_local(video, metadata, pic)
     video = "http://117.169.112.218/mv.music.tc.qq.com/AF7aJMH6V8nmxiSHCIW-Qhyi3XtqxEYnsIFc62e_mlz0/80CA627E10F1F8E395D4EE57FD382C55A11B6A0CABD35F4AF18D08CC03F65BC1DA480E8ABF2D171B562B92FFD03DDE33ZZqqmusic_default/1049_M0100549000F3mmR15zesk1000055326.f20.mp4?fname=1049_M0100549000F3mmR15zesk1000055326.f20.mp4"
