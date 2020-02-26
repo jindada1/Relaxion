@@ -19,13 +19,11 @@ def setup_routes(app):
     app.router.add_static('/img/', path='front/deployment/img', name='img')
     app.router.add_static('/js/', path='front/deployment/js', name='js')
 
-    app.router.add_static('/kris/', path='front/kris', name='admin', show_index=True)
     app.router.add_static('/resource/', path='files', name='resource', show_index=True)
     '''
 
-    # return media file resource
-    # app.router.add_get('/resource/{ftype}/{fname}', core.getResource)
-
+    app.router.add_static('/kris/', path='front/kris', name='admin', show_index=True)
+    
     # extract music from mv
     app.router.add_post('/extract', core.extractAudio)
 
