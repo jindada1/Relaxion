@@ -22,12 +22,7 @@ def initApp():
 
     return app
 
-def main():
-    import sys
-    import codecs
-    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
-    print('输出为 utf-8')
-    
+def main():    
     app = initApp()
     web.run_app(app, host='127.0.0.1', port=8080)
 
