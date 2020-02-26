@@ -1,1 +1,13 @@
 aiohttp_cors
+aiohttp
+asyncio
+threading
+
+datetime
+Crypto
+re
+subprocess
+sqlite3
+base64
+urllib
+binascii

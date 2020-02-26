@@ -1,7 +1,6 @@
 import os
 import threading
 import asyncio
-import aiofiles
 from aiohttp import ClientSession
 
 
@@ -81,40 +80,6 @@ class Downloader(object):
         path = os.path.join(self.rootFolder, re_path)
 
         return os.path.getsize(path)
-
-    async def download(self, url, name, ftype = None):
-
-        if self.__tasksCount > self.__MaxTasks:
-
-            return self.__err('too many tasks')
-        
-        ftype = ftype.replace(".","")
-
-        path, r = self.__realfolder(name, ftype)
-
-        if os.path.exists(path):
-            
-            return self.__succ(path)
-
-        self.__tasksCount += 1
-
-        async with ClientSession(headers=self.__headers) as session:
-
-            async with session.get(url) as resp:
-
-                if resp.status == 200:
-
-                    f = await aiofiles.open(path, mode='wb')
-
-                    await f.write(await resp.read())
-                    await f.close()
-                
-                    self.__tasksCount -= 1
-                    return self.__succ(path)
-    
-        self.__tasksCount -= 1
-        return self.__err('download error')
-
 
     async def getFile(self, url, name, ftype=None):
 
