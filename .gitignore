@@ -5,9 +5,10 @@ __pycache__
 
 */__pycache__
 
-files/
-logs/
+files
+test
+logs
 front/deployment
+resource/audios
 
-db/User.db
 todo-list.txt
