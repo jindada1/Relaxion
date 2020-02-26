@@ -8,6 +8,6 @@ __pycache__
 files/
 logs/
 front/deployment
+resource/audios
 
-db/User.db
 todo-list.txt
