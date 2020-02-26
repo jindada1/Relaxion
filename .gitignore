@@ -1,15 +1,13 @@
-
 __pycache__
 .vscode
 .pytest_cache
 
+
 */__pycache__
 
 files/
-front/deployment
 logs/
+front/deployment
 
 db/User.db
 todo-list.txt
-
-platforms/cookies
