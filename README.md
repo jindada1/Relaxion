@@ -45,7 +45,7 @@
 
 ## 文档与说明
 
-+ apigateway 文档 [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
++ apigateway [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
 
 **技术栈**
 
@@ -56,7 +56,7 @@
   + ffmpeg 分离音视频流
 
 + 部署
-  + nginx sites-available.conf [nginx conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
+  + nginx [sites-available.conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
 
 + requirements
   + python3.x
