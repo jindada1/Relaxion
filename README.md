@@ -56,10 +56,10 @@
   + ffmpeg 分离音视频流
 
 + 部署
- + nginx sites-available.conf [nginx conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
+  + nginx sites-available.conf [nginx conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
 
 + requirements
- + python3.x
- + aiohttp_cors
- + aiohttp
- + asyncio
+  + python3.x
+  + aiohttp_cors
+  + aiohttp
+  + asyncio
