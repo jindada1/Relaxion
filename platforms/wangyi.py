@@ -3,10 +3,9 @@ try:
 except:
     from baseparser import Music
 
-try:
-    from Crypto.Cipher import AES
-except:
-    from crypto.cipher import AES
+
+from Crypto.Cipher import AES
+
 import binascii
 import os
 
