@@ -47,15 +47,22 @@
 
 + apigateway [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
 
+**run**
+
+```
+pip install -r requirements.txt
+python3 gateWay.py
+```
+
 **技术栈**
 
-+ 开发
++ development
   + aiohttp Server api网关
   + aiohttp Client 爬虫
   + sqlite 用户数据，其它资源存储
   + ffmpeg 分离音视频流
 
-+ 部署
++ deployment
   + nginx [sites-available.conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
 
 + requirements
