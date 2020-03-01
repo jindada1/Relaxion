@@ -50,8 +50,16 @@
 **技术栈**
 
 + 开发
-  + aiohttp 微服务架构 api网关
-  + python/node 平台爬虫
-  + sqlite 用户数据存储，其它资源存储
+  + aiohttp Server api网关
+  + aiohttp Client 爬虫
+  + sqlite 用户数据，其它资源存储
+  + ffmpeg 分离音视频流
 
-+ 部署：docker
++ 部署
+ + nginx sites-available.conf [nginx conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
+
++ requirements
+ + python3.x
+ + aiohttp_cors
+ + aiohttp
+ + asyncio
