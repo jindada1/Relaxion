@@ -34,9 +34,39 @@ class WangYi(Music):
 
         self.mv_pic_host = 'http://p4.music.126.net/'
 
-    def playable(self, fee):
+    def hasCopyright(self, song):
+        privilege = song['privilege']
+        
+        if privilege:
+            if (not privilege['st'] == None) and privilege['st'] < 0:
+                return False
 
-        return not (fee == 4 or fee == 1);
+            if (privilege['fee'] > 0 and (not privilege['fee'] == 8) and privilege['payed'] == 0 and privilege['pl'] <= 0):
+                return True
+            if (privilege['fee'] == 16 or privilege['fee'] == 4 and privilege['flag'] & 2048):
+                return True
+            if ((privilege['fee'] == 0 or privilege['payed']) and privilege['pl'] > 0 and privilege['dl'] == 0):
+                return True
+
+            if (privilege['pl'] == 0 and privilege['dl'] == 0):
+                return False 
+            return True
+
+        else:
+            if song['status'] >= 0 or song['fee'] > 0:
+                return True
+
+            return False
+
+    def playable(self, song):
+
+        free = not (song['fee'] == 4 or song['fee'] == 1)
+
+        cpright = self.hasCopyright(song)
+
+        return free and cpright
+
+
 
     def encrypted_request(self, data) -> dict:
         MODULUS = (
@@ -79,8 +109,9 @@ class WangYi(Music):
             's': k
         }
         
-        api = "http://music.163.com/api/search/pc"
-        jsonresp = await self._asyncPostJson(api, params=params)
+        api = "https://music.163.com/weapi/cloudsearch/get/web?csrf_token="
+        
+        jsonresp = await self._asyncPostJson(api, params=self.encrypted_request(params))
 
         result = {'songs': []}
         append = result['songs'].append
@@ -90,14 +121,14 @@ class WangYi(Music):
                     'wangyi',
                     wangyisong["id"],
                     wangyisong["id"],
-                    wangyisong["mvid"],
-                    "/wangyi/albumcover/%s" % wangyisong['album']['id'],
-                    wangyisong["album"]['name'],
+                    wangyisong["mv"],
+                    wangyisong['al']['picUrl'],
+                    wangyisong["al"]['name'],
                     "/wangyi/lyric/%s" % wangyisong['id'],
                     wangyisong['name'],
-                    self._getname(wangyisong['artists']),
-                    int(wangyisong['duration']/1000),
-                    self.playable(wangyisong['fee'])
+                    self._getname(wangyisong['ar']),
+                    int(wangyisong['dt']/1000),
+                    self.playable(wangyisong)
                 ))
         except:
             result['error'] = 1
@@ -246,7 +277,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
                     int(wangyisong['dt']/1000),
-                    self.playable(wangyisong['fee'])
+                    self.playable(wangyisong)
               ))
         except:
             result['error'] = 1
@@ -274,7 +305,7 @@ class WangYi(Music):
                     wangyisong['name'],
                     self._getname(wangyisong['ar']),
                     "",
-                    self.playable(wangyisong['fee'])
+                    self.playable(wangyisong)
                 ))
         except:
             result['error'] = 1

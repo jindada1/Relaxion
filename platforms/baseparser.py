@@ -164,7 +164,7 @@ class Music(Base):
     def _uri(self, uri = None):
         if uri:
             return {"uri": uri}
-        return {"uri": uri, "error": 1}
+        return {"uri": 'https://www.baidu.com', "error": 1}
 
     def _comment(self, avatar, username, content, stars, time):
         return {
