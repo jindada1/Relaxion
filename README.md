@@ -43,24 +43,23 @@
 
 - [x] 通过输入视频 id，获取该视频资源链接
 
-## 文档与说明
+## aqi文档
 
-+ apigateway [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
++ relaxion [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
 
 **run**
 
 ```
 pip install -r requirements.txt
-python3 gateWay.py
+python3 main.py
 ```
 
 **技术栈**
 
 + development
-  + aiohttp Server api网关
-  + aiohttp Client 爬虫
-  + sqlite 用户数据，其它资源存储
-  + ffmpeg 分离音视频流
+  + aiohttp Server/Client
+  + sqlite 数据存储
+  + ffmpeg ...
 
 + deployment
   + nginx [sites-available.conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
