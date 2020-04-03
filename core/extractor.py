@@ -18,7 +18,7 @@ class Extractor(object):
 
         self.__initFolders(mediafolder)
 
-        print('[ok] init extractor based on ffmpeg in %s' % P)
+        print('[ok] init extractor based on ffmpeg in %s' % P or 'env var')
 
     '''
     init ffmpeg command code
