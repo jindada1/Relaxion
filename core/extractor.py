@@ -10,7 +10,7 @@ class Extractor(object):
 
         aim: this class is for extract audio from video, and set metadata, album cover to audio
     '''
-    def __init__(self, P, mediafolder = None):
+    def __init__(self, P, mediafolder=None):
 
         self.__version = "1.0"
 
@@ -18,7 +18,7 @@ class Extractor(object):
 
         self.__initFolders(mediafolder)
 
-        print('[ok] init extractor based on ffmpeg in %s' % P or 'env var')
+        print('[ok] init extractor based on ffmpeg in %s' % (P if P else 'env var'))
 
     '''
     init ffmpeg command code
