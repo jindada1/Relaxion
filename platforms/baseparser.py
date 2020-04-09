@@ -122,7 +122,7 @@ class Music(Base):
                 artist += "," + singer['name']
         return artist
 
-    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time, playable = True):
+    def _song(self, p, res_id, com_id, mv_id, pic_url, alb_name, lrc_url, name, arts, time, playable=True):
         return {
             "platform": p,
             "idforres": res_id,

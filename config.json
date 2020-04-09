@@ -15,6 +15,10 @@
         "youku": {
             "third": "",
             "parser": "YouKu"
+        },
+        "migu": {
+            "third": "",
+            "parser": "MiGu"
         }
     },
 

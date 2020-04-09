@@ -9,6 +9,7 @@ from .qq import QQ
 from .wangyi import WangYi
 from .kugou import KuGou
 from .youku import YouKu
+from .migu import MiGu
 
 class PraserService(object):
     def __init__(self, cfg):

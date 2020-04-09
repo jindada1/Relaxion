@@ -44,6 +44,21 @@
             "mvid": "0c28d3658d3ec86e9d033c80d9d8e9da",
             "lyricid": "10332c58914b9c5fcaaab60b9531d739",
             "user": "同济吴亦凡"
+        },
+        "migu": {
+            "zhName": "咪咕音乐",
+            "keyword": "周杰伦",
+            "albumid": "8592",
+            "dissid": "24381616",
+            "idforcomments": {
+                "album": "8592",
+                "song": "3790007",
+                "mv": "600570Y9D4M"
+            },
+            "idforres": "60054701923",
+            "mvid": "600570Y9D4M",
+            "lyricid": "60054701923",
+            "user": "kris kun"
         }
     },
     "movie": {}

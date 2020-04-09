@@ -1,9 +1,6 @@
 '''
-
     integrate all functional modules and services into views instance
-
     return views instance out
-
 '''
 import json
 from views import *
