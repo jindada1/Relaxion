@@ -12,9 +12,9 @@ except:
 
 
 class MiGu(Music):
-    def __init__(self, thirdparty = None):
+    def __init__(self, thirdparty=None):
 
-        Music.__init__(self, name = "MiGu", third = thirdparty)
+        Music.__init__(self, name="MiGu", third=thirdparty)
 
         self.headers = {
             'referer': 'http://music.migu.cn/',
@@ -24,10 +24,10 @@ class MiGu(Music):
         self.cookies = {}
 
         self.commentMap = {
-            'music':1,
-            'song':1,
-            'album':2,
-            'mv':5
+            'music': 1,
+            'song': 1,
+            'album': 2,
+            'mv': 5
         }
 
         self.mv_pic_host = 'https://y.gtimg.cn/'
@@ -48,8 +48,8 @@ class MiGu(Music):
         try_flag = string[13]
         return ((play_flag == '1') or ((play_flag == '1') and (try_flag == '1')))
 
-
     # override, return object
+
     async def searchSong(self, k, p, n):
         params = {
             'rows': n,
@@ -57,7 +57,7 @@ class MiGu(Music):
             'keyword': k,
             'pgc': p
         }
-        
+
         api = "http://m.music.migu.cn/migu/remoting/scr_search_tag"
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'songs': []}
@@ -180,7 +180,7 @@ class MiGu(Music):
 
     # override
     async def musicuri(self, cid_id):
-        
+
         cid, _id = cid_id.split("|")
         params = {
             'id': _id,
@@ -189,7 +189,7 @@ class MiGu(Music):
         # this api is coincident with your creeper service
         api = "http://api.migu.jsososo.com/song"
         jsonresp = await self._asyncGetJson(api, params=params)
-        
+
         qualities = ['flac', '320k', '128k']
         try:
             data = jsonresp['data']
@@ -197,10 +197,9 @@ class MiGu(Music):
                 if q in data.keys():
                     return self._uri(data[q])
 
-            return self._uri()
-
         except:
-            return self._uri()
+            pass
+        return self._uri()
 
     # override
     async def lyric(self, songid):
@@ -350,7 +349,7 @@ class MiGu(Music):
 
 
 async def test():
-    
+
     p = MiGu()
     searchkey = "周杰伦"
     page = 2
@@ -358,14 +357,14 @@ async def test():
     userid = '7ensoKviNeci'
 
     # test at 2020-09-25 20:11
-    
+
     # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
-    print((await p.searchMV(searchkey, page, num)))
+    # ? print((await p.searchMV(searchkey, page, num)))
     # ? print((await p.getComments("107192078", "music", page, num)).keys())
     # ? print((await p.getComments("14536", "album", page, num)).keys())
     # ? print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # ? print(await p.musicuri("002WCV372JMZJw"))
+    print(await p.musicuri("6005970UK91|1115764335"))
     # ? print(await p.mvuri("m00119xeo83"))
     # ? print(await p.lyric("002WCV372JMZJw"))
     # ? print(await p.getuserid("406143883"))
