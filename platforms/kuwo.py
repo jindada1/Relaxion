@@ -154,69 +154,37 @@ class KuWo(Music):
     async def mvuri(self, mvid):
 
         params = {
-            'data': self.jsonify({
-                "getMvUrl": {
-                    "module": "gosrf.Stream.MvUrlProxy",
-                    "method": "GetMvUrls",
-                    "param": {
-                        "vids": [mvid],
-                        "request_typet": 10001
-                    }
-                }
-            })
+            'rid': mvid,
+            'response': 'url',
+            'format': 'mp4|mkv',
+            'type': 'convert_url',
+            't': '1589586895402'
         }
 
-        api = "https://u.y.qq.com/cgi-bin/musicu.fcg"
-        jsonresp = await self._asyncGetJsonHeaders(api, params=params)
+        api = 'http://kuwo.cn/url'
+        
+        url = await self._asyncGetTextHeadersCookies(api, params=params)
 
-        mp4s = jsonresp['getMvUrl']['data'][mvid]['mp4']
-        i = len(mp4s)
-        while i > -1:
-            i -= 1
-            if len(mp4s[i]['freeflow_url']) > 0:
-                return self._uri(mp4s[i]['freeflow_url'][0])
-
-        hlses = jsonresp['getMvUrl']['data'][mvid]['hls']
-        i = len(hlses)
-        while i > -1:
-            i -= 1
-            if len(hlses[i]['freeflow_url']) > 0:
-                return self._uri(hlses[i]['freeflow_url'][0])
-
-        return self._uri("")
+        return self._uri(url)
 
     # override
     async def musicuri(self, _id):
         # this params is coincident with kuwo
         params = {
-            'data': self.jsonify({
-                "req_0":{
-                    "module":"vkey.GetVkeyServer",
-                    "method":"CgiGetVkey",
-                    "param":{
-                        "guid":"10000",
-                        "songmid":[_id],
-                        "songtype":[0],
-                        "uin":"0",
-                        "loginflag":1,
-                        "platform":"20"
-                    }
-                }
-            })
+            'format': 'mp3',
+            'rid': _id,
+            'response': 'url',
+            'type': 'convert_url3',
+            'br': '128kmp3',
+            'from': 'web',
+            't': 1589364222048
         }
         # this api is coincident with kuwo
-        api = "https://u.y.qq.com/cgi-bin/musicu.fcg"
-        jsonresp = await self._asyncGetJson(api, params=params)
+        api = 'http://kuwo.cn/url'
+        jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
         
         try:
-            info = jsonresp['req_0']['data']
-            host = info['sip'][0]
-
-            route = info['midurlinfo'][0]['purl']
-            if route:
-                return self._uri(host + route)
-
-            return self._uri()
+            return self._uri(jsonresp['url'])
 
         except:
             return self._uri()
@@ -472,8 +440,8 @@ async def test():
     # print((await p.getComments("107192078", "music", page, num)).keys())
     # print((await p.getComments("14536", "album", page, num)).keys())
     # print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # print(await p.musicuri("002WCV372JMZJw"))
-    # print(await p.mvuri("m00119xeo83"))
+    # √ print(await p.musicuri("728668"))
+    # √ print(await p.mvuri("728668"))
     # √ print(await p.lyric("728668"))
     # print(await p.getuserid("406143883"))
     # print(await p.userlist("406143883"))

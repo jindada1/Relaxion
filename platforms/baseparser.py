@@ -69,6 +69,11 @@ class Base(object):
                 a = await resp.text()
                 return json.loads(a)
 
+    async def _asyncGetTextHeadersCookies(self, url, params = None):
+        async with ClientSession(cookies=self.cookies) as session:
+            async with session.get(url, params=params, headers=self.headers) as resp:
+                return await resp.text()
+
 
     def jsonify(self, _dict):
 
