@@ -31,6 +31,12 @@
 - [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
 - [x] 看MV = 【视频资源 + 封面】
 
+### 酷我音乐
+
+- [x] 搜索 = 【单曲 + MV + 专辑】
+- [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
+- [x] 看MV = 【视频资源 + 封面】
+
 ### 咪咕音乐
 
 ## 外部视频（来源于其它平台）
@@ -45,7 +51,7 @@
 
 ## aqi文档
 
-+ relaxion [api doc](https://apizza.net/pro/#/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
++ relaxion [api doc](https://www.apizza.net/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
 
 **run**
 
