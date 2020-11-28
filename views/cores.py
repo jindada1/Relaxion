@@ -19,13 +19,16 @@ class Cores(BaseView):
 
         root = os.getcwd()
 
-        self.administrator = os.path.join(root, 'front/administrator')
-
         self.resource_path = os.path.join(root, 'files')
 
     async def index(self, request):
 
-        return self._send_file('./front/deployment/index.html')
+        front = './front/deployment/index.html'
+        if os.path.exists(front):
+            return self._send_file(front)
+        
+        else:
+            return self._redrict_to('/kris/index.html')
 
     @check_args_post({
         'mvurl': "*",
