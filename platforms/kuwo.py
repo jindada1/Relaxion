@@ -71,7 +71,7 @@ class KuWo(Music):
         # this api is coincident with kuwo
         api = self.API_BASE + "/search/searchMusicBykeyWord"
         jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
-        
+        # return jsonresp
         result = {'songs': []}
         append = result['songs'].append
         try:
@@ -80,15 +80,15 @@ class KuWo(Music):
                     "kuwo",
                     kuwosong['musicrid'],
                     kuwosong['rid'],
-                    kuwosong['vid'],
+                    kuwosong['rid'],
                     kuwosong['albumpic'],
                     kuwosong['album'],
-                    "/kuwo/lyric/" + kuwosong['rid'],
+                    "/kuwo/lyric/" + str(kuwosong['rid']),
                     kuwosong['name'],
                     kuwosong['artist'],
                     kuwosong['duration'],
                     kuwosong['online']
-                ))
+            ))
         except:
             result['error'] = 1
         return result
@@ -97,28 +97,25 @@ class KuWo(Music):
     async def searchAlbum(self, k, p, n):
 
         params = {
-            'remoteplace': 'txt.yqq.album',
-            't': 8,
-            'format': 'json',
-            'n': n,
-            'p': int(p) + 1,
-            'w': k
+            'rn': n,
+            'pn': int(p) + 1, # pages start from 1 in kuwo, we set to 0
+            'key': k
         }
 
-        api = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp"
-        jsonresp = await self._asyncGetJson(api, params=params)
+        api = self.API_BASE + "/search/searchAlbumBykeyWord"
+        jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
         result = {'albums': []}
         append = result['albums'].append
         try:
-            for album in jsonresp['data']['album']['list']:
+            for album in jsonresp['data']['albumList']:
                 append(self._album(
-                    "qq",
-                    album['albumID'],
-                    album['albumPic'],
-                    album['albumName'],
-                    album['albumID'],
-                    self._getname(album['singer_list']),
-                    album['publicTime']
+                    "kuwo",
+                    album['albumid'],
+                    album['pic'],
+                    album['album'],
+                    album['albumid'],
+                    album['artist'],
+                    album['releaseDate']
                 ))
         except:
             result['error'] = 1
@@ -128,29 +125,26 @@ class KuWo(Music):
     async def searchMV(self, k, p, n):
 
         params = {
-            'remoteplace': 'txt.yqq.mv',
-            't': 12,
-            'format': 'json',
-            'n': n,
-            'p': int(p) + 1,
-            'w': k
+            'rn': n,
+            'pn': int(p) + 1, # pages start from 1 in kuwo, we set to 0
+            'key': k
         }
 
-        api = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp"
-        jsonresp = await self._asyncGetJson(api, params=params)
+        api = "https://www.kuwo.cn/api/www/search/searchMvBykeyWord"
+        jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
         result = {'videos': []}
         append = result['videos'].append
         try:
-            for mv in jsonresp['data']['mv']['list']:
+            for mv in jsonresp['data']['mvlist']:
                 append(self._mv(
-                    "qq",
-                    mv['mv_name'],
-                    mv['mv_pic_url'],
-                    mv['v_id'],
-                    mv['v_id'],
-                    self._getname(mv['singer_list']),
+                    "kuwo",
+                    mv['name'],
+                    mv['pic'],
+                    mv['id'],
+                    mv['id'],
+                    mv['artist'],
                     mv['duration'],
-                    mv['publish_date']
+                    '未知'
                 ))
         except:
             result['error'] = 1
@@ -227,20 +221,34 @@ class KuWo(Music):
         except:
             return self._uri()
 
+    def formatlyric(self, line):
+        """
+        line is {
+            "time": "12.38",
+            "lineLyric": "Wah wuh wu wa wa wua wua wua wa wa wua wu"
+        }
+        """
+        t = line['time']
+        minute = ('00' + str(int(float(t)) // 60))[-2:]
+        second = ('00' + str(int(float(t)) % 60))[-2:]
+        millsec = (t.split('.')[1] + "00")[:2]
+        return f"[{minute}:{second}.{millsec}]" + line['lineLyric'] + "\n"
+
     # override
-    async def lyric(self, songmid):
+    async def lyric(self, songid):
         params = {
-            'format': 'json',
-            'g_tk': 5381,
-            'nobase64': 1,
-            'songmid': songmid
+            'musicId': songid
         }
 
-        api = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg"
-        jsonresp = await self._asyncGetJsonHeaders(api, params=params)
+        api = "http://m.kuwo.cn/newh5/singles/songinfoandlrc"
+        jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
+        
+        lyric = ""
 
         try:
-            lyric = jsonresp['lyric']
+            for line in jsonresp['data']['lrclist']:
+                lyric += self.formatlyric(line)
+
         except:
             lyric = '[00:01.000] 没有歌词哦~'
 
@@ -458,20 +466,20 @@ async def test():
 
     # test at 2019-09-25 20:11
     
-    print((await p.searchSong(searchkey, page, num)).keys())
+    # √ print((await p.searchSong(searchkey, page, num)).keys())
     # √ print((await p.searchAlbum(searchkey, page, num)).keys())
     # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # √ print((await p.getComments("107192078", "music", page, num)).keys())
-    # √ print((await p.getComments("14536", "album", page, num)).keys())
-    # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # - print(await p.musicuri("002WCV372JMZJw"))
-    # √ print(await p.mvuri("m00119xeo83"))
-    # √ print(await p.lyric("002WCV372JMZJw"))
-    # √ print(await p.getuserid("406143883"))
+    # print((await p.getComments("107192078", "music", page, num)).keys())
+    # print((await p.getComments("14536", "album", page, num)).keys())
+    # print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
+    # print(await p.musicuri("002WCV372JMZJw"))
+    # print(await p.mvuri("m00119xeo83"))
+    # √ print(await p.lyric("728668"))
+    # print(await p.getuserid("406143883"))
     # print(await p.userlist("406143883"))
-    # √ print(await p.userdetail(userid))
-    # √ print((await p.songsinList("1304470181", page, num)).keys())
-    # √ print((await p.songsinAlbum("14536")).keys())
+    # print(await p.userdetail(userid))
+    # print((await p.songsinList("1304470181", page, num)).keys())
+    # print((await p.songsinAlbum("14536")).keys())
 
 
 if __name__ == '__main__':

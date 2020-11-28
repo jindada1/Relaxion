@@ -59,6 +59,21 @@
             "mvid": "600570Y9D4M",
             "lyricid": "60054701923",
             "user": "kris kun"
+        },
+        "kuwo": {
+            "zhName": "酷我音乐",
+            "keyword": "周杰伦",
+            "albumid": "8592",
+            "dissid": "24381616",
+            "idforcomments": {
+                "album": "8592",
+                "song": "3790007",
+                "mv": "600570Y9D4M"
+            },
+            "idforres": "60054701923",
+            "mvid": "600570Y9D4M",
+            "lyricid": "728668",
+            "user": "kris kun"
         }
     },
     "movie": {}

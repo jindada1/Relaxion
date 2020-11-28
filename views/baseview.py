@@ -39,11 +39,12 @@ class logger(object):
 
     @classmethod
     def __writeline(cls, line):
+        try:
+            with open(logger.infofile, 'a') as f:
+                f.write(line + '\n')
 
-        print(line)
-        with open(logger.infofile, 'a') as f:
-
-            f.write(line + '\n')
+        except:
+            print(line)
 
 
 class router_recorder(object):
