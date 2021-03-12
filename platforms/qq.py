@@ -81,6 +81,7 @@ class QQ(Music):
             # 'aggr':1, 聚合多版本音乐
             'remoteplace': 'txt.yqq.song',
             'format': 'json',
+            'outCharset': 'utf-8',
             't': 0,  # song
             'n': n,
             'p': int(p) + 1, # pages start from 1 in qq, we set to 0
@@ -118,6 +119,7 @@ class QQ(Music):
             'remoteplace': 'txt.yqq.album',
             't': 8,
             'format': 'json',
+            'outCharset': 'utf-8',
             'n': n,
             'p': int(p) + 1,
             'w': k
@@ -149,6 +151,7 @@ class QQ(Music):
             'remoteplace': 'txt.yqq.mv',
             't': 12,
             'format': 'json',
+            'outCharset': 'utf-8',
             'n': n,
             'p': int(p) + 1,
             'w': k

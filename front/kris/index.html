@@ -443,16 +443,16 @@
                     }
                     this.postTo('/extract', params)
                 },
-                getmvurl(){
+                getmvurl() {
                     let _this = this;
                     axios.get('/qq/uri/mv', {
                         params: {
                             mvid: _this.extract.mvid
                         }
                     })
-                    .then(function (response) {
-                        _this.extract.mv = response.data.uri;
-                    })
+                        .then(function (response) {
+                            _this.extract.mv = response.data.uri;
+                        })
                 }
             },
             mounted() {

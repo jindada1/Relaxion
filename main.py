@@ -2,6 +2,7 @@ import asyncio
 import aiohttp_cors
 from aiohttp import web
 from routes import setup_routes
+from settings import host, port
 
 
 def initApp():
@@ -24,7 +25,7 @@ def initApp():
 
 def main():    
     app = initApp()
-    web.run_app(app, host='127.0.0.1', port=8080)
+    web.run_app(app, host=host, port=port)
 
 if __name__ == '__main__':
     main()
