@@ -1,4 +1,4 @@
-# Relaxion
+# Relaxion [![Build Status](https://travis-ci.com/jindada1/Relaxion.svg?branch=master)](https://travis-ci.com/jindada1/Relaxion)
 
 A cross-platform media service
 
