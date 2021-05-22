@@ -401,7 +401,7 @@ class QQ(Music):
             
             return await self.userdetail(userid)
         
-        return ['no user matched']
+        return {"error": 1}
 
     # special
     async def userdetail(self, userid):
@@ -438,7 +438,7 @@ class QQ(Music):
             return res
 
         except:
-            return []
+            return {"error": 1}
 
     # special
     async def getuserid(self, qqnum):

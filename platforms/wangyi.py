@@ -391,6 +391,7 @@ class WangYi(Music):
                 _list['coverImgUrl'],
                 _list['trackCount']
             ))
+        
         return res
 
     # special
@@ -426,7 +427,6 @@ async def test():
     # √ print((await p.getComments("5436712", "mv", page, num)).keys())
     # √ print((await p.musicuri("33894312")).keys())
     # √ print((await p.mvuri("5436712")).keys())
-    # √ print(len(await p.lyric("33894312")))
     # √ print(len(await p.lyric("33894312")))
     # √ print(await p.userlist("同济吴亦凡"))
     # √ print((await p.songsinList("24381616")).keys())

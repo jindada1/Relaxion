@@ -1,77 +1,114 @@
-# Relaxion 娱乐中心 
+# Relaxion
 
-## 内部服务（所有用户数据均属于本项目）
+A cross-platform media service
 
-- [x] 登录/注册
-- [x] 收藏（/取消收藏）歌曲【歌单数据存在本平台】
-- [ ] 收藏（/取消收藏）视频【看单数据存在本平台】
+## Internal User Service
 
-## 外部音乐（数据来源于其它平台）
+- [x] sign in / up
+- [x] like / unlike songs
+- [ ] like / unlike videos
 
-### QQ音乐
+## External Music Service
 
-- [x] 搜索 = 【单曲 + MV + 专辑】
-- [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
-- [x] 看MV = 【视频资源 + 封面】
-- [x] 通过输入QQ号，获取该QQ用户的公开歌单
-- [x] 评论 = 【歌曲评论 + 专辑评论 + MV评论】
+### [QQ Music](https://y.qq.com/)
+
+- [x] search
+    - [x] song
+    - [x] music video
+    - [x] album
+- [x] listen
+    - [x] audio
+    - [x] lyrics
+    - [x] album cover
+- [x] watch
+    - [x] music video
+    - [x] video cover
+- [x] get user's public song lists by user's qq number
+- [x] comments
+    - [x] music
+    - [x] album
+    - [x] music video
 
 
-### 网易云音乐
+### [Netease Music](https://y.qq.com/)
 
-- [x] 搜索 = 【单曲 + MV + 专辑】
-- [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
-- [x] 看MV = 【视频资源 + 封面】
-- [x] 通过输入网易云音乐的用户名，获取该用户的公开歌单
-- [x] 评论 = 【歌曲评论 + 专辑评论 + MV评论】
+- [x] search
+    - [x] song
+    - [x] music video
+    - [x] album
+- [x] listen
+    - [x] audio
+    - [x] lyrics
+    - [x] album cover
+- [x] watch
+    - [x] music video
+    - [x] video cover
 
-### 酷狗音乐
+- [x] get user's public song lists by user's id
+- [ ] comments
+    - [x] music
+    - [x] album
+    - [x] music video
 
-- [x] 搜索 = 【单曲 + MV + 专辑】
-- [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
-- [x] 看MV = 【视频资源 + 封面】
+### [KuGou Music](https://www.kugou.com/)
 
-### 酷我音乐
+- [x] search
+    - [x] song
+    - [x] music video
+    - [x] album
+- [x] listen
+    - [x] audio
+    - [x] lyrics
+    - [x] album cover
+- [x] watch
+    - [x] music video
+    - [x] video cover
 
-- [x] 搜索 = 【单曲 + MV + 专辑】
-- [x] 听歌 = 【音频资源 + 歌词 + 专辑封面】
-- [x] 看MV = 【视频资源 + 封面】
+### [KuWo Music](http://www.kuwo.cn/)
 
-### 咪咕音乐
+- [x] search
+    - [x] song
+    - [x] music video
+    - [x] album
+- [x] listen
+    - [x] audio
+    - [x] lyrics
+    - [x] album cover
+- [x] watch
+    - [x] music video
+    - [x] video cover
 
-## 外部视频（来源于其它平台）
+### [MiGu Music](https://music.migu.cn/v3)
 
-### 腾讯视频
+## External Video Service
 
-### 爱奇艺
+### [Tencent Video](https://v.qq.com/)
 
-### 优酷
+### [Iqiyi](https://www.iqiyi.com/)
 
-- [x] 通过输入视频 id，获取该视频资源链接
+### [Youku](https://www.youku.com/)
 
-## aqi文档
+## **Use**
 
-+ relaxion [api doc](https://www.apizza.net/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
+require:
 
-**run**
++ ffmpeg
++ sqlite
+
+run:
 
 ```
 pip install -r requirements.txt
 python3 main.py
 ```
 
-**技术栈**
+## Doc
 
-+ development
-  + aiohttp Server/Client
-  + sqlite 数据存储
-  + ffmpeg ...
++ [api doc](https://www.apizza.net/project/01eec0c96c62477ce9c7c88a7cacef22/browse)
 
-+ deployment
-  + nginx [sites-available.conf](https://github.com/jindada1/Relaxion/blob/master/nginx.conf)
+## Acknowledgements
 
-+ requirements
-  + python3.x
-  + aiohttp_cors
-  + aiohttp
-  + asyncio
++ [You-Get](https://github.com/soimort/you-get)
++ [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)
++ [FeelUOwn](https://github.com/feeluown/FeelUOwn)
+

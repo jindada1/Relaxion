@@ -36,43 +36,54 @@ class Base(object):
     async def _asyncGetHeaders(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
+            await session.close()
             return resp.headers
 
     async def _asyncGetText(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
-            return await resp.text()
+            txt = await resp.text()
+            await session.close()
+            return txt
 
 
     async def _asyncGetJson(self, url, params = None):
         async with ClientSession() as session:
             resp = await session.get(url, params=params)
-            return json.loads(await resp.text())
+            js = json.loads(await resp.text())
+            await session.close()
+            return js
 
 
     async def _asyncPostJson(self, url, params = None, cookies = None):
         async with ClientSession(cookies = cookies) as session:
             resp = await session.post(url, data=params, headers=self.headers)
-            return json.loads(await resp.text())
+            js = json.loads(await resp.text())
+            await session.close()
+            return js
 
 
     async def _asyncGetJsonHeaders(self, url, params = None):
         async with ClientSession() as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
-                a = await resp.text()
-                return json.loads(a)
+                js = json.loads(await resp.text())
+                await session.close()
+                return js
 
 
     async def _asyncGetJsonHeadersCookies(self, url, params = None):
         async with ClientSession(cookies=self.cookies) as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
-                a = await resp.text()
-                return json.loads(a)
+                js = json.loads(await resp.text())
+                await session.close()
+                return js
 
     async def _asyncGetTextHeadersCookies(self, url, params = None):
         async with ClientSession(cookies=self.cookies) as session:
             async with session.get(url, params=params, headers=self.headers) as resp:
-                return await resp.text()
+                txt = await resp.text()
+                await session.close()
+                return txt
 
 
     def jsonify(self, _dict):

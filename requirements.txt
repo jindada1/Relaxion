@@ -3,3 +3,4 @@ aiohttp
 asyncio
 pycryptodome
 requests
+pytest-aiohttp
