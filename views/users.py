@@ -1,12 +1,13 @@
 from .baseview import BaseView, check_args_post, check_args_get, check_args_upload
+from db import dbService
 
 class Users(BaseView):
     '''
     this class contains many functions for user db
     '''
-    def __init__(self, workers):
+    def __init__(self, config):
         
-        self.localdb = workers[0]
+        self.localdb = dbService(config['database'])
 
 
     @check_args_get({

@@ -1,19 +1,20 @@
 from .baseview import BaseView, check_args_post, check_args_get, router_recorder
+from core import Extractor, Downloader
 import os
-
 
 class Cores(BaseView):
     '''
     this class contains many instrumental functions
     '''
 
-    def __init__(self, workers):
+    def __init__(self, config):
 
         self.__init_path()
 
-        self.extractor = workers[0]
+        self.extractor = Extractor(config["ffmpeg-path"], config['mediafolder'])
 
-        self.downloader = workers[1]
+        self.downloader = Downloader(config['mediafolder'])
+
 
     def __init_path(self):
 

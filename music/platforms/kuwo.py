@@ -2,20 +2,15 @@
 on  :  2019-07-11
 by  :  Kris Huang
 
-for : get data from qq music directly
+for : get data from kuwo music
 '''
-
-try:
-    from .baseparser import Music
-except:
-    from baseparser import Music
-
-import requests
+from music import Music
 
 class KuWo(Music):
-    def __init__(self, thirdparty = None):
 
-        Music.__init__(self, name = "KuWo", third = thirdparty)
+    def __init__(self):
+
+        Music.__init__(self, name = "KuWo")
 
         self.headers = {
             'Accept': '*/*',
@@ -26,22 +21,12 @@ class KuWo(Music):
             'Host': 'kuwo.cn',
         }
 
-        self.get_cookie_token()
+        # self.get_cookie_token()
         
         self.cache = {}
 
         self.API_BASE = 'http://www.kuwo.cn/api/www'
         self.mv_pic_host = 'https://y.gtimg.cn/'
-
-
-    def get_cookie_token(self):
-        """get kuwo token & set cookie jar"""
-        token_uri = 'http://kuwo.cn/search/list?key=hello'
-        with requests.Session() as session:
-            response = session.get(token_uri, headers=self.headers)
-            token = response.cookies.get('kw_token')
-            self.headers['csrf'] = token
-            self.cookies = response.cookies
 
     def playable(self, number):
         '''

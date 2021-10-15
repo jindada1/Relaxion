@@ -1,3 +1,10 @@
+import yaml
 
-host = '127.0.0.1'
-port = 8080
+def load_configuration(file):
+    # load config.yml
+    f = open(file)
+    return yaml.safe_load(f)
+
+def url(prefix, route):
+    
+    return prefix + route

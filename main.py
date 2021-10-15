@@ -2,13 +2,9 @@ import asyncio
 import aiohttp_cors
 from aiohttp import web
 from routes import setup_routes
-from settings import host, port
+from settings import load_configuration
 
-
-def initApp():
-    app = web.Application()
-    setup_routes(app)
-
+def set_cors(app):
     # Configure default CORS settings.
     cors = aiohttp_cors.setup(app, defaults={
         "*": aiohttp_cors.ResourceOptions(
@@ -21,11 +17,17 @@ def initApp():
     for route in list(app.router.routes()):
         cors.add(route)
 
-    return app
+def main():
+    # load configurations
+    config = load_configuration('./config.yml')
+    # create web instance
+    app = web.Application()
+    # setup routes
+    setup_routes(app, config)
+    # config CORS
+    set_cors(app)
 
-def main():    
-    app = initApp()
-    web.run_app(app, host=host, port=port)
+    web.run_app(app, host=config['host'], port=config['port'])
 
 if __name__ == '__main__':
     main()

@@ -4,12 +4,9 @@ by  :  Kris Huang
 
 for : integrate parser modules to package -- "platforms"
 '''
-from __future__ import barry_as_FLUFL
 
-
+from .parser import PraserService
 
 __all__ = ['PraserService']
 __version__ = '0.1'
 __author__ = 'Kris Huang'
-
-from .parser import PraserService

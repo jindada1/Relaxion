@@ -1,0 +1,25 @@
+host: '127.0.0.1'
+port: 8080
+
+ffmpeg-path: ''
+
+database: ./db/User.db
+
+mediafolder: ./core/resources/
+
+platforms:
+  kugou:
+    parser: KuGou
+    
+  kuwo:
+    parser: KuWo
+    
+  migu:
+    parser: MiGu
+    
+  qq:
+    parser: QQ
+    
+  wangyi:
+    parser: WangYi
+    

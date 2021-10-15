@@ -1,6 +1,8 @@
 # Relaxion [![Build Status](https://travis-ci.com/jindada1/Relaxion.svg?branch=master)](https://travis-ci.com/jindada1/Relaxion)
 
-A cross-platform media service
+An aiohttp server, fetching musics from multiple platforms. it can serve as music app's backend, providing services below
+
+*DISCLAIMER: This is an experimental software. **Please do not use it for commercial purposes**!!!*
 
 ## Internal User Service
 
@@ -79,21 +81,6 @@ A cross-platform media service
     - [x] video cover
 
 ### [MiGu Music](https://music.migu.cn/v3)
-
-## External Video Service
-
-### [Tencent Video](https://v.qq.com/)
-
-### [Iqiyi](https://www.iqiyi.com/)
-
-### [Youku](https://www.youku.com/)
-
-## **Use**
-
-require:
-
-+ ffmpeg
-+ sqlite
 
 run:
 

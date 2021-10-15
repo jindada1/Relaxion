@@ -1,12 +1,13 @@
 from .baseview import BaseView, pltf_get, redirect
+from music import PraserService
 
 
 class Platforms(BaseView):
 
-    def __init__(self, workers):
+    def __init__(self, config):
 
         BaseView.__init__(self)
-        self.parser = workers[0]
+        self.parser = PraserService(config['platforms'])
 
     search_args = {
         "keyword": "*",
@@ -24,7 +25,7 @@ class Platforms(BaseView):
     @pltf_get(search_args)
     async def searchMV(self, P, params):
         s = params['keyword']
-        p = params['page']
+        p = params['page'] 
         n = params['num']
         return self._json_response(await P.searchMV(s, p, n))
 

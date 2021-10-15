@@ -2,19 +2,15 @@
 on  :  2019-08-15
 by  :  Kris Huang
 
-for : get data from kugou music directly
+for : get data from kugou music
 '''
 
-try:
-    from .baseparser import Music
-except:
-    from baseparser import Music
-
+from music import Music
 
 class KuGou(Music):
-    def __init__(self, thirdparty = None):
+    def __init__(self):
 
-        Music.__init__(self, name = "KuGou", third = thirdparty)
+        Music.__init__(self, name = "KuGou")
         
         self.cookies = {
             "kg_mid": 'af7c2445064307fc9ef998eff735b0d1',

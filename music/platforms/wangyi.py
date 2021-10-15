@@ -1,20 +1,14 @@
-try:
-    from .baseparser import Music
-except:
-    from baseparser import Music
-
-
+from music import Music
 from Crypto.Cipher import AES
-
 import binascii
 import os
 
 
-
 class WangYi(Music):
-    def __init__(self, thirdparty = None):
 
-        Music.__init__(self, name = "WangYi", third = thirdparty)
+    def __init__(self):
+
+        Music.__init__(self, name = "WangYi")
 
         self.headers = {
             'Referer'       : 'https://music.163.com',
