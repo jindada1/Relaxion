@@ -17,6 +17,15 @@ def set_cors(app):
     for route in list(app.router.routes()):
         cors.add(route)
 
+
+def add_prefix(app, prefix: str):
+    # add prefix to all path in app's routes
+    for resource in app.router.resources():
+        resource.add_prefix(prefix)
+        # print(resource.get_info())
+        # print(resource.canonical)
+        
+
 def main():
     # load configurations
     config = load_configuration('./config.yml')
@@ -24,6 +33,8 @@ def main():
     app = web.Application()
     # setup routes
     setup_routes(app, config)
+    # add route prefix
+    add_prefix(app, '/relaxion')
     # config CORS
     set_cors(app)
 

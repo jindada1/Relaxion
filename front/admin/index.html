@@ -84,6 +84,28 @@
         bottom: 0;
         background-color: white;
     }
+
+    a:link,
+    a:visited {
+        margin: 10px 0;
+        color: black;
+        padding: 0 12px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border: #CCCCCC solid 2px;
+    }
+
+    a:hover,
+    a:active {
+        background-color: #EEEEEE;
+        border: #AAAAAA solid 2px;
+    }
+
+    ul {
+        list-style-type: none;
+        line-height: 32px;
+    }
 </style>
 
 <body>
@@ -130,34 +152,34 @@
                 <el-main>
                     <div v-if="selectedcategory === '1'">
                         <ul>
-                            <li><a :href="`/${platformName}/songs?keyword=${platform.keyword}&page=1`">在
+                            <li><a :href="`/relaxion/music/${platformName}/songs?keyword=${platform.keyword}&page=1`">在
                                     {{platform.zhName}}里 搜索“{{platform.keyword}}”的歌曲的第 1 页</a></li>
-                            <li><a :href="`/${platformName}/albums?keyword=${platform.keyword}&page=2`">在
+                            <li><a :href="`/relaxion/music/${platformName}/albums?keyword=${platform.keyword}&page=2`">在
                                     {{platform.zhName}}里 搜索“{{platform.keyword}}”的专辑的第 2 页</a></li>
-                            <li><a :href="`/${platformName}/mv?keyword=${platform.keyword}&page=0`">在
+                            <li><a :href="`/relaxion/music/${platformName}/mv?keyword=${platform.keyword}&page=0`">在
                                     {{platform.zhName}}里 搜索“{{platform.keyword}}”的MV的第 0 页</a></li>
-                            <li><a :href="`/${platformName}/songs/album?albumid=${platform.albumid}`">在
+                            <li><a :href="`/relaxion/music/${platformName}/songs/album?albumid=${platform.albumid}`">在
                                     {{platform.zhName}}里 获取专辑 id 为 {{platform.albumid}} 里面的所有歌曲</a></li>
-                            <li><a :href="`/${platformName}/songs/songlist?dissid=${platform.dissid}`">在
+                            <li><a :href="`/relaxion/music/${platformName}/songs/songlist?dissid=${platform.dissid}`">在
                                     {{platform.zhName}}里 获取歌单 id 为 {{platform.dissid}} 里面的歌曲</a></li>
                             <li><a
-                                    :href="`/${platformName}/comments/album?idforcomments=${platform.idforcomments.album}`">在
+                                    :href="`/relaxion/music/${platformName}/comments/album?idforcomments=${platform.idforcomments.album}`">在
                                     {{platform.zhName}}里 获取专辑 idforcomments 为 {{platform.idforcomments.album}} 的评论</a>
                             </li>
                             <li><a
-                                    :href="`/${platformName}/comments/song?idforcomments=${platform.idforcomments.song}`">在
+                                    :href="`/relaxion/music/${platformName}/comments/song?idforcomments=${platform.idforcomments.song}`">在
                                     {{platform.zhName}}里 获取音乐 idforcomments 为 {{platform.idforcomments.song}} 的评论</a>
                             </li>
-                            <li><a :href="`/${platformName}/comments/mv?idforcomments=${platform.idforcomments.mv}`">在
+                            <li><a :href="`/relaxion/music/${platformName}/comments/mv?idforcomments=${platform.idforcomments.mv}`">在
                                     {{platform.zhName}}里 获取mv idforcomments 为 {{platform.idforcomments.mv}} 的评论</a>
                             </li>
-                            <li><a :href="`/${platformName}/uri/song?idforres=${platform.idforres}`">在
+                            <li><a :href="`/relaxion/music/${platformName}/uri/song?idforres=${platform.idforres}`">在
                                     {{platform.zhName}}里 获取音乐 idforres 为 {{platform.idforres}} 的 uri</a></li>
-                            <li><a :href="`/${platformName}/uri/mv?mvid=${platform.mvid}`">在 {{platform.zhName}}里 获取mv
+                            <li><a :href="`/relaxion/music/${platformName}/uri/mv?mvid=${platform.mvid}`">在 {{platform.zhName}}里 获取mv
                                     id 为 {{platform.mvid}} 的 uri</a></li>
-                            <li><a :href="`/${platformName}/lyric/${platform.lyricid}`">在 {{platform.zhName}}里 获取音乐歌词id
+                            <li><a :href="`/relaxion/music/${platformName}/lyric/${platform.lyricid}`">在 {{platform.zhName}}里 获取音乐歌词id
                                     为 {{platform.lyricid}} 的歌词内容</a></li>
-                            <li><a :href="`/${platformName}/user/songlists?user=${platform.user}`">在
+                            <li><a :href="`/relaxion/music/${platformName}/user/songlists?user=${platform.user}`">在
                                     {{platform.zhName}}里 获取QQ号 为 {{platform.user}} 的 所有公开歌单</a></li>
                         </ul>
                     </div>
@@ -390,7 +412,7 @@
                 },
                 doSearch() {
                     let _this = this
-                    axios.get(`/${this.search.platform}/songs`, {
+                    axios.get(`/relaxion/music/${this.search.platform}/songs`, {
                         params: {
                             keyword: this.search.input
                         }
