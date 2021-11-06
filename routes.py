@@ -41,7 +41,7 @@ def static_resources(app, config: dict, prefix=''):
     '''
     static resources
     '''
-    app.router.add_static('/kris/', path='front/admin/', name='admin', show_index=True)
+    # app.router.add_static('/kris/', path='front/admin/', name='admin', show_index=True)
 
     app.router.add_static('/resource/', path='core/resources', name='resource', show_index=True)
 
