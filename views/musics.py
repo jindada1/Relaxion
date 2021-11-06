@@ -1,5 +1,5 @@
 from .baseview import BaseView, pltf_get, redirect
-from music import PraserService
+from music import Fetchers
 
 
 class Platforms(BaseView):
@@ -7,7 +7,7 @@ class Platforms(BaseView):
     def __init__(self, config):
 
         BaseView.__init__(self)
-        self.parser = PraserService(config['platforms'])
+        self.fetchers = Fetchers(config['platforms'])
 
     search_args = {
         "keyword": "*",

@@ -283,36 +283,3 @@ class KuGou(Music):
         result = await self._asyncGetJsonHeadersCookies(api, params=params)
 
         return result['data']['img']
-
-
-async def test():
-
-    p = KuGou()
-    # searchkey = "周杰伦"
-    # page = 2
-    # num = 10
-    songhash = "382DC60D2879205633FBB7F2685D9840"
-    gbqq = "5FCE4CBCB96D6025033BCE2025FC3943"
-    # mvhash = "1b43baaf79c20489c85def55e2ba7af0"
-    '''
-        test at 2019-09-26 14:06
-    '''
-
-    # √ print((await p.searchSong(searchkey, page, num)).keys())
-    # √ print((await p.searchAlbum(searchkey, page, num)).keys())
-    # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # √ print(await p.mvuri(mvhash))
-    # √ print(await p.lyric(gbqq))
-    print(await p.picurl(gbqq))
-    # √ print((await p.songsinList("547134", page, num)).keys())
-
-    # × print((await p.songsinAlbum("23509815")).keys())
-    print(await p.musicuri(songhash))
-    # × print((await p.getComments(songhash, "music", page, num)).keys())
-    # × print((await p.getComments("23509815", "album", page, num)).keys())
-    # × print((await p.getComments("0c28d3658d3ec86e9d033c80d9d8e9da", "mv", page, num)).keys())
-
-if __name__ == '__main__':
-    import asyncio
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(test())

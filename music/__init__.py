@@ -1,7 +1,7 @@
 
 from .interface import Music
-from .platforms import PraserService
+from .platforms import Fetchers
 
-__all__ = ['Music', 'PraserService']
+__all__ = ['Music', 'Fetchers']
 __version__ = '0.1'
 __author__ = 'Kris Huang'

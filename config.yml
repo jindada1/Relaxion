@@ -9,17 +9,17 @@ mediafolder: ./core/resources/
 
 platforms:
   kugou:
-    parser: KuGou
+    fetcher: KuGou
     
   kuwo:
-    parser: KuWo
+    fetcher: KuWo
     
   migu:
-    parser: MiGu
+    fetcher: MiGu
     
   qq:
-    parser: QQ
+    fetcher: QQ
     
   wangyi:
-    parser: WangYi
+    fetcher: WangYi
     

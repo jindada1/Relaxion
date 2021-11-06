@@ -9,7 +9,7 @@ from .kugou import KuGou
 from .migu import MiGu
 from .kuwo import KuWo
 
-class PraserService(object):
+class Fetchers(object):
     def __init__(self, cfg):
         self.platforms = {}
         
@@ -18,11 +18,11 @@ class PraserService(object):
 
         for name, prop in cfg.items():
             # construct instance according to cfg
-            constructor = globals()[prop['parser']]
+            constructor = globals()[prop['fetcher']]
             instance = constructor()
             self.platforms[name] = instance
     
-    # override [], return parser
+    # override [], return fetcher
     def __getitem__(self, key):
 
         if key in self.platforms.keys():
