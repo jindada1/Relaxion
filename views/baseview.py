@@ -188,14 +188,14 @@ class pltf_get(args_check):
             logger.log_get(req)
 
             # filter invalid platforms
-            if view.parser[platform]:
+            if view.fetchers[platform]:
                 validation = self._validate(request.rel_url.query)
 
                 if validation['err']:
                     return view._textmsg(validation['err'])
 
                 else:
-                    return await handler(view, view.parser[platform], validation)
+                    return await handler(view, view.fetchers[platform], validation)
 
             # handle error platforms
             return view._textmsg("platform: %s is not supported" % platform)
@@ -224,14 +224,14 @@ class redirect(object):
             logger.log_get(req)
 
             # filter invalid platforms
-            if view.parser[platform]:
+            if view.fetchers[platform]:
                 cache = view.get_cache(req)
                 
                 if not type(cache) is dict:
                     # not dict means readable, hit cache
                     return return_func(cache)
 
-                result = await handler(view, view.parser[platform], _id)
+                result = await handler(view, view.fetchers[platform], _id)
                 view.set_cache(cache, result)
                 return return_func(result)
 

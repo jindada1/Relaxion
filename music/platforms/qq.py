@@ -463,35 +463,3 @@ class QQ(Music):
 
         except:
             return False
-
-
-async def test():
-    
-    p = QQ()
-    searchkey = "周杰伦"
-    page = 2
-    num = 20
-    userid = '7ensoKviNeci'
-
-    # test at 2019-09-25 20:11
-    
-    # √ print((await p.searchSong(searchkey, page, num)).keys())
-    # √ print((await p.searchAlbum(searchkey, page, num)).keys())
-    # √ print((await p.searchMV(searchkey, page, num)).keys())
-    # √ print((await p.getComments("107192078", "music", page, num)).keys())
-    # √ print((await p.getComments("14536", "album", page, num)).keys())
-    # √ print((await p.getComments("n0010BCw40a", "mv", page, num)).keys())
-    # - print(await p.musicuri("002WCV372JMZJw"))
-    # √ print(await p.mvuri("m00119xeo83"))
-    print(await p.lyric("002WCV372JMZJw"))
-    # √ print(await p.getuserid("406143883"))
-    # print(await p.userlist("406143883"))
-    # √ print(await p.userdetail(userid))
-    # √ print((await p.songsinList("1304470181", page, num)).keys())
-    # √ print((await p.songsinAlbum("14536")).keys())
-
-
-if __name__ == '__main__':
-    import asyncio
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(test())

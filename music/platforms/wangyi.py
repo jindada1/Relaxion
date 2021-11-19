@@ -401,34 +401,3 @@ class WangYi(Music):
         except:
             pass
         return url
-
-
-async def test():
-
-    p = WangYi()
-    searchkey = "林俊杰"
-    page = 1
-    num = 20
-    '''
-        test at 2020-01-25 21:27, all passed
-    '''
-
-    # √ print((await p.searchSong(searchkey,page,num)).keys())
-    # √ print((await p.searchAlbum(searchkey,page,num)).keys())
-    # √ print((await p.searchMV(searchkey,page,num)).keys())
-    # √ print((await p.getComments("33894312", "music", page, num)).keys())
-    # √ print((await p.getComments("32311", "album", page, num)).keys())
-    # √ print((await p.getComments("5436712", "mv", page, num)).keys())
-    # √ print((await p.musicuri("33894312")).keys())
-    # √ print((await p.mvuri("5436712")).keys())
-    # √ print(len(await p.lyric("33894312")))
-    # √ print(await p.userlist("同济吴亦凡"))
-    # √ print((await p.songsinList("24381616")).keys())
-    # √ print((await p.songsinAlbum("32311")).keys())
-    # √ print(await p.picurl("32311"))
-
-
-if __name__ == '__main__':
-    import asyncio
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(test())
