@@ -20,14 +20,14 @@ def setup_routes(app, config: dict):
 
     setup_services(app, user_service(config), '/user')
 
-    setup_services(app, music_platforms(config), '/music')
+    setup_services(app, music_platforms(config))
 
     setup_services(app, core_functions(config), '/core')
 
 
-def setup_services(app, services, prefix=None):
+def setup_services(app, services, prefix=""):
 
-    if not prefix:
+    if prefix:
         assert prefix.startswith('/')
         assert not prefix.endswith('/')
         assert len(prefix) > 1

@@ -220,32 +220,32 @@ class KuWo(Music):
             'inCharset': 'utf8',
             'outCharset': 'utf-8',
             'notice': 0,
-            'platform': 'yqq.json',
+            'platform': 'ykuwo.json',
             'needNewCode': 0,
             'song_num': n,
             'song_begin': int(p)*int(n),   # page start from 0
             'disstid': _id
         }
 
-        api = "https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg"
+        api = "https://c.y.kuwo.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg"
         jsonresp = await self._asyncGetJsonHeaders(api, params=params)
 
         result = {'songs': []}
         append = result['songs'].append
         try:
-            for qqsong in jsonresp['songlist']:
+            for kuwosong in jsonresp['songlist']:
                 append(self._song(
-                    "qq",
-                    qqsong['songmid'],
-                    qqsong['songid'],
-                    qqsong['vid'],
+                    "kuwo",
+                    kuwosong['songmid'],
+                    kuwosong['songid'],
+                    kuwosong['vid'],
                     "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
-                    qqsong['albummid'] + ".jpg?max_age=2592000",
-                    qqsong['albumname'],
-                    "/qq/lyric/" + qqsong['songmid'],
-                    qqsong['songname'],
-                    self._getname(qqsong['singer']),
-                    qqsong['interval']
+                    kuwosong['albummid'] + ".jpg?max_age=2592000",
+                    kuwosong['albumname'],
+                    "/kuwo/lyric/" + kuwosong['songmid'],
+                    kuwosong['songname'],
+                    self._getname(kuwosong['singer']),
+                    kuwosong['interval']
                 ))
         except:
             result['error'] = 1
@@ -262,25 +262,25 @@ class KuWo(Music):
             'albumid': _id
         }
 
-        api = "https://c.y.qq.com/v8/fcg-bin/musicmall.fcg"
+        api = "https://c.y.kuwo.com/v8/fcg-bin/musicmall.fcg"
         jsonresp = await self._asyncGetJson(api, params=params)
         result = {'songs': []}
         append = result['songs'].append
 
         try:
-            for qqsong in jsonresp['data']['songlist']:
+            for kuwosong in jsonresp['data']['songlist']:
                 append(self._song(
-                    "qq",
-                    qqsong['songmid'],
-                    qqsong['songid'],
-                    qqsong['vid'],
+                    "kuwo",
+                    kuwosong['songmid'],
+                    kuwosong['songid'],
+                    kuwosong['vid'],
                     "https://y.gtimg.cn/music/photo_new/T002R300x300M000" +
-                    qqsong['albummid'] + ".jpg?max_age=2592000",
-                    qqsong['albumname'],
-                    "/qq/lyric/" + qqsong['songmid'],
-                    qqsong['songname'],
-                    self._getname(qqsong['singer']),
-                    qqsong['interval']
+                    kuwosong['albummid'] + ".jpg?max_age=2592000",
+                    kuwosong['albumname'],
+                    "/kuwo/lyric/" + kuwosong['songmid'],
+                    kuwosong['songname'],
+                    self._getname(kuwosong['singer']),
+                    kuwosong['interval']
                 ))
         except:
             result['error'] = 1
@@ -299,7 +299,7 @@ class KuWo(Music):
             'topid': _id
         }
 
-        api = "https://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg"
+        api = "https://c.y.kuwo.com/base/fcgi-bin/fcg_global_comment_h5.fcg"
         data = await self._asyncGetJson(api, params=params)
 
         # parse data
@@ -333,9 +333,9 @@ class KuWo(Music):
         return result
 
     # special
-    async def userlist(self, qqnum):
+    async def userlist(self, kuwonum):
 
-        userid = await self.getuserid(qqnum)
+        userid = await self.getuserid(kuwonum)
 
         if userid:
             
@@ -355,13 +355,13 @@ class KuWo(Music):
             "userid": userid
         }
 
-        api = "https://c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg"
+        api = "https://c.y.kuwo.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg"
         jsonresp = await self._asyncGetJsonHeadersCookies(api, params=params)
         
         try:
             data = jsonresp['data']
             res = {"lists": [self._songlist(
-                "qq",
+                "kuwo",
                 data['mymusic'][0]['id'],
                 data['mymusic'][0]['title'],
                 data['mymusic'][0]['laypic'],
@@ -369,7 +369,7 @@ class KuWo(Music):
             )]}
             for _list in data['mydiss']['list']:
                 res["lists"].append(self._songlist(
-                    "qq",
+                    "kuwo",
                     _list['dissid'],
                     _list['title'],
                     _list['picurl'],
@@ -381,28 +381,28 @@ class KuWo(Music):
             return []
 
     # special
-    async def getuserid(self, qqnum):
+    async def getuserid(self, kuwonum):
 
-        if qqnum in self.cache.keys():
+        if kuwonum in self.cache.keys():
             print('hit cache')
-            return self.cache[qqnum]
+            return self.cache[kuwonum]
 
         params = {
             'p': 1,
             'n': 30,
-            'remoteplace': 'txt.yqq.user',
+            'remoteplace': 'txt.ykuwo.user',
             'format': 'json',
             'searchid': '239684060216084795',
-            'w': qqnum
+            'w': kuwonum
         }
 
-        api = "https://c.y.qq.com/soso/fcgi-bin/client_search_user"
+        api = "https://c.y.kuwo.com/soso/fcgi-bin/client_search_user"
         
         resp = await self._asyncGetJsonHeadersCookies(api, params)
         
         try:
             userid = resp['data']['user']['list'][0]['docid']
-            self.cache[qqnum] = userid
+            self.cache[kuwonum] = userid
             return userid
 
         except:
